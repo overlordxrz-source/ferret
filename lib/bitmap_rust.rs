@@ -55,7 +55,7 @@ const BITS_PER_LONG: u32 = usize::BITS;
 // Internal helpers
 // ---------------------------------------------------------------------------
 
-/// The words of a bitmap.
+/// A read-only view of the words of a bitmap.
 ///
 /// The C interface passes the word array and the number of bits separately,
 /// so this carries both. The length is the *validated* view of the buffer: it
@@ -64,7 +64,7 @@ const BITS_PER_LONG: u32 = usize::BITS;
 /// always provably below the length (the bit count is what defines it), and a
 /// check would only add a panic path to a kernel that must not panic.
 struct Words {
-    ptr: *mut usize,
+    ptr: *const usize,
     len: usize,
 }
 
@@ -76,8 +76,47 @@ impl Words {
     /// `ptr` must be valid for `bits_to_longs(bits)` words, and the caller
     /// must keep the buffer alive for as long as the view is used.
     #[inline]
-    unsafe fn new(ptr: *mut usize, bits: u32) -> Self {
+    unsafe fn new(ptr: *const usize, bits: u32) -> Self {
         Words {
+            ptr,
+            len: bits_to_longs(bits),
+        }
+    }
+
+    /// The `i`-th word of the bitmap.
+    ///
+    /// The index must be below the number of words of the bitmap.
+    #[inline]
+    fn get(&self, i: usize) -> usize {
+        debug_assert!(i < self.len);
+
+        // SAFETY: the caller guarantees that the buffer is valid for `len`
+        // words, and `i` is below `len` (checked above in debug builds and
+        // provable from the bit count in release builds).
+        unsafe { *self.ptr.add(i) }
+    }
+}
+
+/// A read-write view of the words of a bitmap.
+///
+/// This is the same as [`Words`], but for the buffers that the operations
+/// write to. Keeping the two apart makes it impossible to write through a
+/// view of a source bitmap.
+struct WordsMut {
+    ptr: *mut usize,
+    len: usize,
+}
+
+impl WordsMut {
+    /// The words of a bitmap.
+    ///
+    /// # Safety
+    ///
+    /// `ptr` must be valid for `bits_to_longs(bits)` words and writable, and
+    /// the caller must keep the buffer alive for as long as the view is used.
+    #[inline]
+    unsafe fn new(ptr: *mut usize, bits: u32) -> Self {
+        WordsMut {
             ptr,
             len: bits_to_longs(bits),
         }
@@ -91,25 +130,24 @@ impl Words {
 
     /// The `i`-th word of the bitmap.
     ///
-    /// The index must be below [`Words::len()`].
+    /// The index must be below [`WordsMut::len()`].
     #[inline]
     fn get(&self, i: usize) -> usize {
         debug_assert!(i < self.len);
 
-        // SAFETY: the caller guarantees that the buffer is valid for `len`
-        // words, and `i` is below `len` (checked above in debug builds and
-        // provable from the bit count in release builds).
+        // SAFETY: as in `Words::get()`.
         unsafe { *self.ptr.add(i) }
     }
 
     /// Set the `i`-th word of the bitmap.
     ///
-    /// The index must be below [`Words::len()`].
+    /// The index must be below [`WordsMut::len()`].
     #[inline]
     fn set(&self, i: usize, value: usize) {
         debug_assert!(i < self.len);
 
-        // SAFETY: as in `Words::get()`.
+        // SAFETY: as in `Words::get()`; the pointer comes from a mutable
+        // buffer, so writing to it is allowed.
         unsafe { *self.ptr.add(i) = value }
     }
 }
@@ -135,6 +173,18 @@ fn last_word_mask(nbits: u32) -> usize {
 #[inline]
 fn first_word_mask(start: u32) -> usize {
     usize::MAX << (start & (BITS_PER_LONG - 1))
+}
+
+/// The number of set bits in a word.
+///
+/// This is the kernel's `hweight64()`: the architecture implements it with
+/// the alternatives mechanism, so the generic software version is patched to
+/// the popcount instruction at boot. A Rust `count_ones()` is compiled to the
+/// software sequence instead, which is several times slower.
+#[inline]
+fn hweight(w: usize) -> u32 {
+    // SAFETY: the helper takes a word and returns its population count.
+    unsafe { bindings::hweight64(w as u64) as u32 }
 }
 
 /// The position of the `n`-th set bit in a word, counted from zero.
@@ -237,7 +287,7 @@ fn find_nth_bit(words: &Words, size: u32, n: u32) -> u32 {
         }
 
         let tmp = words.get(idx);
-        let w = tmp.count_ones();
+        let w = hweight(tmp);
         if w > nr {
             return (idx as u32) * BITS_PER_LONG + fns(tmp, nr);
         }
@@ -263,11 +313,11 @@ fn weight(words: &Words, bits: u32) -> u32 {
     let mut w = 0;
 
     for k in 0..lim {
-        w += words.get(k).count_ones();
+        w += hweight(words.get(k));
     }
 
     if bits % BITS_PER_LONG != 0 {
-        w += (words.get(lim) & last_word_mask(bits)).count_ones();
+        w += hweight(words.get(lim) & last_word_mask(bits));
     }
 
     w
@@ -277,7 +327,7 @@ fn weight(words: &Words, bits: u32) -> u32 {
 ///
 /// This is the C `bitmap_zero()`.
 #[inline]
-fn zero(words: &Words, bits: u32) {
+fn zero(words: &WordsMut, bits: u32) {
     let len = bits_to_longs(bits);
 
     for k in 0..len {
@@ -287,15 +337,13 @@ fn zero(words: &Words, bits: u32) {
 
 /// Set one bit.
 #[inline]
-#[inline]
-fn set_bit(words: &Words, nr: u32) {
+fn set_bit(words: &WordsMut, nr: u32) {
     let idx = (nr / BITS_PER_LONG) as usize;
 
     words.set(idx, words.get(idx) | (1 << (nr % BITS_PER_LONG)));
 }
 
 /// Test one bit.
-#[inline]
 #[inline]
 fn test_bit(words: &Words, nr: u32) -> bool {
     let idx = (nr / BITS_PER_LONG) as usize;
@@ -329,8 +377,8 @@ pub unsafe extern "C" fn __bitmap_equal(
     // SAFETY: the caller guarantees the buffers are valid.
     let (b1, b2) = unsafe {
         (
-            Words::new(bitmap1 as *mut usize, bits),
-            Words::new(bitmap2 as *mut usize, bits),
+            Words::new(bitmap1, bits),
+            Words::new(bitmap2, bits),
         )
     };
     let lim = (bits / BITS_PER_LONG) as usize;
@@ -368,9 +416,9 @@ pub unsafe extern "C" fn __bitmap_or_equal(
     // SAFETY: the caller guarantees the buffers are valid.
     let (b1, b2, b3) = unsafe {
         (
-            Words::new(bitmap1 as *mut usize, bits),
-            Words::new(bitmap2 as *mut usize, bits),
-            Words::new(bitmap3 as *mut usize, bits),
+            Words::new(bitmap1, bits),
+            Words::new(bitmap2, bits),
+            Words::new(bitmap3, bits),
         )
     };
     let lim = (bits / BITS_PER_LONG) as usize;
@@ -406,8 +454,8 @@ pub unsafe extern "C" fn __bitmap_complement(
     // SAFETY: the caller guarantees the buffers are valid.
     let (d, s) = unsafe {
         (
-            Words::new(dst, bits),
-            Words::new(src as *mut usize, bits),
+            WordsMut::new(dst, bits),
+            Words::new(src, bits),
         )
     };
 
@@ -433,8 +481,8 @@ pub unsafe extern "C" fn __bitmap_shift_right(
     // SAFETY: the caller guarantees the buffers are valid.
     let (d, s) = unsafe {
         (
-            Words::new(dst, nbits),
-            Words::new(src as *mut usize, nbits),
+            WordsMut::new(dst, nbits),
+            Words::new(src, nbits),
         )
     };
 
@@ -493,8 +541,8 @@ pub unsafe extern "C" fn __bitmap_shift_left(
     // SAFETY: the caller guarantees the buffers are valid.
     let (d, s) = unsafe {
         (
-            Words::new(dst, nbits),
-            Words::new(src as *mut usize, nbits),
+            WordsMut::new(dst, nbits),
+            Words::new(src, nbits),
         )
     };
 
@@ -556,7 +604,7 @@ pub unsafe extern "C" fn bitmap_cut(
     // the bitmap itself are the same either way.
     let keep = if first_bit != 0 && first_word < len {
         // SAFETY: the caller guarantees the buffer is valid.
-        let s = unsafe { Words::new(src as *mut usize, nbits) };
+        let s = unsafe { Words::new(src, nbits) };
         s.get(first_word) & (usize::MAX >> (BITS_PER_LONG - first_bit))
     } else {
         0
@@ -572,7 +620,7 @@ pub unsafe extern "C" fn bitmap_cut(
     }
 
     // SAFETY: the caller guarantees the buffer is valid.
-    let d = unsafe { Words::new(dst, nbits) };
+    let d = unsafe { WordsMut::new(dst, nbits) };
 
     let mut cut = cut;
     while cut > 0 {
@@ -606,9 +654,9 @@ pub unsafe extern "C" fn __bitmap_and(
     // SAFETY: the caller guarantees the buffers are valid.
     let (d, b1, b2) = unsafe {
         (
-            Words::new(dst, bits),
-            Words::new(bitmap1 as *mut usize, bits),
-            Words::new(bitmap2 as *mut usize, bits),
+            WordsMut::new(dst, bits),
+            Words::new(bitmap1, bits),
+            Words::new(bitmap2, bits),
         )
     };
     let lim = (bits / BITS_PER_LONG) as usize;
@@ -646,9 +694,9 @@ pub unsafe extern "C" fn __bitmap_or(
     // SAFETY: the caller guarantees the buffers are valid.
     let (d, b1, b2) = unsafe {
         (
-            Words::new(dst, bits),
-            Words::new(bitmap1 as *mut usize, bits),
-            Words::new(bitmap2 as *mut usize, bits),
+            WordsMut::new(dst, bits),
+            Words::new(bitmap1, bits),
+            Words::new(bitmap2, bits),
         )
     };
 
@@ -674,9 +722,9 @@ pub unsafe extern "C" fn __bitmap_xor(
     // SAFETY: the caller guarantees the buffers are valid.
     let (d, b1, b2) = unsafe {
         (
-            Words::new(dst, bits),
-            Words::new(bitmap1 as *mut usize, bits),
-            Words::new(bitmap2 as *mut usize, bits),
+            WordsMut::new(dst, bits),
+            Words::new(bitmap1, bits),
+            Words::new(bitmap2, bits),
         )
     };
 
@@ -702,9 +750,9 @@ pub unsafe extern "C" fn __bitmap_andnot(
     // SAFETY: the caller guarantees the buffers are valid.
     let (d, b1, b2) = unsafe {
         (
-            Words::new(dst, bits),
-            Words::new(bitmap1 as *mut usize, bits),
-            Words::new(bitmap2 as *mut usize, bits),
+            WordsMut::new(dst, bits),
+            Words::new(bitmap1, bits),
+            Words::new(bitmap2, bits),
         )
     };
     let lim = (bits / BITS_PER_LONG) as usize;
@@ -743,10 +791,10 @@ pub unsafe extern "C" fn __bitmap_replace(
     // SAFETY: the caller guarantees the buffers are valid.
     let (d, o, n, m) = unsafe {
         (
-            Words::new(dst, nbits),
-            Words::new(old as *mut usize, nbits),
-            Words::new(new as *mut usize, nbits),
-            Words::new(mask as *mut usize, nbits),
+            WordsMut::new(dst, nbits),
+            Words::new(old, nbits),
+            Words::new(new, nbits),
+            Words::new(mask, nbits),
         )
     };
 
@@ -771,8 +819,8 @@ pub unsafe extern "C" fn __bitmap_intersects(
     // SAFETY: the caller guarantees the buffers are valid.
     let (b1, b2) = unsafe {
         (
-            Words::new(bitmap1 as *mut usize, bits),
-            Words::new(bitmap2 as *mut usize, bits),
+            Words::new(bitmap1, bits),
+            Words::new(bitmap2, bits),
         )
     };
     let lim = (bits / BITS_PER_LONG) as usize;
@@ -802,8 +850,8 @@ pub unsafe extern "C" fn __bitmap_subset(
     // SAFETY: the caller guarantees the buffers are valid.
     let (b1, b2) = unsafe {
         (
-            Words::new(bitmap1 as *mut usize, bits),
-            Words::new(bitmap2 as *mut usize, bits),
+            Words::new(bitmap1, bits),
+            Words::new(bitmap2, bits),
         )
     };
     let lim = (bits / BITS_PER_LONG) as usize;
@@ -831,7 +879,7 @@ pub unsafe extern "C" fn __bitmap_subset(
 #[export]
 pub unsafe extern "C" fn __bitmap_weight(bitmap: *const usize, bits: c_uint) -> c_uint {
     // SAFETY: the caller guarantees the buffer is valid.
-    let b = unsafe { Words::new(bitmap as *mut usize, bits) };
+    let b = unsafe { Words::new(bitmap, bits) };
 
     weight(&b, bits)
 }
@@ -852,19 +900,19 @@ pub unsafe extern "C" fn __bitmap_weight_and(
     // SAFETY: the caller guarantees the buffers are valid.
     let (b1, b2) = unsafe {
         (
-            Words::new(bitmap1 as *mut usize, bits),
-            Words::new(bitmap2 as *mut usize, bits),
+            Words::new(bitmap1, bits),
+            Words::new(bitmap2, bits),
         )
     };
     let lim = (bits / BITS_PER_LONG) as usize;
     let mut w = 0;
 
     for k in 0..lim {
-        w += (b1.get(k) & b2.get(k)).count_ones();
+        w += hweight(b1.get(k) & b2.get(k));
     }
 
     if bits % BITS_PER_LONG != 0 {
-        w += (b1.get(lim) & b2.get(lim) & last_word_mask(bits)).count_ones();
+        w += hweight(b1.get(lim) & b2.get(lim) & last_word_mask(bits));
     }
 
     w
@@ -886,19 +934,19 @@ pub unsafe extern "C" fn __bitmap_weight_andnot(
     // SAFETY: the caller guarantees the buffers are valid.
     let (b1, b2) = unsafe {
         (
-            Words::new(bitmap1 as *mut usize, bits),
-            Words::new(bitmap2 as *mut usize, bits),
+            Words::new(bitmap1, bits),
+            Words::new(bitmap2, bits),
         )
     };
     let lim = (bits / BITS_PER_LONG) as usize;
     let mut w = 0;
 
     for k in 0..lim {
-        w += (b1.get(k) & !b2.get(k)).count_ones();
+        w += hweight(b1.get(k) & !b2.get(k));
     }
 
     if bits % BITS_PER_LONG != 0 {
-        w += (b1.get(lim) & !b2.get(lim) & last_word_mask(bits)).count_ones();
+        w += hweight(b1.get(lim) & !b2.get(lim) & last_word_mask(bits));
     }
 
     w
@@ -918,7 +966,7 @@ pub unsafe extern "C" fn __bitmap_set(map: *mut usize, start: c_uint, len: c_int
 
     // SAFETY: the caller guarantees the buffer is valid for the words the
     // range covers.
-    let words = unsafe { Words::new(map, size) };
+    let words = unsafe { WordsMut::new(map, size) };
 
     let mut len = len;
     let mut bits_to_set = BITS_PER_LONG as i32 - (start % BITS_PER_LONG) as i32;
@@ -953,7 +1001,7 @@ pub unsafe extern "C" fn __bitmap_clear(map: *mut usize, start: c_uint, len: c_i
 
     // SAFETY: the caller guarantees the buffer is valid for the words the
     // range covers.
-    let words = unsafe { Words::new(map, size) };
+    let words = unsafe { WordsMut::new(map, size) };
 
     let mut len = len;
     let mut bits_to_clear = BITS_PER_LONG as i32 - (start % BITS_PER_LONG) as i32;
@@ -1040,13 +1088,13 @@ pub unsafe extern "C" fn bitmap_remap(
     // SAFETY: the caller guarantees the buffers are valid.
     let (s, o, n) = unsafe {
         (
-            Words::new(src as *mut usize, nbits),
-            Words::new(old as *mut usize, nbits),
-            Words::new(new as *mut usize, nbits),
+            Words::new(src, nbits),
+            Words::new(old, nbits),
+            Words::new(new, nbits),
         )
     };
     // SAFETY: the caller guarantees the buffer is valid.
-    let d = unsafe { Words::new(dst, nbits) };
+    let d = unsafe { WordsMut::new(dst, nbits) };
 
     zero(&d, nbits);
 
@@ -1069,7 +1117,13 @@ pub unsafe extern "C" fn bitmap_remap(
         if ord < 0 || w == 0 {
             set_bit(&d, oldbit);
         } else {
-            set_bit(&d, find_nth_bit(&n, nbits, (ord % w as i64) as u32));
+            // The bit exists (`w` bits are set in `new` and the ordinal is
+            // below `w`), but the C original would write outside the bitmap
+            // if it did not; the check keeps that impossible.
+            let bit = find_nth_bit(&n, nbits, (ord % w as i64) as u32);
+            if bit < nbits {
+                set_bit(&d, bit);
+            }
         }
 
         oldbit += 1;
@@ -1095,8 +1149,8 @@ pub unsafe extern "C" fn bitmap_bitremap(
     // SAFETY: the caller guarantees the buffers are valid.
     let (o, n) = unsafe {
         (
-            Words::new(old as *mut usize, bits),
-            Words::new(new as *mut usize, bits),
+            Words::new(old, bits),
+            Words::new(new, bits),
         )
     };
 
@@ -1140,12 +1194,12 @@ pub unsafe extern "C" fn bitmap_onto(
     // SAFETY: the caller guarantees the buffers are valid.
     let (o, r) = unsafe {
         (
-            Words::new(orig as *mut usize, bits),
-            Words::new(relmap as *mut usize, bits),
+            Words::new(orig, bits),
+            Words::new(relmap, bits),
         )
     };
     // SAFETY: the caller guarantees the buffer is valid.
-    let d = unsafe { Words::new(dst, bits) };
+    let d = unsafe { WordsMut::new(dst, bits) };
 
     zero(&d, bits);
 
@@ -1190,11 +1244,17 @@ pub unsafe extern "C" fn bitmap_fold(
     }
 
     // SAFETY: the caller guarantees the buffers are valid.
-    let o = unsafe { Words::new(orig as *mut usize, nbits) };
+    let o = unsafe { Words::new(orig, nbits) };
     // SAFETY: the caller guarantees the buffer is valid.
-    let d = unsafe { Words::new(dst, nbits) };
+    let d = unsafe { WordsMut::new(dst, nbits) };
 
     zero(&d, nbits);
+
+    if sz == 0 {
+        // The C original divides by zero here (a kernel oops). There is no
+        // meaningful result, so the bitmap is left cleared.
+        return;
+    }
 
     let mut oldbit = 0u32;
     while oldbit < nbits {
@@ -1378,7 +1438,7 @@ pub unsafe extern "C" fn bitmap_from_arr32(bitmap: *mut usize, buf: *const u32, 
     // SAFETY: the caller guarantees the buffers are valid.
     let (b, src) = unsafe {
         (
-            Words::new(bitmap, nbits),
+            WordsMut::new(bitmap, nbits),
             core::slice::from_raw_parts(buf, (nbits as usize).div_ceil(32)),
         )
     };
@@ -1416,7 +1476,7 @@ pub unsafe extern "C" fn bitmap_to_arr32(buf: *mut u32, bitmap: *const usize, nb
     // SAFETY: the caller guarantees the buffers are valid.
     let (b, dst) = unsafe {
         (
-            Words::new(bitmap as *mut usize, nbits),
+            Words::new(bitmap, nbits),
             core::slice::from_raw_parts_mut(buf, (nbits as usize).div_ceil(32)),
         )
     };
@@ -1499,7 +1559,7 @@ pub unsafe extern "C" fn bitmap_to_arr64(buf: *mut u64, bitmap: *const usize, nb
     // SAFETY: the caller guarantees the buffers are valid.
     let (b, dst) = unsafe {
         (
-            Words::new(bitmap as *mut usize, nbits),
+            Words::new(bitmap, nbits),
             core::slice::from_raw_parts_mut(buf, (nbits as usize).div_ceil(64)),
         )
     };

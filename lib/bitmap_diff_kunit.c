@@ -87,6 +87,16 @@ static void bitmap_diff_sizes(struct kunit *test)
 	struct rnd_state rng;
 	unsigned int i;
 
+	/*
+	 * Guard against a vacuous test: the two implementations must be
+	 * different objects, otherwise the comparison below would compare the
+	 * C reference with itself and pass for the wrong reason.
+	 */
+	KUNIT_ASSERT_NE(test, (unsigned long)__bitmap_and,
+			(unsigned long)__bitmap_and_c_ref);
+	KUNIT_ASSERT_NE(test, (unsigned long)bitmap_alloc,
+			(unsigned long)bitmap_alloc_c_ref);
+
 	prandom_seed_state(&rng, 0x666572726574); /* "ferret" */
 
 	for (i = 0; i < ARRAY_SIZE(diff_sizes); i++) {
@@ -100,57 +110,57 @@ static void bitmap_diff_sizes(struct kunit *test)
 		diff_fill(&rng, c, bits);
 
 		/* Comparison helpers. */
-		KUNIT_EXPECT_EQ(test, __bitmap_equal_c_ref(a, b, bits),
+		KUNIT_EXPECT_EQ(test, __bitmap_equal(a, b, bits),
 				__bitmap_equal_c_ref(a, b, bits));
-		KUNIT_EXPECT_EQ(test, __bitmap_or_equal_c_ref(a, b, c, bits),
+		KUNIT_EXPECT_EQ(test, __bitmap_or_equal(a, b, c, bits),
 				__bitmap_or_equal_c_ref(a, b, c, bits));
-		KUNIT_EXPECT_EQ(test, __bitmap_intersects_c_ref(a, b, bits),
+		KUNIT_EXPECT_EQ(test, __bitmap_intersects(a, b, bits),
 				__bitmap_intersects_c_ref(a, b, bits));
-		KUNIT_EXPECT_EQ(test, __bitmap_subset_c_ref(a, b, bits),
+		KUNIT_EXPECT_EQ(test, __bitmap_subset(a, b, bits),
 				__bitmap_subset_c_ref(a, b, bits));
 
 		/* Weight helpers. */
-		KUNIT_EXPECT_EQ(test, __bitmap_weight_c_ref(a, bits),
+		KUNIT_EXPECT_EQ(test, __bitmap_weight(a, bits),
 				__bitmap_weight_c_ref(a, bits));
-		KUNIT_EXPECT_EQ(test, __bitmap_weight_and_c_ref(a, b, bits),
+		KUNIT_EXPECT_EQ(test, __bitmap_weight_and(a, b, bits),
 				__bitmap_weight_and_c_ref(a, b, bits));
-		KUNIT_EXPECT_EQ(test, __bitmap_weight_andnot_c_ref(a, b, bits),
+		KUNIT_EXPECT_EQ(test, __bitmap_weight_andnot(a, b, bits),
 				__bitmap_weight_andnot_c_ref(a, b, bits));
 
 		/* Logical operations write the destination. */
 		memset(ra, 0, sizeof(ra));
 		memset(rb, 0, sizeof(rb));
-		KUNIT_EXPECT_EQ(test, __bitmap_and_c_ref(ra, a, b, bits),
+		KUNIT_EXPECT_EQ(test, __bitmap_and(ra, a, b, bits),
 				__bitmap_and_c_ref(rb, a, b, bits));
 		diff_compare(test, ra, rb, words, "and");
 
 		memset(ra, 0, sizeof(ra));
 		memset(rb, 0, sizeof(rb));
-		__bitmap_or_c_ref(ra, a, b, bits);
+		__bitmap_or(ra, a, b, bits);
 		__bitmap_or_c_ref(rb, a, b, bits);
 		diff_compare(test, ra, rb, words, "or");
 
 		memset(ra, 0, sizeof(ra));
 		memset(rb, 0, sizeof(rb));
-		__bitmap_xor_c_ref(ra, a, b, bits);
+		__bitmap_xor(ra, a, b, bits);
 		__bitmap_xor_c_ref(rb, a, b, bits);
 		diff_compare(test, ra, rb, words, "xor");
 
 		memset(ra, 0, sizeof(ra));
 		memset(rb, 0, sizeof(rb));
-		KUNIT_EXPECT_EQ(test, __bitmap_andnot_c_ref(ra, a, b, bits),
+		KUNIT_EXPECT_EQ(test, __bitmap_andnot(ra, a, b, bits),
 				__bitmap_andnot_c_ref(rb, a, b, bits));
 		diff_compare(test, ra, rb, words, "andnot");
 
 		memset(ra, 0, sizeof(ra));
 		memset(rb, 0, sizeof(rb));
-		__bitmap_replace_c_ref(ra, a, b, c, bits);
+		__bitmap_replace(ra, a, b, c, bits);
 		__bitmap_replace_c_ref(rb, a, b, c, bits);
 		diff_compare(test, ra, rb, words, "replace");
 
 		memset(ra, 0, sizeof(ra));
 		memset(rb, 0, sizeof(rb));
-		__bitmap_complement_c_ref(ra, a, bits);
+		__bitmap_complement(ra, a, bits);
 		__bitmap_complement_c_ref(rb, a, bits);
 		diff_compare(test, ra, rb, words, "complement");
 	}
@@ -177,13 +187,13 @@ static void bitmap_diff_set_clear(struct kunit *test)
 
 		memcpy(ra, a, sizeof(ra));
 		memcpy(rb, a, sizeof(rb));
-		__bitmap_set_c_ref(ra, start, len);
+		__bitmap_set(ra, start, len);
 		__bitmap_set_c_ref(rb, start, len);
 		diff_compare(test, ra, rb, words, "set");
 
 		memcpy(ra, a, sizeof(ra));
 		memcpy(rb, a, sizeof(rb));
-		__bitmap_clear_c_ref(ra, start, len);
+		__bitmap_clear(ra, start, len);
 		__bitmap_clear_c_ref(rb, start, len);
 		diff_compare(test, ra, rb, words, "clear");
 
@@ -221,13 +231,13 @@ static void bitmap_diff_shifts(struct kunit *test)
 		for (shift = 0; shift <= bits; shift += 7) {
 			memset(ra, 0, sizeof(ra));
 			memset(rb, 0, sizeof(rb));
-			__bitmap_shift_right_c_ref(ra, a, shift, bits);
+			__bitmap_shift_right(ra, a, shift, bits);
 			__bitmap_shift_right_c_ref(rb, a, shift, bits);
 			diff_compare(test, ra, rb, words, "shift right");
 
 			memset(ra, 0, sizeof(ra));
 			memset(rb, 0, sizeof(rb));
-			__bitmap_shift_left_c_ref(ra, a, shift, bits);
+			__bitmap_shift_left(ra, a, shift, bits);
 			__bitmap_shift_left_c_ref(rb, a, shift, bits);
 			diff_compare(test, ra, rb, words, "shift left");
 		}
@@ -254,9 +264,38 @@ static void bitmap_diff_cut(struct kunit *test)
 
 		memcpy(ra, a, sizeof(ra));
 		memcpy(rb, a, sizeof(rb));
-		bitmap_cut_c_ref(ra, a, first, cut, bits);
+		bitmap_cut(ra, a, first, cut, bits);
 		bitmap_cut_c_ref(rb, a, first, cut, bits);
 		diff_compare(test, ra, rb, words, "cut");
+	}
+}
+
+/*
+ * The C original reads and writes the word that `first` points at even when
+ * that word is outside the bitmap, which is an out-of-bounds access: the
+ * upstream test suite exercises exactly that case (first == BITS_PER_LONG with
+ * a one-word bitmap). The Rust implementation only touches the words that are
+ * inside the bitmap, so the bits of the bitmap itself are the same, and the
+ * C implementation's extra word is not compared.
+ */
+static void bitmap_diff_cut_out_of_range(struct kunit *test)
+{
+	unsigned long a[DIFF_WORDS], ra[DIFF_WORDS], rb[DIFF_WORDS];
+	unsigned int bits = 64;
+	unsigned int words = BITS_TO_LONGS(bits);
+	unsigned int first;
+
+	memset(a, 0, sizeof(a));
+	a[0] = 0xa5a5a5a5UL;
+	a[1] = 0x5a5a5a5aUL;
+
+	/* `first` at and past the end of the bitmap. */
+	for (first = bits; first <= bits + BITS_PER_LONG; first += BITS_PER_LONG) {
+		memcpy(ra, a, sizeof(ra));
+		memcpy(rb, a, sizeof(rb));
+		bitmap_cut(ra, a, first, BITS_PER_LONG, bits);
+		bitmap_cut_c_ref(rb, a, first, BITS_PER_LONG, bits);
+		diff_compare(test, ra, rb, words, "cut outside the bitmap");
 	}
 }
 
@@ -279,7 +318,7 @@ static void bitmap_diff_find_next_zero_area(struct kunit *test)
 
 			memcpy(b, a, sizeof(b));
 			KUNIT_EXPECT_EQ(test,
-					bitmap_find_next_zero_area_off_c_ref(a, bits, start, nr, 0, 0),
+					bitmap_find_next_zero_area_off(a, bits, start, nr, 0, 0),
 					bitmap_find_next_zero_area_off_c_ref(b, bits, start, nr, 0, 0));
 
 			memcpy(b, a, sizeof(b));
@@ -310,13 +349,13 @@ static void bitmap_diff_remap(struct kunit *test)
 
 		memset(ra, 0, sizeof(ra));
 		memset(rb, 0, sizeof(rb));
-		bitmap_remap_c_ref(ra, src, old, new, bits);
+		bitmap_remap(ra, src, old, new, bits);
 		bitmap_remap_c_ref(rb, src, old, new, bits);
 		diff_compare(test, ra, rb, words, "remap");
 
 		for (bit = 0; bit < bits; bit++) {
 			KUNIT_EXPECT_EQ(test,
-					bitmap_bitremap_c_ref(bit, old, new, bits),
+					bitmap_bitremap(bit, old, new, bits),
 					bitmap_bitremap_c_ref(bit, old, new, bits));
 		}
 	}
@@ -344,11 +383,11 @@ static void bitmap_diff_arr32(struct kunit *test)
 		memset(a, 0, sizeof(a));
 		memset(b, 0, sizeof(b));
 
-		bitmap_from_arr32_c_ref(a, src, bits);
+		bitmap_from_arr32(a, src, bits);
 		bitmap_from_arr32_c_ref(b, src, bits);
 		diff_compare(test, a, b, BITS_TO_LONGS(bits), "from_arr32");
 
-		bitmap_to_arr32_c_ref(out_a, a, bits);
+		bitmap_to_arr32(out_a, a, bits);
 		bitmap_to_arr32_c_ref(out_b, b, bits);
 		KUNIT_EXPECT_MEMEQ_MSG(test, out_a, out_b, halfwords * sizeof(u32), "to_arr32");
 	}
@@ -360,9 +399,9 @@ static void bitmap_diff_alloc(struct kunit *test)
 
 	for (i = 0; i < ARRAY_SIZE(diff_sizes); i++) {
 		unsigned int bits = diff_sizes[i];
-		unsigned long *a = bitmap_alloc_c_ref(bits, GFP_KERNEL);
+		unsigned long *a = bitmap_alloc(bits, GFP_KERNEL);
 		unsigned long *b = bitmap_alloc_c_ref(bits, GFP_KERNEL);
-		unsigned long *za = bitmap_zalloc_c_ref(bits, GFP_KERNEL);
+		unsigned long *za = bitmap_zalloc(bits, GFP_KERNEL);
 		unsigned long *zb = bitmap_zalloc_c_ref(bits, GFP_KERNEL);
 		unsigned int words = BITS_TO_LONGS(bits);
 
@@ -377,11 +416,147 @@ static void bitmap_diff_alloc(struct kunit *test)
 		/* Both allocations have the same size. */
 		KUNIT_EXPECT_EQ(test, ksize(a), ksize(b));
 
-		bitmap_free_c_ref(a);
+		bitmap_free(a);
 		bitmap_free_c_ref(b);
 		bitmap_free_c_ref(za);
 		bitmap_free_c_ref(zb);
 	}
+}
+
+/*
+ * The NUMA node variants must agree with the C reference as well.
+ */
+static void bitmap_diff_alloc_node(struct kunit *test)
+{
+	unsigned int i;
+
+	for (i = 0; i < ARRAY_SIZE(diff_sizes); i++) {
+		unsigned int bits = diff_sizes[i];
+		unsigned long *a = bitmap_alloc_node(bits, GFP_KERNEL, 0);
+		unsigned long *b = bitmap_alloc_node_c_ref(bits, GFP_KERNEL, 0);
+		unsigned long *za = bitmap_zalloc_node(bits, GFP_KERNEL, 0);
+		unsigned long *zb = bitmap_zalloc_node_c_ref(bits, GFP_KERNEL, 0);
+
+		KUNIT_ASSERT_NOT_NULL(test, a);
+		KUNIT_ASSERT_NOT_NULL(test, b);
+		KUNIT_ASSERT_NOT_NULL(test, za);
+		KUNIT_ASSERT_NOT_NULL(test, zb);
+
+		/* A zeroed allocation is zeroed in both implementations. */
+		diff_compare(test, za, zb, BITS_TO_LONGS(bits), "zalloc_node");
+		KUNIT_EXPECT_EQ(test, ksize(a), ksize(b));
+
+		bitmap_free(a);
+		bitmap_free(b);
+		bitmap_free(za);
+		bitmap_free(zb);
+	}
+}
+
+/*
+ * Throughput comparison of the two implementations.
+ *
+ * The upstream test_bitmap kselftest measures bitmap_read() and
+ * bitmap_write(), which are static inlines in include/linux/bitmap.h and
+ * therefore identical in both builds: they do not measure the ported code at
+ * all. This benchmark exercises the *exported* functions instead, on both
+ * implementations, in the same kernel and the same run.
+ *
+ * The numbers are QEMU TCG figures, so only the ratio between the two
+ * implementations is meaningful; the run-to-run spread of a single TCG
+ * measurement is large (the upstream kselftest, which measures identical code
+ * in both builds, varied by ~30 % between two boots of the same kernel).
+ */
+#define BENCH_BITS	1024
+#define BENCH_ITERS	2000
+#define BENCH_ROUNDS	3
+
+/* `with_weight` selects the workload: the weight helpers use the kernel's
+ * population count, which the alternatives mechanism patches to the popcount
+ * instruction at boot. That patch cannot be applied to Rust code, so the
+ * weight helpers are measured separately from the rest of the API. */
+static u64 bench_run(bool rust, bool with_weight)
+{
+	unsigned long a[BENCH_BITS / BITS_PER_LONG] = { 0 };
+	unsigned long b[BENCH_BITS / BITS_PER_LONG] = { 0 };
+	unsigned long c[BENCH_BITS / BITS_PER_LONG] = { 0 };
+	u64 start, end;
+	unsigned int i, j;
+
+	for (j = 0; j < BENCH_BITS / BITS_PER_LONG; j++)
+		a[j] = 0x5555555555555555UL ^ (j * 0x0101010101010101UL);
+
+	start = ktime_get();
+
+	for (i = 0; i < BENCH_ITERS; i++) {
+		if (rust) {
+			__bitmap_set(a, i % (BENCH_BITS - 64), 64);
+			__bitmap_clear(a, i % (BENCH_BITS - 64), 32);
+			__bitmap_and(b, a, c, BENCH_BITS);
+			__bitmap_or(b, a, c, BENCH_BITS);
+			__bitmap_xor(b, a, c, BENCH_BITS);
+			if (with_weight)
+				__bitmap_weight(a, BENCH_BITS);
+			__bitmap_shift_left(b, a, 3, BENCH_BITS);
+			__bitmap_shift_right(b, a, 3, BENCH_BITS);
+		} else {
+			__bitmap_set_c_ref(a, i % (BENCH_BITS - 64), 64);
+			__bitmap_clear_c_ref(a, i % (BENCH_BITS - 64), 32);
+			__bitmap_and_c_ref(b, a, c, BENCH_BITS);
+			__bitmap_or_c_ref(b, a, c, BENCH_BITS);
+			__bitmap_xor_c_ref(b, a, c, BENCH_BITS);
+			if (with_weight)
+				__bitmap_weight_c_ref(a, BENCH_BITS);
+			__bitmap_shift_left_c_ref(b, a, 3, BENCH_BITS);
+			__bitmap_shift_right_c_ref(b, a, 3, BENCH_BITS);
+		}
+	}
+
+	end = ktime_get();
+
+	return end - start;
+}
+
+static void bitmap_diff_benchmark(struct kunit *test)
+{
+	u64 rust_best, c_best, rust_ns, c_ns;
+	unsigned int round;
+
+	/* The whole API, including the weight helpers. */
+	rust_best = U64_MAX;
+	c_best = U64_MAX;
+	for (round = 0; round < BENCH_ROUNDS; round++) {
+		rust_ns = bench_run(true, true);
+		c_ns = bench_run(false, true);
+
+		if (rust_ns < rust_best)
+			rust_best = rust_ns;
+		if (c_ns < c_best)
+			c_best = c_ns;
+	}
+
+	pr_info("bitmap benchmark: %d iterations over %d bits, best of %d\n",
+		BENCH_ITERS, BENCH_BITS, BENCH_ROUNDS);
+	pr_info("bitmap benchmark: all operations, rust %llu ns, c %llu ns, ratio %llu per mille\n",
+		rust_best, c_best,
+		div64_u64(c_best ? rust_best * 1000 : 0, c_best ? c_best : 1));
+
+	/* The same workload without the weight helpers. */
+	rust_best = U64_MAX;
+	c_best = U64_MAX;
+	for (round = 0; round < BENCH_ROUNDS; round++) {
+		rust_ns = bench_run(true, false);
+		c_ns = bench_run(false, false);
+
+		if (rust_ns < rust_best)
+			rust_best = rust_ns;
+		if (c_ns < c_best)
+			c_best = c_ns;
+	}
+
+	pr_info("bitmap benchmark: without the weight helpers, rust %llu ns, c %llu ns, ratio %llu per mille\n",
+		rust_best, c_best,
+		div64_u64(c_best ? rust_best * 1000 : 0, c_best ? c_best : 1));
 }
 
 static struct kunit_case bitmap_diff_test_cases[] = {
@@ -389,10 +564,13 @@ static struct kunit_case bitmap_diff_test_cases[] = {
 	KUNIT_CASE(bitmap_diff_set_clear),
 	KUNIT_CASE(bitmap_diff_shifts),
 	KUNIT_CASE(bitmap_diff_cut),
+	KUNIT_CASE(bitmap_diff_cut_out_of_range),
 	KUNIT_CASE(bitmap_diff_find_next_zero_area),
 	KUNIT_CASE(bitmap_diff_remap),
 	KUNIT_CASE(bitmap_diff_arr32),
 	KUNIT_CASE(bitmap_diff_alloc),
+	KUNIT_CASE(bitmap_diff_alloc_node),
+	KUNIT_CASE(bitmap_diff_benchmark),
 	{},
 };
 
