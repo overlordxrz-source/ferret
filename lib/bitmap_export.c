@@ -49,3 +49,13 @@ EXPORT_SYMBOL(bitmap_zalloc_node);
 /* These two are EXPORT_SYMBOL_GPL() in the C original. */
 EXPORT_SYMBOL_GPL(devm_bitmap_alloc);
 EXPORT_SYMBOL_GPL(devm_bitmap_zalloc);
+
+/*
+ * On a 32-bit build the word conversions are the 64-bit ones, and the C
+ * original exports them. On a 64-bit build they are macros in
+ * include/linux/bitmap.h, so there is nothing to export.
+ */
+#if BITS_PER_LONG == 32
+EXPORT_SYMBOL(bitmap_from_arr64);
+EXPORT_SYMBOL(bitmap_to_arr64);
+#endif
