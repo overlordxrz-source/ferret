@@ -1,6 +1,6 @@
 Ferret verification evidence
-Source commit: 84808e28b814
-Extracted: 2026-10-21T04:09:08Z (UTC)
+Source commit: 78d2f33d4cbe
+Extracted: 2026-10-21T06:21:37Z (UTC)
 Raw logs: artifacts/ (not published; reproduced by tools/ferret/test.sh)
 ----------------------------------------------------------------------
 Guest: Ubuntu 24.04 root filesystem, arm64
