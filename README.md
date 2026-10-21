@@ -151,7 +151,9 @@ The full plan, including exit criteria per phase, is in
 Ferret is a fork of the Linux kernel and is distributed under the
 **GNU General Public License, version 2 only** (`GPL-2.0-only`), like the
 upstream kernel. Every file keeps its original SPDX identifier and copyright
-notices; new Ferret files are GPL-2.0-only unless stated otherwise.
+notices; new Ferret files are GPL-2.0-only unless stated otherwise. The full
+license text is in [`COPYING`](COPYING) (as shipped by upstream) and
+[`LICENSE`](LICENSE) states the terms in one place.
 
 * Upstream: [Linux kernel](https://www.kernel.org/), stable tree
   `git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git`

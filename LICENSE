@@ -1,0 +1,18 @@
+Ferret is distributed under the GNU General Public License, version 2 only
+(GPL-2.0-only), the same license as the Linux kernel it is derived from.
+
+This file is a pointer, not a replacement for the license text:
+
+  * COPYING      — the full GNU General Public License version 2 text, as
+                   shipped by upstream Linux and kept unmodified.
+  * LICENSES/    — the other licenses used by individual kernel files, as
+                   shipped by upstream Linux and kept unmodified.
+
+Every source file in this tree keeps its original SPDX identifier, copyright
+notices and license text. New Ferret files carry
+`SPDX-License-Identifier: GPL-2.0-only` unless stated otherwise.
+
+Upstream baseline: Linux v6.18.57, commit
+2ff600d29ee478d0a8d46ef8a58afb5e038fe692.
+
+See docs/ferret/UPSTREAM.md for provenance and licensing obligations.
