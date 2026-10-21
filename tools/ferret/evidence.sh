@@ -83,13 +83,20 @@ write_ubuntu ubuntu-systemd-amd64/boot.log amd64 "systemd PID 1" amd64 boot-ubun
 write_ubuntu ubuntu-shell-arm64/boot.log arm64 "init=/sbin/ferret-init probe" arm64 boot-ubuntu-shell-arm64.txt
 write_ubuntu ubuntu-systemd-arm64/boot.log arm64 "systemd PID 1" arm64 boot-ubuntu-systemd-arm64.txt
 
-# Final per-step summary from the clean cycle.
-need "$ART/RESULTS.txt"
-{
-	header
-	printf 'Clean cycle: CLEAN=1 tools/ferret/test.sh\n\n'
-	grep -aE "^(build|boot|linkage|initramfs|registry|ubuntu)[a-z0-9-]*[[:space:]]+(PASS|FAIL|SKIP|NOT RUN)" "$ART/RESULTS.txt" || true
-} >"$OUT/results-clean-cycle.txt"
+# The per-step summary of the last cycle. It is only present when a cycle
+# has been run in this tree.
+if [ -e "$ART/RESULTS.txt" ]; then
+	{
+		header
+		printf 'Cycle: CLEAN=1 tools/ferret/test.sh\n\n'
+		grep -aE "^(build|boot|linkage|initramfs|registry|ubuntu)[a-z0-9-]*[[:space:]]+(PASS|FAIL|SKIP|NOT RUN)" "$ART/RESULTS.txt" || true
+	} >"$OUT/results-clean-cycle.txt"
+else
+	{
+		header
+		printf 'Cycle: not run in this tree yet.\n'
+	} >"$OUT/results-clean-cycle.txt"
+fi
 
 echo "evidence written to $OUT"
 ls -l "$OUT"

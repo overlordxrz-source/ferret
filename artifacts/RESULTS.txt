@@ -1,0 +1,14 @@
+checkpoint 003 (branch ferret/004-bitmap) — incremental verification
+
+The clean cycle (CLEAN=1 tools/ferret/test.sh) has not been run on this
+branch yet; the steps below are the incremental ones that were run.
+
+build-rust            PASS
+boot-rust             PASS
+linkage-rust          PASS
+build-rust-arm64      PASS
+linkage-rust-arm64    PASS
+ubuntu-shell-amd64    PASS
+ubuntu-systemd-amd64  PASS
+ubuntu-shell-arm64    PASS
+ubuntu-systemd-arm64  PASS

@@ -1,0 +1,84 @@
+make: Entering directory '/build/src'
+make[1]: Entering directory '/build/linux-rust-arm64'
+  SYNC    include/config/auto.conf.cmd
+  GEN     Makefile
+  GEN     Makefile
+  CALL    /build/src/scripts/checksyscalls.sh
+  BINDGEN rust/bindings/bindings_helpers_generated.rs
+  CC      rust/helpers/helpers.o
+  RUSTC L rust/bindings.o
+  EXPORTS rust/exports_helpers_generated.h
+  EXPORTS rust/exports_bindings_generated.h
+  RUSTC L rust/kernel.o
+  EXPORTS rust/exports_kernel_generated.h
+  CC      rust/exports.o
+  RUSTC     lib/kfifo_rust.o
+  AR      rust/built-in.a
+  RUSTC     lib/crc/crc16_rust.o
+  UPD     kernel/config_data
+  RUSTC     lib/crc/crc_ccitt_rust.o
+  GZIP    kernel/config_data.gz
+  CC      kernel/configs.o
+  AR      lib/crc/built-in.a
+  CC      lib/test_bitmap.o
+  RUSTC     lib/bitmap_rust.o
+  CC      lib/bitmap_export.o
+warning: unused attribute
+   --> /build/src/lib/bitmap_rust.rs:290:1
+    |
+290 | #[inline]
+    | ^^^^^^^^^ help: remove this attribute
+    |
+note: attribute also specified here
+   --> /build/src/lib/bitmap_rust.rs:289:1
+    |
+289 | #[inline]
+    | ^^^^^^^^^
+    = warning: this was previously accepted by the compiler but is being phased out; it will become a hard error in a future release!
+    = note: `#[warn(unused_attributes)]` on by default
+
+warning: unused attribute
+   --> /build/src/lib/bitmap_rust.rs:299:1
+    |
+299 | #[inline]
+    | ^^^^^^^^^ help: remove this attribute
+    |
+note: attribute also specified here
+   --> /build/src/lib/bitmap_rust.rs:298:1
+    |
+298 | #[inline]
+    | ^^^^^^^^^
+    = warning: this was previously accepted by the compiler but is being phased out; it will become a hard error in a future release!
+
+  CC      lib/bitmap_ref.o
+  CC      lib/bitmap_diff_kunit.o
+warning: 2 warnings emitted
+
+  AR      kernel/built-in.a
+  AR      lib/built-in.a
+  AR      built-in.a
+  AR      vmlinux.a
+  LD      vmlinux.o
+  MODPOST vmlinux.symvers
+  CC      .vmlinux.export.o
+  UPD     include/generated/utsversion.h
+  CC      init/version-timestamp.o
+  KSYMS   .tmp_vmlinux0.kallsyms.S
+  AS      .tmp_vmlinux0.kallsyms.o
+  LD      .tmp_vmlinux1
+  NM      .tmp_vmlinux1.syms
+  KSYMS   .tmp_vmlinux1.kallsyms.S
+  AS      .tmp_vmlinux1.kallsyms.o
+  LD      .tmp_vmlinux2
+  NM      .tmp_vmlinux2.syms
+  KSYMS   .tmp_vmlinux2.kallsyms.S
+  AS      .tmp_vmlinux2.kallsyms.o
+  LD      vmlinux.unstripped
+  NM      System.map
+  SORTTAB vmlinux.unstripped
+  OBJCOPY vmlinux
+  GEN     modules.builtin.modinfo
+  GEN     modules.builtin
+  OBJCOPY arch/arm64/boot/Image
+make[1]: Leaving directory '/build/linux-rust-arm64'
+make: Leaving directory '/build/src'
