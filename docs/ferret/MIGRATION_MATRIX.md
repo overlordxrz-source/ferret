@@ -17,6 +17,7 @@ this document is the narrative view.
 | CRC-7 | `lib/crc/crc7.c` | — | `crc7_be` | candidate | — |
 | CRC-32 / CRC-32c | `lib/crc/crc32-main.c` | — | `crc32_le`, `crc32_be`, `crc32c` | candidate-later | hot path + arch SIMD |
 | CRC-64 | `lib/crc/crc64-main.c` | — | `crc64_be`, `crc64_nvme` | candidate-later | generated table + arch SIMD |
+| Reference counting | `lib/refcount.c` | `lib/refcount_rust.rs` | `refcount_warn_saturate`, `refcount_dec_if_one`, `refcount_dec_not_one`, `refcount_dec_and_mutex_lock`, `refcount_dec_and_lock`, `refcount_dec_and_lock_irqsave` | partial (checkpoint 005) | [`evidence/`](evidence/) — boot markers and linkage; the clean cycle is pending |
 
 CRC-16 migration details:
 
@@ -56,6 +57,51 @@ CRC-CCITT migration details:
   built, so no delta is claimed there). Runtime throughput NOT TESTED
   (QEMU TCG only).
 
+Reference counting migration details (checkpoint 005):
+
+* C source: `lib/refcount.c` (186 lines, 6 exported helpers).
+* Rust source: `lib/refcount_rust.rs`; the C object is **not built** in the
+  Rust variant (`lib/refcount.o` is not linked into `lib/built-in.a`), and
+  `lib/refcount_rust.o` defines all 6 symbols.
+* Interface: `include/linux/refcount.h` is unchanged. The `refcount_t`
+  *primitive* stays in C: it is a header type that the C code embeds in its
+  own structures, and its inline operations are what the kernel's own code
+  calls. The exported layer is what moves to Rust. The C inline operations
+  warn through `refcount_warn_saturate()`, which is now the Rust
+  implementation, so every saturation warning in the kernel goes through the
+  Rust code (there is no recursion).
+* Export: all 6 symbols keep their non-GPL `EXPORT_SYMBOL` visibility through
+  the ksymtab-only shim `lib/refcount_export.c` (no algorithm).
+* Memory ordering: not re-implemented. The decrements call
+  `atomic_try_cmpxchg_release()` — the same C primitive the C original uses —
+  through the kernel crate's `Atomic` wrapper, and the decrement-to-zero
+  helper is the C inline of the primitive, with its `smp_acquire__after_ctrl_dep()`
+  acquire on success. The disassembly of the helper is the same as the C
+  inline's on both architectures (`lock cmpxchg` on x86_64, `casl` or
+  `ldxr`+`stlxr` on arm64).
+* Locking: the three lock helpers keep the C contract — the lock is taken
+  only when the count was greater than one, it is *held* by the caller on
+  success, and it is released again on the failure path. The `irqsave`
+  variant restores the interrupt state on the failure path. Two small C
+  helpers were added to the Rust-for-Linux helper set
+  (`rust/helpers/spinlock.c`): `spin_lock_irqsave()` and
+  `spin_unlock_irqrestore()` are macros, so they cannot be bound directly.
+* Tests: `refcount_rust` (6 Rust unit tests, including the `KRef` lifetime)
+  and `refcount_diff` (8 differential cases against the unmodified C
+  compiled under test-only names), covering the count of zero, the count of
+  one, `INT_MAX`, the saturated count, the negative ("bad") counts, the
+  saturation warning, the three lock helpers and a concurrency phase with
+  four tasks.
+* Documented deviations: the C `WARN_ONCE()` uses a racy flag and may print
+  the same warning twice; the Rust version prints it exactly once (the
+  message text is unchanged). The Rust code calls the C atomic primitives
+  through a wrapper instead of inlining them, which costs one call per
+  operation.
+* Remaining C dependency: `lib/refcount_export.c` (ksymtab only).
+* State: **partial** — the incremental build, the boot and the linkage
+  evidence are green, but the clean 16-step cycle has not been run for this
+  checkpoint yet.
+
 ### Remaining C dependencies for CRC-16
 
 | File | Kind | Exit condition |
@@ -67,6 +113,12 @@ CRC-CCITT migration details:
 | File | Kind | Exit condition |
 | --- | --- | --- |
 | `lib/crc/crc_ccitt_export.c` | linkage/ksymtab only (two symbols, one of them data) | per-symbol non-GPL `EXPORT_SYMBOL` support for Rust translation units |
+
+### Remaining C dependencies for the reference counting helpers
+
+| File | Kind | Exit condition |
+| --- | --- | --- |
+| `lib/refcount_export.c` | linkage/ksymtab only (six symbols) | per-symbol non-GPL `EXPORT_SYMBOL` support for Rust translation units |
 
 ## 2. Investigated substantial components
 

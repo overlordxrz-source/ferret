@@ -902,6 +902,133 @@
         "verdict": "implemented in checkpoint 003, audited in checkpoint 004",
         "prerequisites": "the run-time allocation mask and the node-aware allocation in the kernel crate, both added in this checkpoint"
       }
+    },
+    {
+      "id": "refcount",
+      "title": "Out-of-line reference counting helpers (lib/refcount.c)",
+      "subsystem": "lib",
+      "c_sources": [
+        "lib/refcount.c"
+      ],
+      "rust_sources": [
+        "lib/refcount_rust.rs"
+      ],
+      "kconfig": {
+        "upstream": "none: lib/refcount.c is always built",
+        "ferret_switch": "REFCOUNT_RUST",
+        "diff_test": "REFCOUNT_DIFF_KUNIT_TEST"
+      },
+      "abi": {
+        "header": "include/linux/refcount.h",
+        "symbols": [
+          {
+            "name": "refcount_warn_saturate",
+            "signature": "void refcount_warn_saturate(refcount_t *r, enum refcount_saturation_type t)",
+            "export": "EXPORT_SYMBOL",
+            "export_shim": "lib/refcount_export.c"
+          },
+          {
+            "name": "refcount_dec_if_one",
+            "signature": "bool refcount_dec_if_one(refcount_t *r)",
+            "export": "EXPORT_SYMBOL",
+            "export_shim": "lib/refcount_export.c"
+          },
+          {
+            "name": "refcount_dec_not_one",
+            "signature": "bool refcount_dec_not_one(refcount_t *r)",
+            "export": "EXPORT_SYMBOL",
+            "export_shim": "lib/refcount_export.c"
+          },
+          {
+            "name": "refcount_dec_and_mutex_lock",
+            "signature": "bool refcount_dec_and_mutex_lock(refcount_t *r, struct mutex *lock)",
+            "export": "EXPORT_SYMBOL",
+            "export_shim": "lib/refcount_export.c"
+          },
+          {
+            "name": "refcount_dec_and_lock",
+            "signature": "bool refcount_dec_and_lock(refcount_t *r, spinlock_t *lock)",
+            "export": "EXPORT_SYMBOL",
+            "export_shim": "lib/refcount_export.c"
+          },
+          {
+            "name": "refcount_dec_and_lock_irqsave",
+            "signature": "bool refcount_dec_and_lock_irqsave(refcount_t *r, spinlock_t *lock, unsigned long *flags)",
+            "export": "EXPORT_SYMBOL",
+            "export_shim": "lib/refcount_export.c"
+          }
+        ]
+      },
+      "dependencies": [
+        "the refcount_t primitive stays in C (include/linux/refcount.h): it is a header type that the C code embeds in its own structures, and its inline operations are what the kernel's own code calls",
+        "the kernel crate needed a borrowed view of a C refcount_t (kernel::sync::Refcount::from_ptr), the saturation-aware operations (try_dec_if_one, try_dec_not_one, warn_saturate, set_saturated) and a handle for C-owned objects (kernel::sync::KRef); all were added in this checkpoint",
+        "spin_lock_irqsave() and spin_unlock_irqrestore() are macros, so two C helpers were added to the Rust-for-Linux helper set (rust/helpers/spinlock.c)"
+      ],
+      "call_sites": "the exported helpers are called from the inline operations of the refcount_t primitive, which the whole kernel uses (include/linux/refcount.h); the primitive itself is embedded in struct kref, struct rcu_head, struct device and others",
+      "status": "partial",
+      "rust_compiled": true,
+      "c_implementation_replaced": true,
+      "c_object_built_in_rust_variant": false,
+      "tests": [
+        {
+          "name": "kunit-refcount-rust",
+          "kind": "rust-unit-kunit",
+          "config": "CONFIG_KUNIT",
+          "result": "PASS",
+          "evidence": "docs/ferret/evidence/boot-x86_64-rust.txt"
+        },
+        {
+          "name": "kunit-refcount-differential",
+          "kind": "differential-kunit",
+          "config": "CONFIG_REFCOUNT_DIFF_KUNIT_TEST",
+          "result": "PASS",
+          "evidence": "docs/ferret/evidence/boot-x86_64-rust.txt"
+        },
+        {
+          "name": "kunit-refcount-concurrency",
+          "kind": "differential-kunit",
+          "config": "CONFIG_REFCOUNT_DIFF_KUNIT_TEST",
+          "result": "PASS",
+          "evidence": "docs/ferret/evidence/boot-x86_64-rust.txt"
+        },
+        {
+          "name": "linkage-ownership",
+          "kind": "static-analysis",
+          "result": "PASS",
+          "evidence": "docs/ferret/evidence/linkage-x86_64.txt"
+        },
+        {
+          "name": "linkage-ownership-arm64",
+          "kind": "static-analysis",
+          "result": "PASS",
+          "evidence": "docs/ferret/evidence/linkage-arm64.txt"
+        }
+      ],
+      "risks": [
+        "The exported helpers are on the reference-counting hot path of the whole kernel: the C inline operations of the primitive call refcount_warn_saturate() for every saturation event, so the Rust code is now on that path.",
+        "The Rust code calls the C atomic primitives through the kernel crate's Atomic wrapper, which is a real function call, where the C inlined them. The semantics are identical (the same atomic_try_cmpxchg_release() primitive), the cost is one call per operation. This is deliberate: re-implementing the ordering in Rust's own atomics would have been a semantic substitution.",
+        "The C WARN_ONCE() uses a racy flag and may print the same warning twice; the Rust version uses an atomic compare-and-exchange and prints it exactly once. The message text is unchanged.",
+        "The clean 16-step cycle has not been run for this checkpoint yet, so the component is recorded as partial and not migrated."
+      ],
+      "unsafe_boundaries": [
+        "The exported functions take the caller's refcount_t pointer; the Rust code borrows it and never frees or reallocates it.",
+        "The lock helpers take the caller's lock pointer and leave the lock held on success, exactly as the C original does; the caller is responsible for releasing it.",
+        "The decrement-if-not-one helper reproduces the C loop, including the refusal to decrement a count of one and the underflow warning that returns true without decrementing.",
+        "kernel::sync::KRef holds a unique borrow of the C object (PhantomData<&'a mut T>) and a raw pointer to the object; the release callback is the one the C code would pass to kref_put()."
+      ],
+      "remaining_c_dependencies": [
+        {
+          "file": "lib/refcount_export.c",
+          "kind": "linkage/metadata",
+          "reason": "ksymtab entries only (six symbols); no algorithm. Exit condition: per-symbol EXPORT_SYMBOL support for Rust translation units upstream."
+        }
+      ],
+      "investigation": {
+        "document": "docs/ferret/design/COMPONENT_005_INVESTIGATION.md",
+        "audit": "not written yet: the audit is part of the remaining checkpoint work",
+        "verdict": "implemented in checkpoint 005, the clean cycle and the audit are pending",
+        "prerequisites": "the borrowed refcount view, the saturation-aware operations and the KRef handle in the kernel crate, all added in this checkpoint"
+      }
     }
   ],
   "benchmarks": [

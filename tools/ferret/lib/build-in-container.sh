@@ -72,6 +72,8 @@ if [ "$VARIANT" = rust ]; then
 	cfg --enable KFIFO_DIFF_KUNIT_TEST
 	cfg --enable BITMAP_RUST
 	cfg --enable BITMAP_DIFF_KUNIT_TEST
+	cfg --enable REFCOUNT_RUST
+	cfg --enable REFCOUNT_DIFF_KUNIT_TEST
 	# Rust KUnit tests (the migrated modules ship their own vectors tests).
 	# KUNIT_ALL_TESTS is deliberately not enabled: unrelated suites must not
 	# be able to obscure the result of the Ferret migrations.
@@ -85,6 +87,8 @@ else
 	cfg --disable KFIFO_DIFF_KUNIT_TEST 2>/dev/null || true
 	cfg --disable BITMAP_RUST 2>/dev/null || true
 	cfg --disable BITMAP_DIFF_KUNIT_TEST 2>/dev/null || true
+	cfg --disable REFCOUNT_RUST 2>/dev/null || true
+	cfg --disable REFCOUNT_DIFF_KUNIT_TEST 2>/dev/null || true
 fi
 
 # Keep the build reproducible and reasonably fast.

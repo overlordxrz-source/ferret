@@ -15,6 +15,7 @@ pub mod atomic;
 pub mod barrier;
 pub mod completion;
 mod condvar;
+mod kref;
 pub mod lock;
 mod locked_by;
 pub mod poll;
@@ -24,11 +25,12 @@ mod refcount;
 pub use arc::{Arc, ArcBorrow, UniqueArc};
 pub use completion::Completion;
 pub use condvar::{new_condvar, CondVar, CondVarTimeoutResult};
+pub use kref::{KRef, KRefRelease};
 pub use lock::global::{global_lock, GlobalGuard, GlobalLock, GlobalLockBackend, GlobalLockedBy};
 pub use lock::mutex::{new_mutex, Mutex, MutexGuard};
 pub use lock::spinlock::{new_spinlock, SpinLock, SpinLockGuard};
 pub use locked_by::LockedBy;
-pub use refcount::Refcount;
+pub use refcount::{Refcount, REFCOUNT_SATURATED};
 
 /// Represents a lockdep class. It's a wrapper around C's `lock_class_key`.
 #[repr(transparent)]

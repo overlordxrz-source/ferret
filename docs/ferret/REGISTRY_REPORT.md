@@ -19,6 +19,7 @@ Baseline: `v6.18.57` (`2ff600d29ee478d0a8d46ef8a58afb5e038fe692`)
 | `percpu-counter` | lib | candidate-blocked | no | no |
 | `eventfd` | fs | candidate-blocked | no | no |
 | `bitmap` | lib | migrated | yes | yes |
+| `refcount` | lib | partial | yes | yes |
 
 ## 2. Components genuinely migrated
 
@@ -52,6 +53,11 @@ Baseline: `v6.18.57` (`2ff600d29ee478d0a8d46ef8a58afb5e038fe692`)
 | `bitmap` | upstream-test-bitmap-kselftest | upstream-kselftest | PASS | `docs/ferret/evidence/boot-x86_64-rust.txt` |
 | `bitmap` | kunit-bitmap-differential | differential-kunit | PASS | `docs/ferret/evidence/boot-x86_64-rust.txt` |
 | `bitmap` | linkage-ownership | static-analysis | PASS | `docs/ferret/evidence/linkage-x86_64.txt` |
+| `refcount` | kunit-refcount-rust | rust-unit-kunit | PASS | `docs/ferret/evidence/boot-x86_64-rust.txt` |
+| `refcount` | kunit-refcount-differential | differential-kunit | PASS | `docs/ferret/evidence/boot-x86_64-rust.txt` |
+| `refcount` | kunit-refcount-concurrency | differential-kunit | PASS | `docs/ferret/evidence/boot-x86_64-rust.txt` |
+| `refcount` | linkage-ownership | static-analysis | PASS | `docs/ferret/evidence/linkage-x86_64.txt` |
+| `refcount` | linkage-ownership-arm64 | static-analysis | PASS | `docs/ferret/evidence/linkage-arm64.txt` |
 
 ## 4. Components with remaining C dependencies
 
@@ -59,6 +65,7 @@ Baseline: `v6.18.57` (`2ff600d29ee478d0a8d46ef8a58afb5e038fe692`)
 * `crc-ccitt` — `lib/crc/crc_ccitt_export.c` (linkage/metadata): ksymtab entries only for crc_ccitt and crc_ccitt_table, preserving non-GPL EXPORT_SYMBOL visibility (DECISIONS D-004); no algorithm
 * `kfifo` — `lib/kfifo_export.c` (linkage/metadata): ksymtab entries only (23 symbols); no algorithm. Exit condition: per-symbol non-GPL EXPORT_SYMBOL support for Rust translation units.
 * `bitmap` — `lib/bitmap_export.c` (linkage/metadata): ksymtab entries only (29 symbols, two of them GPL); no algorithm. Exit condition: per-symbol EXPORT_SYMBOL support for Rust translation units upstream.
+* `refcount` — `lib/refcount_export.c` (linkage/metadata): ksymtab entries only (six symbols); no algorithm. Exit condition: per-symbol EXPORT_SYMBOL support for Rust translation units upstream.
 
 ## 5. Remaining migration candidates
 

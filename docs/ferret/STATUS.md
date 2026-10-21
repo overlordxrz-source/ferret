@@ -1,3 +1,94 @@
+# Status — Checkpoint 005
+
+State vocabulary: **VERIFIED** (evidence produced and committed), **PARTIAL**,
+**FAILED**, **NOT TESTED**.
+
+Last updated: checkpoint 005 (2026-10-21).
+
+## 0. Checkpoint 005 — the out-of-line reference counting helpers in Rust
+
+**State: PARTIAL.** The implementation is complete and the *incremental* build
+passes, the boot is green and the linkage evidence is produced, but the
+*clean* cycle (`CLEAN=1 tools/ferret/test.sh`) has **not** been run for this
+checkpoint yet, so the component is not VERIFIED in the sense of the contract
+in `AGENTS.md`.
+
+| Item | State | Result |
+| --- | --- | --- |
+| Rust implementation | done | `lib/refcount_rust.rs`, all 6 exported symbols |
+| C object in the Rust build | absent | `lib/refcount.o` is not built; `lib/refcount_rust.o` defines every symbol |
+| Exports | preserved | all 6 symbols keep `EXPORT_SYMBOL` (non-GPL) via `lib/refcount_export.c` |
+| Rust unit tests (`refcount_rust`) | PASS | 6 cases: the `KRef` lifetime, the saturated count, the count of one |
+| Differential KUnit (`refcount_diff`) | PASS | 8 cases against the unmodified C, including a concurrency phase |
+| Concurrency | PASS | 4 tasks × 250 decrements: 1 000 successful decrements, the count ends at exactly 1; the race for the last reference has exactly one winner, in both implementations |
+| Linkage evidence | PASS | one definition per symbol, size match, ksymtab, export class, in both variants |
+| arm64 build | PASS | the arm64 Ferret kernel builds and the arm64 linkage report is green |
+| Clean cycle | **NOT RUN** | the clean 16-step cycle is the remaining step of this checkpoint |
+| Native performance | NOT TESTED | the host has no KVM; all measurements would be QEMU TCG |
+
+What the port covers:
+
+* All six exported functions of `lib/refcount.c` are implemented in Rust:
+  `refcount_warn_saturate()`, `refcount_dec_if_one()`,
+  `refcount_dec_not_one()`, `refcount_dec_and_mutex_lock()`,
+  `refcount_dec_and_lock()` and `refcount_dec_and_lock_irqsave()`.
+* The `refcount_t` *primitive* stays in C, in `include/linux/refcount.h`. It
+  is a header type that the C code embeds in its own structures, and its
+  inline operations are what the kernel's own code calls. It cannot be
+  migrated as a file without changing every C structure that embeds it. The
+  exported layer is what moves.
+* The direction of the call is worth noting: the C inline operations of the
+  primitive (`refcount_inc()`, `refcount_dec()`, `refcount_add()`, ...) warn
+  through `refcount_warn_saturate()`, which is now the Rust implementation.
+  Every saturation warning in the kernel therefore goes through this Rust
+  code. There is no recursion.
+* The memory ordering is not re-implemented: the decrements use
+  `atomic_try_cmpxchg_release()`, the very same C primitive the C original
+  uses, through the kernel crate's `Atomic` wrapper. The disassembly of the
+  helper shows the same instructions as the C inline on both architectures
+  (`lock cmpxchg` on x86_64, `casl`/`ldxr`+`stlxr` on arm64).
+* The lock helpers keep the C contract exactly: the lock is taken only when
+  the count was greater than one, it is *held* by the caller on success, and
+  it is released again on failure. The `irqsave` variant restores the
+  interrupt state on the failure path.
+
+### The kernel-crate extensions
+
+Two additions to the in-tree kernel crate, both exposing what the C code
+already had:
+
+* `kernel::sync::Refcount`: `from_ptr()` (a borrowed view of a C
+  `refcount_t`), `read()`, `set_saturated()`, `try_dec_if_one()`,
+  `try_dec_not_one()` and `warn_saturate()`.
+* `kernel::sync::KRef`: a Rust handle for an object that is owned by C and
+  counted by an embedded `struct kref`. It owns one reference, releases it
+  when it is dropped, runs the C release callback when it was the last one,
+  and can hand the reference back to C with `into_raw()`.
+
+### Deviations from the C original
+
+* The C `WARN_ONCE()` uses a plain, racy flag, so two tasks that hit the same
+  warning at the same time may print it twice. The Rust code uses an atomic
+  compare-and-exchange, so each warning is printed exactly once. The message
+  text is unchanged.
+* The Rust code calls the C atomic primitives through the kernel crate's
+  `Atomic` wrapper, which is a real function call, where the C inlined them.
+  The semantics are identical, the cost is a call per operation. This is the
+  price of not re-implementing the ordering, and it is the reason the port
+  does not use Rust's own atomics.
+
+### A defect in the test harness, not in the port
+
+The first version of the concurrency test failed, and the cause was in the
+test, not in the implementation: `kthread_stop()` on a task that has not been
+scheduled yet kills it *before* it calls the worker function, so one of the
+four tasks silently did nothing and the count ended 250 too high. The Rust
+implementation was never wrong in that run — the C reference showed the same
+behaviour in the same run. The test now waits for the tasks to signal that
+they are running before it stops them.
+
+---
+
 # Status — Checkpoint 003
 
 State vocabulary: **VERIFIED** (evidence produced by a clean cycle and

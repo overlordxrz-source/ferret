@@ -55,7 +55,7 @@ obj-y += bcd.o sort.o parser.o debug_locks.o random32.o \
 	 list_sort.o uuid.o iov_iter.o clz_ctz.o \
 	 bsearch.o find_bit.o llist.o lwq.o memweight.o \
 	 percpu-refcount.o rhashtable.o base64.o \
-	 once.o refcount.o rcuref.o usercopy.o errseq.o bucket_locks.o \
+	 once.o rcuref.o usercopy.o errseq.o bucket_locks.o \
 	 generic-radix-tree.o bitmap-str.o
 
 #
@@ -411,6 +411,36 @@ endif
 obj-y += bitmap_ref.o bitmap_diff_kunit.o
 
 $(obj)/bitmap_ref.o: $(src)/bitmap.c FORCE
+	$(call if_changed_rule,cc_o_c)
+endif
+
+#
+# Ferret: the out-of-line reference counting helpers have a Rust
+# implementation. The C object is not built at all when the Rust variant is
+# selected, so every exported symbol has exactly one definition.
+#
+ifeq ($(CONFIG_REFCOUNT_RUST),y)
+obj-y += refcount_rust.o
+# ksymtab entries only; preserves the EXPORT_SYMBOL() visibility. No algorithm.
+obj-y += refcount_export.o
+else
+obj-y += refcount.o
+endif
+
+#
+# Ferret: differential test. Compiles the unmodified C reference a second time
+# under test-only symbol names (see docs/ferret/DECISIONS.md D-005).
+#
+ifeq ($(CONFIG_REFCOUNT_DIFF_KUNIT_TEST),y)
+CFLAGS_refcount_ref.o := -Drefcount_warn_saturate=refcount_warn_saturate_c_ref \
+		      -Drefcount_dec_if_one=refcount_dec_if_one_c_ref \
+		      -Drefcount_dec_not_one=refcount_dec_not_one_c_ref \
+		      -Drefcount_dec_and_mutex_lock=refcount_dec_and_mutex_lock_c_ref \
+		      -Drefcount_dec_and_lock=refcount_dec_and_lock_c_ref \
+		      -Drefcount_dec_and_lock_irqsave=refcount_dec_and_lock_irqsave_c_ref
+obj-y += refcount_ref.o refcount_diff_kunit.o
+
+$(obj)/refcount_ref.o: $(src)/refcount.c FORCE
 	$(call if_changed_rule,cc_o_c)
 endif
 

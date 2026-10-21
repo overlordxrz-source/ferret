@@ -108,7 +108,7 @@ section "kernel variant"
 say "variant:  $VARIANT"
 say "vmlinux:  $VMLINUX"
 say "git:      $(git -C /mnt/projects/ferret rev-parse --short HEAD 2>/dev/null || echo unknown)"
-say "config:   $(grep -E '^CONFIG_(CRC16|CRC16_RUST|CRC16_DIFF_KUNIT_TEST|CRC_CCITT|CRC_CCITT_RUST|CRC_CCITT_DIFF_KUNIT_TEST|KFIFO_RUST|KFIFO_DIFF_KUNIT_TEST|BITMAP_RUST|BITMAP_DIFF_KUNIT_TEST|RUST|KUNIT)=' "$OUT/.config" | tr '\n' ' ')"
+say "config:   $(grep -E '^CONFIG_(CRC16|CRC16_RUST|CRC16_DIFF_KUNIT_TEST|CRC_CCITT|CRC_CCITT_RUST|CRC_CCITT_DIFF_KUNIT_TEST|KFIFO_RUST|KFIFO_DIFF_KUNIT_TEST|BITMAP_RUST|BITMAP_DIFF_KUNIT_TEST|REFCOUNT_RUST|REFCOUNT_DIFF_KUNIT_TEST|RUST|KUNIT)=' "$OUT/.config" | tr '\n' ' ')"
 
 # The symbols exported by the generic kernel FIFO.
 KFIFO_SYMBOLS="__kfifo_alloc __kfifo_free __kfifo_init __kfifo_in __kfifo_out
@@ -128,6 +128,12 @@ bitmap_alloc_node bitmap_bitremap bitmap_cut bitmap_find_next_zero_area_off
 bitmap_free bitmap_from_arr32 bitmap_remap bitmap_to_arr32 bitmap_zalloc
 bitmap_zalloc_node devm_bitmap_alloc devm_bitmap_zalloc"
 
+# The exported symbols of the out-of-line reference counting helpers. All of
+# them are EXPORT_SYMBOL (not GPL) in the C original.
+REFCOUNT_SYMBOLS="refcount_warn_saturate refcount_dec_if_one
+refcount_dec_not_one refcount_dec_and_mutex_lock refcount_dec_and_lock
+refcount_dec_and_lock_irqsave"
+
 section "build tree object ownership"
 if [ "$VARIANT" = rust ]; then
 	check_absent() { # <path> <description>
@@ -141,6 +147,15 @@ if [ "$VARIANT" = rust ]; then
 	check_absent "$OUT/lib/crc/crc-ccitt.o" "C object lib/crc/crc-ccitt.o"
 	check_absent "$OUT/lib/kfifo.o" "C object lib/kfifo.o"
 	check_absent "$OUT/lib/bitmap.o" "C object lib/bitmap.o"
+	# The C object of the reference counting helpers must not be linked.
+	# The check is on the built-in archive and not on the file: an
+	# incremental tree can still hold the stale object of a build made
+	# before the migration, and that file proves nothing.
+	if ar t "$OUT/lib/built-in.a" 2>/dev/null | grep -q '/refcount\.o$'; then
+		bad "C object lib/refcount.o is linked into the Rust variant"
+	else
+		pass "C object lib/refcount.o is not linked into the Rust variant"
+	fi
 	for o in crc16_rust.o crc_ccitt_rust.o crc16_export.o crc_ccitt_export.o; do
 		if [ -e "$OUT/lib/crc/$o" ]; then
 			pass "Rust object lib/crc/$o is present"
@@ -148,7 +163,8 @@ if [ "$VARIANT" = rust ]; then
 			bad "Rust object lib/crc/$o is missing"
 		fi
 	done
-	for o in kfifo_rust.o kfifo_export.o bitmap_rust.o bitmap_export.o; do
+	for o in kfifo_rust.o kfifo_export.o bitmap_rust.o bitmap_export.o \
+		 refcount_rust.o refcount_export.o; do
 		if [ -e "$OUT/lib/$o" ]; then
 			pass "Rust object lib/$o is present"
 		else
@@ -180,7 +196,13 @@ else
 	else
 		bad "C object lib/bitmap.o is missing from the reference build"
 	fi
-	for o in kfifo_rust.o kfifo_export.o bitmap_rust.o bitmap_export.o; do
+	if [ -e "$OUT/lib/refcount.o" ]; then
+		pass "C object lib/refcount.o is present (reference)"
+	else
+		bad "C object lib/refcount.o is missing from the reference build"
+	fi
+	for o in kfifo_rust.o kfifo_export.o bitmap_rust.o bitmap_export.o \
+		 refcount_rust.o refcount_export.o; do
 		if [ -e "$OUT/lib/$o" ]; then
 			bad "Rust object lib/$o present in the reference build"
 		else
@@ -210,6 +232,15 @@ for sym in $KFIFO_SYMBOLS; do
 done
 
 for sym in $BITMAP_SYMBOLS; do
+	n=$(defcount "$sym")
+	if [ "$n" = "1" ]; then
+		pass "$sym is defined exactly once"
+	else
+		bad "$sym must be defined exactly once (found $n)"
+	fi
+done
+
+for sym in $REFCOUNT_SYMBOLS; do
 	n=$(defcount "$sym")
 	if [ "$n" = "1" ]; then
 		pass "$sym is defined exactly once"
@@ -271,6 +302,25 @@ if [ "$VARIANT" = rust ]; then
 		fi
 	done
 
+	# The reference counting helpers: the Rust object defines every exported
+	# symbol, and the shim only references them.
+	objnm "$OUT/lib/refcount_rust.o" rustrefcount.nmsize
+	objnm "$OUT/lib/refcount_export.o" exprefcount.nm
+
+	for sym in $REFCOUNT_SYMBOLS; do
+		if grep -qE "^[0-9a-f]+ [0-9a-f]+ T $sym\$" "$TMP/rustrefcount.nmsize"; then
+			pass "$sym is defined by lib/refcount_rust.o"
+			check_size "$sym" "$(symsize "$TMP/rustrefcount.nmsize" "$sym")" "Rust object"
+		else
+			bad "$sym is not defined by lib/refcount_rust.o"
+		fi
+		if grep -qE "^ +U $sym\$" "$TMP/exprefcount.nm"; then
+			pass "export shim for $sym only references it (no definition)"
+		else
+			bad "export shim for $sym does not reference it"
+		fi
+	done
+
 	# The kernel FIFO: the Rust object defines every exported symbol, and the
 	# shim only references them.
 	objnm "$OUT/lib/kfifo_rust.o" rustkfifo.nmsize
@@ -304,6 +354,11 @@ else
 	objnm "$OUT/lib/bitmap.o" refbitmap.nmsize
 	for sym in $BITMAP_SYMBOLS; do
 		check_size "$sym" "$(symsize "$TMP/refbitmap.nmsize" "$sym")" "C object"
+	done
+
+	objnm "$OUT/lib/refcount.o" refrefcount.nmsize
+	for sym in $REFCOUNT_SYMBOLS; do
+		check_size "$sym" "$(symsize "$TMP/refrefcount.nmsize" "$sym")" "C object"
 	done
 fi
 
@@ -348,6 +403,11 @@ for sym in $BITMAP_SYMBOLS; do
 		check_symvers "$sym" EXPORT_SYMBOL
 		;;
 	esac
+done
+
+for sym in $REFCOUNT_SYMBOLS; do
+	check_ksymtab "$sym"
+	check_symvers "$sym" EXPORT_SYMBOL
 done
 
 section "disassembly fingerprint"
