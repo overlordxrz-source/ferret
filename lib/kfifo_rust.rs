@@ -126,28 +126,48 @@ fn buffer_mut(fifo: &mut Kfifo) -> &mut [u8] {
 /// This is the Rust equivalent of the C code's pair of `memcpy()` calls: the
 /// first copy stops at the end of the buffer and the second one continues at
 /// the beginning of the buffer.
-fn copy_bytes_in(buf: &mut [u8], off: usize, src: &[u8]) {
-    let off = off.min(buf.len());
-    let l = core::cmp::min(src.len(), buf.len() - off);
+/// Copy `len` bytes from `src` into `buf` at byte offset `off`, wrapping at
+/// the end of the buffer.
+///
+/// The caller guarantees that `off < buf.len()` and that `len <= buf.len()`;
+/// under those conditions the first copy stops at the end of the buffer and
+/// the second one continues at its beginning, exactly like the C original.
+#[inline]
+fn copy_bytes_in(buf: &mut [u8], off: usize, src: &[u8], len: usize) {
+    let l = core::cmp::min(len, buf.len() - off);
+    let rest = len - l;
 
-    buf[off..off + l].copy_from_slice(&src[..l]);
-
-    let rest = core::cmp::min(src.len() - l, buf.len());
-    buf[..rest].copy_from_slice(&src[l..l + rest]);
+    // SAFETY: `off < buf.len()` and `len <= buf.len()` (caller's contract),
+    // so `off + l` is within `buf` and `l + rest == len` is within `src`.
+    // The source and the destination do not overlap, exactly like the
+    // `memcpy()` calls of the C original (which have the same requirement).
+    unsafe {
+        core::ptr::copy_nonoverlapping(src.as_ptr(), buf.as_mut_ptr().add(off), l);
+        core::ptr::copy_nonoverlapping(src.as_ptr().add(l), buf.as_mut_ptr(), rest);
+    }
 }
 
 /// Copy out of `buf` at byte offset `off` into `dst`, wrapping at the end of
 /// `buf`.
 ///
 /// This is the Rust equivalent of the C code's pair of `memcpy()` calls.
-fn copy_bytes_out(buf: &[u8], off: usize, dst: &mut [u8]) {
-    let off = off.min(buf.len());
-    let l = core::cmp::min(dst.len(), buf.len() - off);
+/// Copy `len` bytes out of `buf` at byte offset `off` into `dst`, wrapping at
+/// the end of the buffer.
+///
+/// The caller guarantees that `off < buf.len()` and that `len <= dst.len()`.
+#[inline]
+fn copy_bytes_out(buf: &[u8], off: usize, dst: &mut [u8], len: usize) {
+    let l = core::cmp::min(len, buf.len() - off);
+    let rest = len - l;
 
-    dst[..l].copy_from_slice(&buf[off..off + l]);
-
-    let rest = core::cmp::min(dst.len() - l, buf.len());
-    dst[l..l + rest].copy_from_slice(&buf[..rest]);
+    // SAFETY: as in `copy_bytes_in()`: `off < buf.len()` and
+    // `len <= dst.len()` (caller's contract), so `off + l` is within `buf`
+    // and `l + rest == len` is within `dst`. The two regions do not overlap,
+    // like the `memcpy()` calls of the C original.
+    unsafe {
+        core::ptr::copy_nonoverlapping(buf.as_ptr().add(off), dst.as_mut_ptr(), l);
+        core::ptr::copy_nonoverlapping(buf.as_ptr(), dst.as_mut_ptr().add(l), rest);
+    }
 }
 
 /// Copy `len` elements into the FIFO, starting at element index `off`.
@@ -162,7 +182,12 @@ fn copy_in(fifo: &mut Kfifo, src: &[u8], len: u32, off: u32) {
     let n = core::cmp::min(len, src.len());
 
     let buf = buffer_mut(fifo);
-    copy_bytes_in(buf, off, &src[..n]);
+
+    // The offset is inside the buffer (`off & mask` is at most `mask`, and
+    // the buffer holds `mask + 1` elements), and the number of bytes to copy
+    // is at most the size of the buffer, because the callers clamp the
+    // element count to the free space.
+    copy_bytes_in(buf, off, src, n);
 
     // The C original issues `smp_wmb()` here: the data has to be visible
     // before the caller publishes the new `in` index.
@@ -179,7 +204,10 @@ fn copy_out(fifo: &mut Kfifo, dst: &mut [u8], len: u32, off: u32) {
     let n = core::cmp::min(len, dst.len());
 
     let buf = buffer(fifo);
-    copy_bytes_out(buf, off, &mut dst[..n]);
+
+    // As in `copy_in()`: the offset is inside the buffer and the number of
+    // bytes to copy is at most the size of the destination.
+    copy_bytes_out(buf, off, dst, n);
 
     // The C original issues `smp_wmb()` here: the data has to be visible
     // before the caller publishes the new `out` index.
@@ -200,10 +228,19 @@ fn peek_n(fifo: &Kfifo, recsize: usize) -> u32 {
         return 0;
     }
 
-    let mut len = data[(fifo.out & mask) as usize] as u32;
+    // SAFETY: the record length is stored at the *byte* offset `index & mask`,
+    // exactly as in the C code (`data[out & mask]`, without scaling by the
+    // element size). `index & mask` is at most `mask`, and the buffer holds
+    // `(mask + 1) * esize` bytes with `esize >= 1`, so the offset is inside
+    // the buffer.
+    let first = unsafe { *data.get_unchecked((fifo.out & mask) as usize) } as u32;
+    let mut len = first;
 
     if recsize.wrapping_sub(1) != 0 {
-        len |= (data[((fifo.out.wrapping_add(1)) & mask) as usize] as u32) << 8;
+        // SAFETY: as above; the second byte is at `(out + 1) & mask`, which is
+        // at most `mask`.
+        let second = unsafe { *data.get_unchecked((fifo.out.wrapping_add(1) & mask) as usize) };
+        len |= (second as u32) << 8;
     }
 
     len
@@ -221,10 +258,19 @@ fn poke_n(fifo: &mut Kfifo, n: u32, recsize: usize) {
         return;
     }
 
-    buf[(in_ & mask) as usize] = n as u8;
+    // SAFETY: the record length is written at the byte offset `index & mask`,
+    // exactly as in the C code. `index & mask` is at most `mask`, and the
+    // buffer holds `(mask + 1) * esize` bytes with `esize >= 1`, so the offset
+    // is inside the buffer.
+    unsafe {
+        *buf.get_unchecked_mut((in_ & mask) as usize) = n as u8;
+    }
 
     if recsize > 1 {
-        buf[((in_.wrapping_add(1)) & mask) as usize] = (n >> 8) as u8;
+        // SAFETY: as above, for `(in + 1) & mask`.
+        unsafe {
+            *buf.get_unchecked_mut(((in_.wrapping_add(1)) & mask) as usize) = (n >> 8) as u8;
+        }
     }
 }
 
@@ -974,9 +1020,12 @@ pub unsafe extern "C" fn __kfifo_dma_in_prepare_r(
     // SAFETY: the caller passes a valid `struct __kfifo`.
     let fifo = unsafe { &mut *fifo };
 
-    // The C original uses BUG_ON(!nents): a caller contract violation, which
-    // aborts the kernel there and aborts it here as well.
-    assert!(nents > 0, "kfifo: nents must be greater than zero");
+    // The C original uses BUG_ON(!nents): a caller contract violation. The
+    // kernel's BUG() is used here for the same effect (it never returns).
+    if nents <= 0 {
+        // SAFETY: the kernel's BUG() does not return.
+        unsafe { bindings::BUG() };
+    }
 
     let recsize = recsize;
     // SAFETY: the function has no pointer arguments.
@@ -1039,7 +1088,10 @@ pub unsafe extern "C" fn __kfifo_dma_out_prepare_r(
     let fifo = unsafe { &mut *fifo };
 
     // The C original uses BUG_ON(!nents): a caller contract violation.
-    assert!(nents > 0, "kfifo: nents must be greater than zero");
+    if nents <= 0 {
+        // SAFETY: the kernel's BUG() does not return.
+        unsafe { bindings::BUG() };
+    }
 
     let recsize = recsize;
     // SAFETY: the function has no pointer arguments.
@@ -1445,6 +1497,73 @@ mod tests {
         assert_eq!(unsafe { __kfifo_max_r(70000, 2) }, 65535);
         // SAFETY: the function has no pointer arguments.
         assert_eq!(unsafe { __kfifo_max_r(10, 2) }, 10);
+    }
+
+    #[test]
+    fn kfifo_rust_max_r_large_recsize() {
+        // A record size of four bytes or more shifts a 32-bit integer out of
+        // range in the C original (undefined behaviour: on x86 the shift
+        // count is masked, so the C code ends up clamping every length to
+        // zero). The Rust version computes the mathematical maximum and
+        // therefore leaves the length alone.
+        // SAFETY: the function has no pointer arguments.
+        assert_eq!(unsafe { __kfifo_max_r(100, 4) }, 100);
+        // SAFETY: the function has no pointer arguments.
+        assert_eq!(unsafe { __kfifo_max_r(100, 8) }, 100);
+        // A record size of three bytes still fits in 32 bits, and the clamp
+        // works as in the C original.
+        // SAFETY: the function has no pointer arguments.
+        assert_eq!(unsafe { __kfifo_max_r(0x0200_0000, 3) }, 0x00ff_ffff);
+        // SAFETY: the function has no pointer arguments.
+        assert_eq!(unsafe { __kfifo_max_r(0x0200_0000, 2) }, 0xffff);
+    }
+
+    #[test]
+    fn kfifo_rust_init_zero_element_size() {
+        // SAFETY: `Kfifo` is a plain C structure; all-zero is valid.
+        let mut fifo = unsafe { core::mem::zeroed::<Kfifo>() };
+        let mut buf = [0u8; 8];
+
+        // A zero element size is a division by zero in the C original (a
+        // kernel oops); the Rust version rejects it instead of trapping.
+        // SAFETY: `buf` is valid for eight bytes and `fifo` is valid.
+        let ret = unsafe { __kfifo_init(&mut fifo, buf.as_mut_ptr().cast(), 8, 0) };
+        assert_eq!(ret, kernel::error::code::EINVAL.to_errno());
+    }
+
+    /// The user-copy path must fail cleanly on a pointer that is not a
+    /// userspace address.
+    ///
+    /// This needs `CONFIG_HARDENED_USERCOPY` to be off: with it enabled, the
+    /// kernel panics on a copy from a non-user address instead of reporting
+    /// the error.
+    #[test]
+    #[cfg(not(CONFIG_HARDENED_USERCOPY))]
+    fn kfifo_rust_user_copy_fault() {
+        let mut fifo = TestFifo::new(1);
+        let data = [1u8, 2, 3];
+        let mut copied = 0xdead_beefu32;
+
+        assert_eq!(fifo.in_(&data), 3);
+
+        // A kernel address is not a valid userspace address: the copy must
+        // fail with -EFAULT, report that nothing was copied and leave the
+        // FIFO untouched, exactly as the C original does.
+        // SAFETY: `fifo` is valid, `copied` is writable, and the "user"
+        // pointer is a kernel address on purpose.
+        let ret =
+            unsafe { __kfifo_from_user(&mut fifo.fifo, data.as_ptr().cast(), 3, &mut copied) };
+        assert_eq!(ret, kernel::error::code::EFAULT.to_errno());
+        assert_eq!(copied, 0);
+        assert_eq!(fifo.len(), 3);
+
+        // The same in the output direction: the FIFO must keep its content.
+        // SAFETY: as above.
+        let ret =
+            unsafe { __kfifo_to_user(&mut fifo.fifo, data.as_ptr().cast_mut().cast::<core::ffi::c_void>(), 3, &mut copied) };
+        assert_eq!(ret, kernel::error::code::EFAULT.to_errno());
+        assert_eq!(copied, 0);
+        assert_eq!(fifo.len(), 3);
     }
 
     #[test]

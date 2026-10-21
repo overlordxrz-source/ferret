@@ -297,6 +297,11 @@ if command -v llvm-objdump >/dev/null; then
 	llvm-objdump -d --no-show-raw-insn "$VMLINUX" 2>/dev/null |
 		awk '/<crc_ccitt>:/{p=1} p{print; n++} n>6{exit}' |
 		sed 's/^/      /' >>"$LOG"
+	# The kernel FIFO: the data copy has to happen before the index is
+	# published, so the fingerprint shows the copy and the index update.
+	llvm-objdump -d --no-show-raw-insn "$VMLINUX" 2>/dev/null |
+		awk '/<__kfifo_in>:/{p=1} p{print; n++} n>28{exit}' |
+		sed 's/^/      /' >>"$LOG"
 	pass "disassembly fingerprints captured above"
 else
 	skip "llvm-objdump unavailable"

@@ -18,6 +18,7 @@
 
 #include <linux/kfifo.h>
 #include <linux/prandom.h>
+#include <linux/ktime.h>
 #include <linux/scatterlist.h>
 #include <linux/slab.h>
 
@@ -35,6 +36,10 @@ extern unsigned int kfifo_c_ref_out_peek(struct __kfifo *fifo, void *buf,
 					 unsigned int len);
 extern unsigned int kfifo_c_ref_out_linear(struct __kfifo *fifo,
 					   unsigned int *tail, unsigned int n);
+extern int kfifo_c_ref_from_user(struct __kfifo *fifo, const void __user *from,
+				  unsigned long len, unsigned int *copied);
+extern int kfifo_c_ref_to_user(struct __kfifo *fifo, void __user *to,
+				unsigned long len, unsigned int *copied);
 extern unsigned int kfifo_c_ref_max_r(unsigned int len, size_t recsize);
 extern unsigned int kfifo_c_ref_len_r(struct __kfifo *fifo, size_t recsize);
 extern unsigned int kfifo_c_ref_in_r(struct __kfifo *fifo, const void *buf,
@@ -336,6 +341,163 @@ static void kfifo_diff_dma_prepare(struct kunit *test)
 	}
 }
 
+/*
+ * The user-copy paths must fail cleanly on a pointer that is not a userspace
+ * address, in both implementations.
+ *
+ * CONFIG_HARDENED_USERCOPY changes the kernel's reaction to a copy from a
+ * non-user address from "report the error" to "panic", so the test is only
+ * meaningful with it disabled.
+ */
+#if !IS_ENABLED(CONFIG_HARDENED_USERCOPY)
+static void kfifo_diff_user_copy_fault(struct kunit *test)
+{
+	struct kfifo_diff_pair p;
+	unsigned int rust_copied = 0xdeadbeef, c_copied = 0xdeadbeef;
+	int rust_ret, c_ret;
+
+	kfifo_diff_pair_init(&p, 64, 1);
+
+	__kfifo_in(&p.rust, p.rust_buf, 8);
+	kfifo_c_ref_in(&p.c, p.c_buf, 8);
+
+	/* A kernel address is not a valid userspace address. */
+	rust_ret = __kfifo_from_user(&p.rust, p.rust_buf, 8, &rust_copied);
+	c_ret = kfifo_c_ref_from_user(&p.c, p.c_buf, 8, &c_copied);
+
+	KUNIT_EXPECT_EQ(test, rust_ret, c_ret);
+	KUNIT_EXPECT_EQ(test, rust_ret, -EFAULT);
+	KUNIT_EXPECT_EQ(test, rust_copied, c_copied);
+	KUNIT_EXPECT_EQ(test, rust_copied, 0);
+	kfifo_diff_pair_compare(test, &p);
+
+	/* The same in the output direction. */
+	rust_copied = 0xdeadbeef;
+	c_copied = 0xdeadbeef;
+
+	rust_ret = __kfifo_to_user(&p.rust, p.rust_buf, 8, &rust_copied);
+	c_ret = kfifo_c_ref_to_user(&p.c, p.c_buf, 8, &c_copied);
+
+	KUNIT_EXPECT_EQ(test, rust_ret, c_ret);
+	KUNIT_EXPECT_EQ(test, rust_ret, -EFAULT);
+	KUNIT_EXPECT_EQ(test, rust_copied, c_copied);
+	KUNIT_EXPECT_EQ(test, rust_copied, 0);
+	kfifo_diff_pair_compare(test, &p);
+}
+#else
+static void kfifo_diff_user_copy_fault(struct kunit *test)
+{
+	/* CONFIG_HARDENED_USERCOPY panics on a copy from a non-user address, so
+	 * the fault path cannot be exercised from the kernel. */
+	KUNIT_SKIP(test, "CONFIG_HARDENED_USERCOPY is enabled");
+}
+#endif
+
+/*
+ * A DMA preparation that has to wrap around the end of the buffer must
+ * produce the same two scatterlist entries in both implementations.
+ */
+static void kfifo_diff_dma_wrap(struct kunit *test)
+{
+	struct kfifo_diff_pair p;
+	struct scatterlist rust_sgl[4];
+	struct scatterlist c_sgl[4];
+	unsigned int rust_n, c_n, i;
+
+	kfifo_diff_pair_init(&p, 32, 1);
+
+	/* Fill, drain it and refill, so that the read offset is close to the
+	 * end of the buffer and the transfer has to be split in two. */
+	__kfifo_in(&p.rust, p.rust_buf, 20);
+	kfifo_c_ref_in(&p.c, p.c_buf, 20);
+	__kfifo_out(&p.rust, p.rust_buf, 20);
+	kfifo_c_ref_out(&p.c, p.c_buf, 20);
+	__kfifo_in(&p.rust, p.rust_buf, 24);
+	kfifo_c_ref_in(&p.c, p.c_buf, 24);
+
+	memset(rust_sgl, 0, sizeof(rust_sgl));
+	memset(c_sgl, 0, sizeof(c_sgl));
+
+	rust_n = __kfifo_dma_out_prepare(&p.rust, rust_sgl, ARRAY_SIZE(rust_sgl),
+					 24, 0);
+	c_n = kfifo_c_ref_dma_out_prepare(&p.c, c_sgl, ARRAY_SIZE(c_sgl), 24, 0);
+
+	KUNIT_EXPECT_EQ(test, rust_n, c_n);
+	KUNIT_EXPECT_EQ(test, rust_n, 2);
+
+	for (i = 0; i < rust_n && i < c_n; i++) {
+		KUNIT_EXPECT_EQ(test, rust_sgl[i].length, c_sgl[i].length);
+		KUNIT_EXPECT_EQ(test, rust_sgl[i].dma_address, c_sgl[i].dma_address);
+		KUNIT_EXPECT_EQ(test, rust_sgl[i].dma_length, c_sgl[i].dma_length);
+	}
+}
+
+#define KFIFO_BENCH_ITERS	20000
+#define KFIFO_BENCH_LEN		64
+
+/* Time a fixed in/out sequence on one implementation. */
+static u64 kfifo_bench_run(bool rust)
+{
+	struct __kfifo fifo;
+	u8 buf[KFIFO_BENCH_LEN];
+	u64 start, end;
+	int i;
+
+	memset(&fifo, 0, sizeof(fifo));
+	memset(buf, 0, sizeof(buf));
+
+	if (rust)
+		__kfifo_init(&fifo, buf, sizeof(buf), 1);
+	else
+		kfifo_c_ref_init(&fifo, buf, sizeof(buf), 1);
+
+	start = ktime_get();
+	for (i = 0; i < KFIFO_BENCH_ITERS; i++) {
+		if (rust) {
+			__kfifo_in(&fifo, buf, KFIFO_BENCH_LEN);
+			__kfifo_out(&fifo, buf, KFIFO_BENCH_LEN);
+		} else {
+			kfifo_c_ref_in(&fifo, buf, KFIFO_BENCH_LEN);
+			kfifo_c_ref_out(&fifo, buf, KFIFO_BENCH_LEN);
+		}
+	}
+	end = ktime_get();
+
+	return end - start;
+}
+
+/*
+ * Throughput comparison of the two implementations.
+ *
+ * The absolute numbers are meaningless here: the test kernel runs under QEMU
+ * TCG, an instruction-level emulator. The ratio between the two
+ * implementations, measured in the same run on the same machine, is the only
+ * meaningful part, and even that is noisy.
+ */
+static void kfifo_diff_benchmark(struct kunit *test)
+{
+	u64 rust_best = U64_MAX, c_best = U64_MAX;
+	u64 rust_ns, c_ns;
+	int round;
+
+	/* Three rounds each, keeping the fastest: the emulation and the host
+	 * are noisy, and the best run is the least disturbed one. */
+	for (round = 0; round < 3; round++) {
+		rust_ns = kfifo_bench_run(true);
+		c_ns = kfifo_bench_run(false);
+		if (rust_ns < rust_best)
+			rust_best = rust_ns;
+		if (c_ns < c_best)
+			c_best = c_ns;
+	}
+
+	pr_info("kfifo benchmark: %d iterations of in(%d)+out(%d), best of 3\n",
+		KFIFO_BENCH_ITERS, KFIFO_BENCH_LEN, KFIFO_BENCH_LEN);
+	pr_info("kfifo benchmark: rust %llu ns, c %llu ns\n", rust_best, c_best);
+	pr_info("kfifo benchmark: rust/c ratio %llu per mille\n",
+		div64_u64(c_best ? rust_best * 1000 : 0, c_best ? c_best : 1));
+}
+
 static struct kunit_case kfifo_diff_test_cases[] = {
 	KUNIT_CASE(kfifo_diff_init),
 	KUNIT_CASE(kfifo_diff_alloc),
@@ -344,6 +506,9 @@ static struct kunit_case kfifo_diff_test_cases[] = {
 	KUNIT_CASE(kfifo_diff_records),
 	KUNIT_CASE(kfifo_diff_max_r),
 	KUNIT_CASE(kfifo_diff_dma_prepare),
+	KUNIT_CASE(kfifo_diff_dma_wrap),
+	KUNIT_CASE(kfifo_diff_user_copy_fault),
+	KUNIT_CASE(kfifo_diff_benchmark),
 	{},
 };
 
