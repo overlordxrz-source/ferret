@@ -346,13 +346,20 @@ modules that the test kernels never load.
 1. Build from a container-local rsync mirror (`/build/src`), never from the
    virtiofs mount.
 2. Build only the bootable target (`bzImage` on x86_64, `Image` on arm64), not
-   `all`; `Module.symvers` is still produced by the vmlinux link.
+   `all`. The export namespace is then read from `vmlinux.symvers` (written by
+   the vmlinux link); `Module.symvers` only exists after a full `make modules`.
 3. Wrap the compiler with ccache (`CCACHE_DIR=/build/ccache`, 20 GiB) so a
    `CLEAN=1` rebuild reuses preprocessed-object results.
 
 **Consequences.** Clean builds no longer compile modules. The first clean
 rebuild after enabling ccache is still cold; warm-cache timings are recorded in
 `docs/ferret/STATUS.md` only when measured, never assumed.
+
+The image-only build broke the linkage script in checkpoint 002: it still read
+`Module.symvers`, which the image target does not produce, and reported the
+export namespace as missing for all three migrated symbols. The kernel was
+correct; the harness was wrong. The script now falls back to `vmlinux.symvers`,
+and the checkpoint 002 cycle was repeated with the corrected harness.
 
 **Status.** Accepted.
 

@@ -85,9 +85,17 @@ check_ksymtab() { # <symbol>
 }
 
 check_symvers() { # <symbol> <expected-export>
-	local line type
-	line=$(awk -F'\t' -v s="$1" '$2==s' "$OUT/Module.symvers" | head -1)
-	note "Module.symvers: ${line:-<none>}"
+	local line type symvers
+	# `Module.symvers` is only written by a full `make modules`; the image-only
+	# build (DECISIONS D-014) stops after the vmlinux link, which produces
+	# `vmlinux.symvers` with the same export namespace column.
+	if [ -f "$OUT/Module.symvers" ]; then
+		symvers="$OUT/Module.symvers"
+	else
+		symvers="$OUT/vmlinux.symvers"
+	fi
+	line=$(awk -F'\t' -v s="$1" '$2==s' "$symvers" 2>/dev/null | head -1)
+	note "$(basename "$symvers"): ${line:-<none>}"
 	type=$(printf '%s' "$line" | awk '{print $NF}')
 	if [ "$type" = "$2" ]; then
 		pass "$1 exported as $2"

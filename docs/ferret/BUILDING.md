@@ -108,8 +108,9 @@ Each script:
 5. `make ARCH=x86_64 LLVM=1 -j$(nproc) bzImage` (arm64: `Image`)
 
 Only the bootable image is built; test kernels never load modules, so `all`
-would waste most of the build on unused drivers. `Module.symvers` is still
-produced by the vmlinux link. C compilation is wrapped with `ccache`
+would waste most of the build on unused drivers. The export namespace is read
+from `vmlinux.symvers` in that case, because `Module.symvers` is only written
+by a full `make modules` (DECISIONS D-014). C compilation is wrapped with `ccache`
 (`CCACHE_DIR=/build/ccache`, 20 GiB) so clean rebuilds can hit the cache.
 
 The mirror is an `rsync` of the worktree without `.git` and `artifacts`; after
@@ -216,8 +217,15 @@ Writes `artifacts/<variant>/linkage.txt` and asserts:
   build),
 * the export shims only reference their symbols (no definitions),
 * `__ksymtab_*` entries exist for `crc16`, `crc_ccitt` and `crc_ccitt_table`,
-  and `Module.symvers` records `EXPORT_SYMBOL` (non-GPL) for all of them,
+  and the export namespace recorded in `Module.symvers` (or `vmlinux.symvers`
+  when only the image target was built — see below) is `EXPORT_SYMBOL` (non-GPL)
+  for all of them,
 * short disassembly fingerprints of both functions are recorded.
+
+The image-only build (DECISIONS D-014) stops after the `vmlinux` link, which
+writes `vmlinux.symvers`; `Module.symvers` is produced by a full `make modules`.
+The linkage script uses `Module.symvers` when it exists and falls back to
+`vmlinux.symvers`, which carries the same export namespace column.
 
 `addr2line` provenance is attempted only when the configuration carries DWARF.
 `x86_64 defconfig` selects `CONFIG_DEBUG_INFO_NONE`, so on this baseline the

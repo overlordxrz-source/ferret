@@ -9,41 +9,54 @@ Baseline: `v6.18.57` (`2ff600d29ee478d0a8d46ef8a58afb5e038fe692`)
 | Component | Subsystem | Status | Rust compiled | C replaced |
 | --- | --- | --- | --- | --- |
 | `crc16` | lib/crc | migrated | yes | yes |
-| `crc-ccitt` | lib/crc | candidate | no | no |
+| `crc-ccitt` | lib/crc | migrated | yes | yes |
 | `crc-itu-t` | lib/crc | candidate | no | no |
 | `crc8` | lib/crc | candidate | no | no |
 | `crc7` | lib/crc | candidate | no | no |
 | `crc32` | lib/crc | candidate-later | no | no |
 | `crc64` | lib/crc | candidate-later | no | no |
+| `kfifo` | lib | candidate-investigated | no | no |
+| `percpu-counter` | lib | candidate-blocked | no | no |
+| `eventfd` | fs | candidate-blocked | no | no |
 
 ## 2. Components genuinely migrated
 
 * `crc16` — CRC-16 (poly 0x8005, reflected): lib/crc/crc16.c → lib/crc/crc16_rust.rs
+* `crc-ccitt` — CRC-CCITT (poly 0x1021): lib/crc/crc-ccitt.c → lib/crc/crc_ccitt_rust.rs
 
 ## 3. Components tested
 
 | Component | Test | Kind | Result | Evidence |
 | --- | --- | --- | --- | --- |
-| `crc16` | kunit-crc-suite | upstream-kunit | PASS | `artifacts/rust/boot.log` |
-| `crc16` | kunit-crc16-differential | differential-kunit | PASS | `artifacts/rust/boot.log` |
-| `crc16` | kunit-crc16-rust-vectors | rust-kunit | PASS | `artifacts/rust/boot.log` |
-| `crc16` | qemu-boot-userspace-abi | boot | PASS | `artifacts/rust/boot.log` |
-| `crc16` | linkage-ownership | static-analysis | PASS | `artifacts/rust/linkage.txt` |
+| `crc16` | kunit-crc-suite | upstream-kunit | PASS | `docs/ferret/evidence/boot-x86_64-rust.txt` |
+| `crc16` | kunit-crc16-differential | differential-kunit | PASS | `docs/ferret/evidence/boot-x86_64-rust.txt` |
+| `crc16` | kunit-crc16-rust-vectors | rust-kunit | PASS | `docs/ferret/evidence/boot-x86_64-rust.txt` |
+| `crc16` | qemu-boot-userspace-abi | boot | PASS | `docs/ferret/evidence/boot-x86_64-rust.txt` |
+| `crc16` | linkage-ownership | static-analysis | PASS | `docs/ferret/evidence/linkage-x86_64.txt` |
+| `crc-ccitt` | kunit-crc-ccitt-differential | differential-kunit | PASS | `docs/ferret/evidence/boot-x86_64-rust.txt` |
+| `crc-ccitt` | kunit-crc-ccitt-table-and-vectors | rust-kunit | PASS | `docs/ferret/evidence/boot-x86_64-rust.txt` |
+| `crc-ccitt` | qemu-boot-userspace-abi | boot | PASS | `docs/ferret/evidence/boot-x86_64-rust.txt` |
+| `crc-ccitt` | qemu-boot-ubuntu-amd64 | boot | PASS | `docs/ferret/evidence/boot-ubuntu-shell-amd64.txt` |
+| `crc-ccitt` | linkage-ownership | static-analysis | PASS | `docs/ferret/evidence/linkage-x86_64.txt` |
+| `crc-ccitt` | qemu-boot-ubuntu-arm64-systemd | boot | PASS | `docs/ferret/evidence/boot-ubuntu-systemd-arm64.txt` |
 
 ## 4. Components with remaining C dependencies
 
 * `crc16` — `lib/crc/crc16_export.c` (linkage/metadata): ksymtab entry only, to preserve non-GPL EXPORT_SYMBOL visibility (see DECISIONS D-004)
+* `crc-ccitt` — `lib/crc/crc_ccitt_export.c` (linkage/metadata): ksymtab entries only for crc_ccitt and crc_ccitt_table, preserving non-GPL EXPORT_SYMBOL visibility (DECISIONS D-004); no algorithm
 
 ## 5. Remaining migration candidates
 
 | Component | Status | Dependencies | Risks |
 | --- | --- | --- | --- |
-| `crc-ccitt` | candidate | - | Two exported symbols share one table; the Rust module must define both with the same visibility. |
 | `crc-itu-t` | candidate | - | Shares the upstream CRC KUnit harness; low risk. |
 | `crc8` | candidate | - | API takes caller-owned 256-byte tables; Rust must not impose alignment or aliasing assumptions beyond the C contract. |
 | `crc7` | candidate | - | - |
 | `crc32` | candidate-later | CONFIG_CRC32_ARCH (x86 SSE4.2/PCLMUL) | Hot path (ext4, btrfs, networking); must not regress throughput. Arch-accelerated variants are selected by alternatives/patching; aggressive; keep C until SIMD abstraction exists. |
 | `crc64` | candidate-later | CONFIG_CRC64_ARCH (x86 PCLMUL) | Generated table via hostprog; Rust would need a const table or build-time generation to preserve behaviour. |
+| `kfifo` | candidate-investigated | - | Record-mode framing and partial user-copy semantics are the highest-risk areas. |
+| `percpu-counter` | candidate-blocked | - | Requires a kernel::percpu abstraction (alloc_percpu, this_cpu_ptr) that does not exist in this tree. |
+| `eventfd` | candidate-blocked | - | Requires anon_inode_getfile() file operations and poll() support in the Rust abstraction layer, which does not exist in this tree. |
 
 ## 6. Measured build/runtime regressions
 

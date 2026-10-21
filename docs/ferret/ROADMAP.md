@@ -31,7 +31,8 @@ Progress is counted in verified components, never in a percentage of Linux.
 
 The machine-readable registry (`registry/migrations.json`) and
 [MIGRATION_MATRIX.md](MIGRATION_MATRIX.md) are the source of truth for
-individual components.
+individual components. The puzzles themselves are listed in
+[MIGRATION_MAP.md](MIGRATION_MAP.md).
 
 ## Migration track
 

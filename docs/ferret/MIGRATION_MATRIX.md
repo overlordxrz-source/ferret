@@ -10,8 +10,8 @@ this document is the narrative view.
 
 | Component | C sources | Rust sources | Symbols | Status | Evidence |
 | --- | --- | --- | --- | --- | --- |
-| CRC-16 | `lib/crc/crc16.c` | `lib/crc/crc16_rust.rs` | `crc16` | migrated | `artifacts/rust/` (boot, linkage) |
-| CRC-CCITT | `lib/crc/crc-ccitt.c` | `lib/crc/crc_ccitt_rust.rs` | `crc_ccitt`, `crc_ccitt_table` | migrated | `artifacts/rust/` (boot, linkage) |
+| CRC-16 | `lib/crc/crc16.c` | `lib/crc/crc16_rust.rs` | `crc16` | migrated | [`evidence/`](evidence/) — boot markers and linkage |
+| CRC-CCITT | `lib/crc/crc-ccitt.c` | `lib/crc/crc_ccitt_rust.rs` | `crc_ccitt`, `crc_ccitt_table` | migrated | [`evidence/`](evidence/) — boot markers and linkage |
 | CRC-ITU-T | `lib/crc/crc-itu-t.c` | — | `crc_itu_t` | candidate | — |
 | CRC-8 | `lib/crc/crc8.c` | — | `crc8`, `crc8_populate_*` | candidate | — |
 | CRC-7 | `lib/crc/crc7.c` | — | `crc7_be` | candidate | — |
@@ -29,7 +29,8 @@ CRC-16 migration details:
   `crc16_diff` differential against the original C compiled as `crc16_c_ref`.
 * Measured footprint (x86_64 defconfig): 133 B (C) → 147 B (Rust) of text,
   +14 B (+10.5%); runtime throughput NOT TESTED.
-* Linkage evidence: `artifacts/rust/linkage.txt` (single definition, size match,
+* Linkage evidence: [`evidence/linkage-x86_64.txt`](evidence/linkage-x86_64.txt)
+  (single definition, size match,
   ksymtab present, `EXPORT_SYMBOL` preserved).
 
 CRC-CCITT migration details:

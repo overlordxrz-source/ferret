@@ -1,0 +1,23 @@
+Ferret verification evidence
+Source commit: 84808e28b814
+Extracted: 2026-10-21T04:09:08Z (UTC)
+Raw logs: artifacts/ (not published; reproduced by tools/ferret/test.sh)
+----------------------------------------------------------------------
+Clean cycle: CLEAN=1 tools/ferret/test.sh
+
+build-ref    PASS
+build-rust   PASS
+initramfs    PASS
+boot-ref     PASS
+boot-rust    PASS
+linkage-ref  PASS
+linkage-rust PASS
+build-rust-arm64 PASS
+linkage-rust-arm64 PASS
+ubuntu-rootfs-amd64 PASS
+ubuntu-rootfs-arm64 PASS
+ubuntu-shell-amd64 PASS
+ubuntu-systemd-amd64 PASS
+ubuntu-shell-arm64 PASS
+ubuntu-systemd-arm64 PASS
+registry     PASS

@@ -39,15 +39,17 @@ Measured, not estimated. `VERIFIED` means the evidence is in the repository.
 | x86_64 QEMU boot with Rust components active | **VERIFIED** |
 | Differential tests: C reference vs Rust implementation | **VERIFIED** |
 | Kernel linkage proof (C object absent, symbol ownership, export type) | **VERIFIED** |
-| arm64 kernel build | **IN PROGRESS** (checkpoint 002 cycle) |
-| arm64 QEMU boot | **IN PROGRESS** (checkpoint 002 cycle) |
-| Ubuntu 24.04 userspace: shell and systemd | **IN PROGRESS** (checkpoint 002 cycle) |
+| arm64 kernel build and QEMU boot | **VERIFIED** |
+| Ubuntu 24.04 userspace: shell and systemd | **VERIFIED** — amd64 and arm64 |
 | Container / Docker userspace | **NOT TESTED** |
 | Physical hardware boot | **NOT TESTED** |
+| Runtime performance comparison | **NOT TESTED** (QEMU TCG only) |
 
 The authoritative, machine-readable source of truth is
 [`registry/migrations.json`](registry/migrations.json); the rendered report is
-[`docs/ferret/REGISTRY_REPORT.md`](docs/ferret/REGISTRY_REPORT.md).
+[`docs/ferret/REGISTRY_REPORT.md`](docs/ferret/REGISTRY_REPORT.md), and the
+sanitized verification evidence of the last clean cycle is in
+[`docs/ferret/evidence/`](docs/ferret/evidence/).
 
 There is deliberately no "percent of Linux rewritten" figure. Two utilities do
 not make a percentage of a 30-million-line kernel.
@@ -61,16 +63,11 @@ differential tests until the Rust component has been validated and reviewed.
 
 ```mermaid
 flowchart TB
-    U["Ubuntu userspace<br/>glibc, systemd, containers"] --> A["Linux syscall ABI<br/>(unchanged)"]
-    A --> K
-
-    subgraph K["Ferret kernel — one kernel, two implementation languages"]
-        direction LR
-        R["Rust components<br/>lib/crc/*_rust.rs<br/>..."] --- C["C components<br/>(not yet migrated)"]
-        R <-->|"extern \"C\" ABI<br/>ksymtab exports"| C
-    end
-
-    K --> H["x86_64 / arm64 hardware<br/>or QEMU"]
+    U["Ubuntu userspace: glibc, systemd, containers"] --> A["Linux syscall ABI (unchanged)"]
+    A --> R["Rust components: lib/crc/*_rust.rs"]
+    A --> C["C components: not yet migrated"]
+    R --> H["x86_64 or arm64 hardware, or QEMU"]
+    C --> H
 ```
 
 * **What "migrated" means:** the C translation unit is not compiled, the Rust
@@ -118,7 +115,8 @@ Full instructions, pinned toolchain versions and the reproducibility story:
 > **Pick a component. Rewrite it in Rust. Prove it works. Submit a PR.**
 
 The migration is designed as a set of independently reviewable engineering
-puzzles — [the Ferret Migration Map](https://github.com/overlordxrz-source/ferret/issues?q=is%3Aissue+label%3A%22type%3Amigration%22).
+puzzles — [the Ferret Migration Map](https://github.com/overlordxrz-source/ferret/issues?q=is%3Aissue+label%3A%22type%3Amigration%22),
+described in [`docs/ferret/MIGRATION_MAP.md`](docs/ferret/MIGRATION_MAP.md).
 Each issue states the C file, the symbols, the tests, the safety invariants and
 the acceptance criteria. If you want to work on one, comment on the issue to
 claim it; a maintainer will acknowledge it and mark it `status: claimed`.

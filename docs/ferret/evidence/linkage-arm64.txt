@@ -1,0 +1,77 @@
+Ferret verification evidence
+Source commit: 84808e28b814
+Extracted: 2026-10-21T04:09:08Z (UTC)
+Raw logs: artifacts/ (not published; reproduced by tools/ferret/test.sh)
+----------------------------------------------------------------------
+Variant: rust (arm64)
+Result: PASS (see the checks below)
+
+
+== kernel variant ==
+variant:  rust
+vmlinux:  /build/linux-rust-arm64/vmlinux
+git:      84808e28b814
+config:   CONFIG_RUST=y CONFIG_CRC16=y CONFIG_CRC16_RUST=y CONFIG_CRC16_DIFF_KUNIT_TEST=y CONFIG_CRC_CCITT=y CONFIG_CRC_CCITT_RUST=y CONFIG_CRC_CCITT_DIFF_KUNIT_TEST=y CONFIG_KUNIT=y 
+
+== build tree object ownership ==
+PASS  C object lib/crc/crc16.o is absent from the build
+PASS  C object lib/crc/crc-ccitt.o is absent from the build
+PASS  Rust object lib/crc/crc16_rust.o is present
+PASS  Rust object lib/crc/crc_ccitt_rust.o is present
+PASS  Rust object lib/crc/crc16_export.o is present
+PASS  Rust object lib/crc/crc_ccitt_export.o is present
+
+== symbol definitions ==
+      definitions of crc16 in vmlinux: 1
+PASS  crc16 is defined exactly once
+      definitions of crc_ccitt in vmlinux: 1
+PASS  crc_ccitt is defined exactly once
+      definitions of crc_ccitt_table in vmlinux: 1
+PASS  crc_ccitt_table is defined exactly once
+PASS  crc16 is defined by lib/crc/crc16_rust.o
+      size crc16: object=0x0000000000000048 vmlinux=0x0000000000000048 bytes
+PASS  linked crc16 has the size of the function in the Rust object
+PASS  crc_ccitt is defined by lib/crc/crc_ccitt_rust.o
+      size crc_ccitt: object=0x0000000000000048 vmlinux=0x0000000000000048 bytes
+PASS  linked crc_ccitt has the size of the function in the Rust object
+PASS  crc_ccitt_table is defined by lib/crc/crc_ccitt_rust.o
+      size crc_ccitt_table: object=0x0000000000000200 vmlinux=0x0000000000000200 bytes
+PASS  linked crc_ccitt_table has the size of the function in the Rust object
+PASS  export shim for crc16 only references it (no definition)
+PASS  export shim for crc_ccitt only references it (no definition)
+PASS  export shim for crc_ccitt_table only references it (no definition)
+
+== debug-info provenance ==
+      crc16 address: 0xffff80008063bfec
+      origin:  crc16 /build/src/lib/crc/crc16_rust.rs:76 
+PASS  crc16 maps to Rust source (crc16_rust.rs)
+
+== export / ksymtab ==
+PASS  __ksymtab_crc16 exists (module ABI preserved)
+PASS  __ksymtab_crc_ccitt exists (module ABI preserved)
+PASS  __ksymtab_crc_ccitt_table exists (module ABI preserved)
+      vmlinux.symvers: 0x00000000	crc16	vmlinux	EXPORT_SYMBOL	
+PASS  crc16 exported as EXPORT_SYMBOL
+      vmlinux.symvers: 0x00000000	crc_ccitt	vmlinux	EXPORT_SYMBOL	
+PASS  crc_ccitt exported as EXPORT_SYMBOL
+      vmlinux.symvers: 0x00000000	crc_ccitt_table	vmlinux	EXPORT_SYMBOL	
+PASS  crc_ccitt_table exported as EXPORT_SYMBOL
+
+== disassembly fingerprint ==
+      ffff80008063bfec <crc16>:
+      ffff80008063bfec:      	bti	c
+      ffff80008063bff0:      	cbz	x2, 0xffff80008063c030 <crc16+0x44>
+      ffff80008063bff4:      	paciasp
+      ffff80008063bff8:      	stp	x29, x30, [sp, #-0x10]!
+      ffff80008063bffc:      	mov	x29, sp
+      ffff80008063c000:      	adrp	x8, 0xffff8000812ea000 <_RNvNCNvNtNtNtNtCshc5sK6KjdJJ_6kernel4sync6atomic9predefine5tests20atomic_cmpxchg_testss3_0s1_9CONDITION+0x8>
+      ffff80008063c758 <crc_ccitt>:
+      ffff80008063c758:      	bti	c
+      ffff80008063c75c:      	cbz	x2, 0xffff80008063c79c <crc_ccitt+0x44>
+      ffff80008063c760:      	paciasp
+      ffff80008063c764:      	stp	x29, x30, [sp, #-0x10]!
+      ffff80008063c768:      	mov	x29, sp
+      ffff80008063c76c:      	adrp	x8, 0xffff8000812eb000 <crc7_be_syndrome_table+0x2c0>
+PASS  disassembly fingerprints captured above
+
+RESULT: PASS

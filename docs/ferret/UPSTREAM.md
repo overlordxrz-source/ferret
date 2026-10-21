@@ -124,3 +124,29 @@ descriptively, to identify the codebase being modified.
 If a file appears without the correct license header, or a Ferret change cannot
 be traced to a commit in this repository, open an issue with the path and the
 commit SHA. Provenance bugs are treated as release blockers.
+
+## 8. Repository settings and manual follow-ups
+
+The public repository is configured as follows:
+
+| Setting | Value | How |
+| --- | --- | --- |
+| Visibility | public | `gh repo create --public` |
+| Default branch | `main` | first pushed branch |
+| Issues | enabled | default |
+| Discussions | enabled | `PATCH /repos/{owner}/{repo} {has_discussions: true}` |
+| Wiki | disabled | `has_wiki: false` |
+| Topics | rust, linux, linux-kernel, operating-system, kernel, systems-programming, rust-for-linux, open-source | `gh repo edit --add-topic` |
+| Description | "Rewriting the Linux kernel in Rust, one subsystem at a time." | `gh repo edit --description` |
+
+Two items need a browser and are therefore done by the maintainer, not by the
+API:
+
+1. **Social preview image.** Settings → General → Social preview → upload
+   `assets/ferret-banner.png`. The GitHub REST API cannot set it.
+2. **Project board "Ferret Migration Map"** (optional). Creating a project
+   requires the `project` OAuth scope, which the automation token does not
+   have. A maintainer can grant it (`gh auth refresh -s project`) and then run
+   `gh project create --owner <owner> --title "Ferret Migration Map"`. Until
+   then the `status:` label carries the same state, and the workflow is
+   described in [MIGRATION_MAP.md](MIGRATION_MAP.md).

@@ -34,7 +34,7 @@ header() {
 
 # KUnit + userspace markers from an x86_64 initramfs boot.
 boot_filter() {
-	grep -aE "Linux version|^\s*# Subtest|^\s*ok [0-9]+|^\s*not ok|FERRET-INIT:|Kernel panic|BUG:|WARNING:|Call Trace" "$1" || true
+	grep -aE "Linux version|\] +(not )?ok [0-9]+ |FERRET-INIT:|Kernel panic|BUG:|WARNING:|Call Trace" "$1" || true
 }
 
 # Ubuntu guest: boot, userspace and systemd evidence only.
