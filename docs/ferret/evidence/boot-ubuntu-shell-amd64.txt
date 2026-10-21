@@ -1,6 +1,6 @@
 Ferret verification evidence
-Source commit: 48fed460f7cf
-Extracted: 2026-10-21T19:25:59Z (UTC)
+Source commit: f281ebf3b2e6
+Extracted: 2026-10-21T22:15:25Z (UTC)
 Raw logs: artifacts/ (not published; reproduced by tools/ferret/test.sh)
 ----------------------------------------------------------------------
 Guest: Ubuntu 24.04 root filesystem, amd64
@@ -8,7 +8,22 @@ Mode: init=/sbin/ferret-init probe
 Architecture: amd64
 Result: PASS (required marker found)
 
-[    0.000000] Linux version 6.18.57-ferret-rust (root@3ea769cb049c) (Ubuntu clang version 18.1.3 (1ubuntu1), Ubuntu LLD 18.1.3) #1 SMP PREEMPT_DYNAMIC Wed Oct 21 18:56:12 UTC 2026
-[    6.266832] EXT4-fs (vda): mounted filesystem 02f8190d-4eff-4f3f-8bb0-9fa2ddab79de r/w with ordered data mode. Quota mode: none.
+[    0.000000] Linux version 6.18.57-ferret-rust (root@3ea769cb049c) (Ubuntu clang version 18.1.3 (1ubuntu1), Ubuntu LLD 18.1.3) #1 SMP PREEMPT_DYNAMIC Wed Oct 21 21:56:31 UTC 2026
+[    5.852998] Call Trace:
+[    5.908731] Call Trace:
+[    6.029051] Call Trace:
+[    6.073095] Call Trace:
+[    6.120925] Call Trace:
+[    6.167664] Call Trace:
+[    6.232643] Call Trace:
+[    6.279072] Call Trace:
+[    6.322083] Call Trace:
+[    6.371843] Call Trace:
+[    6.415772] Call Trace:
+[    6.456260] Call Trace:
+[    6.500697] Call Trace:
+[    6.542253] Call Trace:
+[    6.913995] Call Trace:
+[    7.282319] EXT4-fs (vda): mounted filesystem b2dd246e-7763-49e4-9811-b05307e30736 r/w with ordered data mode. Quota mode: none.
 UBUNTU-PROC: Linux version 6.18.57-ferret-rust (root@
 UBUNTU-CHECK: ok

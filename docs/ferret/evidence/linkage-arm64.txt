@@ -1,6 +1,6 @@
 Ferret verification evidence
-Source commit: 01ab4372971c
-Extracted: 2026-10-21T22:15:06Z (UTC)
+Source commit: f281ebf3b2e6
+Extracted: 2026-10-21T22:15:25Z (UTC)
 Raw logs: artifacts/ (not published; reproduced by tools/ferret/test.sh)
 ----------------------------------------------------------------------
 Variant: rust (arm64)

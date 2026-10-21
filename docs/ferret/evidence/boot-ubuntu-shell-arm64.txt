@@ -1,6 +1,6 @@
 Ferret verification evidence
-Source commit: 48fed460f7cf
-Extracted: 2026-10-21T19:25:59Z (UTC)
+Source commit: f281ebf3b2e6
+Extracted: 2026-10-21T22:15:25Z (UTC)
 Raw logs: artifacts/ (not published; reproduced by tools/ferret/test.sh)
 ----------------------------------------------------------------------
 Guest: Ubuntu 24.04 root filesystem, arm64
@@ -8,7 +8,7 @@ Mode: init=/sbin/ferret-init probe
 Architecture: arm64
 Result: PASS (required marker found)
 
-[    0.000000] Linux version 6.18.57-ferret-rust (root@3ea769cb049c) (Ubuntu clang version 18.1.3 (1ubuntu1), Ubuntu LLD 18.1.3) #1 SMP PREEMPT Wed Oct 21 19:09:54 UTC 2026
-[    6.588787] EXT4-fs (vda): mounted filesystem 8f01e456-e8c1-420e-94c8-57cbc7fbd43f r/w with ordered data mode. Quota mode: none.
+[    0.000000] Linux version 6.18.57-ferret-rust (root@3ea769cb049c) (Ubuntu clang version 18.1.3 (1ubuntu1), Ubuntu LLD 18.1.3) #1 SMP PREEMPT Wed Oct 21 22:02:33 UTC 2026
+[    7.411845] EXT4-fs (vda): mounted filesystem 1e92698b-db91-4636-ab14-db37ebad546a r/w with ordered data mode. Quota mode: none.
 UBUNTU-PROC: Linux version 6.18.57-ferret-rust (root@
 UBUNTU-CHECK: ok
