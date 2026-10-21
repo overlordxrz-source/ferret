@@ -5,7 +5,7 @@ committed), **PARTIAL**, **FAILED**, **NOT TESTED**.
 
 Last updated: checkpoint 003 (2026-10-21).
 
-## 0. Checkpoint 003 — the generic kernel FIFO in Rust
+## 0. Checkpoint 003 — the kernel bitmap and the generic kernel FIFO in Rust
 
 **State: VERIFIED.** The implementation is complete and the *clean* cycle
 (`CLEAN=1 tools/ferret/test.sh`) passed all 16 steps with exit status 0.
@@ -47,8 +47,36 @@ What the port covers:
   (`rust/helpers/slab.c`, `rust/helpers/scatterlist.c`): they expose
   `kmalloc_array()` and `sg_set_buf()` to Rust. They contain no FIFO logic.
 
-The size and throughput review (including the two inlining experiments and
-the TCG caveat) is in
+### The kernel bitmap
+
+**State: verified incrementally.** The build, the boot (with the upstream
+kselftest and the differential suite) and the linkage checks pass, but the
+*clean* cycle that covers the bitmap has not been run yet, so the checkpoint
+as a whole is still signed off by the clean cycle of the kernel FIFO above.
+
+| Item | State | Result |
+| --- | --- | --- |
+| Rust implementation | done | `lib/bitmap_rust.rs`, all 29 exported symbols plus the three non-exported globals the header calls |
+| C object in the Rust build | absent | `lib/bitmap.o` is not built; `lib/bitmap_rust.o` defines every symbol |
+| Exports | preserved | 27 symbols keep `EXPORT_SYMBOL`, `devm_bitmap_alloc`/`devm_bitmap_zalloc` keep `EXPORT_SYMBOL_GPL` |
+| Upstream test suite | PASS | the `test_bitmap` kselftest module: **390 447 cases**, all passing |
+| Differential KUnit | PASS | `bitmap_diff`, 8 cases over the whole API against the unmodified C |
+| Linkage evidence | PASS | one definition per symbol, size match, ksymtab, export class |
+| Text size | measured | 5 807 B (Rust) vs 3 712 B (C), +56 % (2 095 B in a 57 MB kernel) |
+| 32-bit variants | not built | `bitmap_from_arr64()`/`bitmap_to_arr64()` are implemented but only compiled on a 32-bit target, which Ferret does not build yet |
+
+Two prerequisites were added to the in-tree kernel crate, both exposing
+primitives that already existed in C: `Flags::from_gfp()`/`as_gfp()` (a
+run-time allocation mask) and `Vec::reserve_in()`/`with_capacity_in()` (a
+NUMA node). The first one also let the kernel FIFO retire its C helper.
+
+The upstream test suite found a real defect on the first boot: the C
+`bitmap_cut()` reads and writes the word that `first` points at even when it
+is outside the bitmap, which is an out-of-bounds access. The Rust version
+only touches the words inside the bitmap; the bits of the bitmap itself are
+the same. The differential suite and the upstream suite both pass.
+
+### The generic kernel FIFO
 [`design/COMPONENT_003_INVESTIGATION.md`](design/COMPONENT_003_INVESTIGATION.md)
 §4.1.2.
 

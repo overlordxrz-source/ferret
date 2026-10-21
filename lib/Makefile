@@ -51,7 +51,7 @@ lib-y	+= kobject.o klist.o
 obj-y	+= lockref.o
 
 obj-y += bcd.o sort.o parser.o debug_locks.o random32.o \
-	 bust_spinlocks.o kasprintf.o bitmap.o scatterlist.o \
+	 bust_spinlocks.o kasprintf.o scatterlist.o \
 	 list_sort.o uuid.o iov_iter.o clz_ctz.o \
 	 bsearch.o find_bit.o llist.o lwq.o memweight.o \
 	 percpu-refcount.o rhashtable.o base64.o \
@@ -353,6 +353,66 @@ UBSAN_SANITIZE_ubsan.o := n
 KASAN_SANITIZE_ubsan.o := n
 KCSAN_SANITIZE_ubsan.o := n
 CFLAGS_ubsan.o := -fno-stack-protector $(DISABLE_KSTACK_ERASE)
+
+#
+# Ferret: the kernel bitmap has a Rust implementation. The C object is not
+# built at all when the Rust variant is selected, so every exported symbol has
+# exactly one definition.
+#
+ifeq ($(CONFIG_BITMAP_RUST),y)
+obj-y += bitmap_rust.o
+# ksymtab entries only; preserves the EXPORT_SYMBOL() visibility. No algorithm.
+obj-y += bitmap_export.o
+else
+obj-y += bitmap.o
+endif
+
+#
+# Ferret: differential test. Compiles the unmodified C reference a second time
+# under test-only symbol names (see docs/ferret/DECISIONS.md D-005).
+#
+ifeq ($(CONFIG_BITMAP_DIFF_KUNIT_TEST),y)
+CFLAGS_bitmap_ref.o := -D__bitmap_and=__bitmap_and_c_ref \
+		      -D__bitmap_andnot=__bitmap_andnot_c_ref \
+		      -D__bitmap_clear=__bitmap_clear_c_ref \
+		      -D__bitmap_complement=__bitmap_complement_c_ref \
+		      -D__bitmap_equal=__bitmap_equal_c_ref \
+		      -D__bitmap_intersects=__bitmap_intersects_c_ref \
+		      -D__bitmap_or=__bitmap_or_c_ref \
+		      -D__bitmap_or_equal=__bitmap_or_equal_c_ref \
+		      -D__bitmap_replace=__bitmap_replace_c_ref \
+		      -D__bitmap_set=__bitmap_set_c_ref \
+		      -D__bitmap_shift_left=__bitmap_shift_left_c_ref \
+		      -D__bitmap_shift_right=__bitmap_shift_right_c_ref \
+		      -D__bitmap_subset=__bitmap_subset_c_ref \
+		      -D__bitmap_weight=__bitmap_weight_c_ref \
+		      -D__bitmap_weight_and=__bitmap_weight_and_c_ref \
+		      -D__bitmap_weight_andnot=__bitmap_weight_andnot_c_ref \
+		      -D__bitmap_xor=__bitmap_xor_c_ref \
+		      -Dbitmap_alloc=bitmap_alloc_c_ref \
+		      -Dbitmap_alloc_node=bitmap_alloc_node_c_ref \
+		      -Dbitmap_bitremap=bitmap_bitremap_c_ref \
+		      -Dbitmap_cut=bitmap_cut_c_ref \
+		      -Dbitmap_find_next_zero_area_off=bitmap_find_next_zero_area_off_c_ref \
+		      -Dbitmap_fold=bitmap_fold_c_ref \
+		      -Dbitmap_free=bitmap_free_c_ref \
+		      -Dbitmap_from_arr32=bitmap_from_arr32_c_ref \
+		      -Dbitmap_onto=bitmap_onto_c_ref \
+		      -Dbitmap_remap=bitmap_remap_c_ref \
+		      -Dbitmap_to_arr32=bitmap_to_arr32_c_ref \
+		      -Dbitmap_zalloc=bitmap_zalloc_c_ref \
+		      -Dbitmap_zalloc_node=bitmap_zalloc_node_c_ref \
+		      -Ddevm_bitmap_alloc=devm_bitmap_alloc_c_ref \
+		      -Ddevm_bitmap_zalloc=devm_bitmap_zalloc_c_ref
+ifeq ($(CONFIG_64BIT),)
+CFLAGS_bitmap_ref.o += -Dbitmap_from_arr64=bitmap_from_arr64_c_ref \
+		      -Dbitmap_to_arr64=bitmap_to_arr64_c_ref
+endif
+obj-y += bitmap_ref.o bitmap_diff_kunit.o
+
+$(obj)/bitmap_ref.o: $(src)/bitmap.c FORCE
+	$(call if_changed_rule,cc_o_c)
+endif
 
 obj-$(CONFIG_SBITMAP) += sbitmap.o
 

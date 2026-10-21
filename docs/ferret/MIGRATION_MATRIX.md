@@ -80,6 +80,43 @@ Full analysis: `docs/ferret/design/COMPONENT_003_INVESTIGATION.md`.
 | `lib/sbitmap.c` | kvmalloc + irqsave spinlock + waitqueue | deferred | waitqueue API and larger blast radius |
 | `fs/eventfd.c` | kref lifetime + waitqueue + anon-inode fops + poll | blocked | Rust `FileOps`/anon-inode layer with `poll` |
 
+### The kernel bitmap (checkpoint 003)
+
+* C source: `lib/bitmap.c` (882 lines, 31 exported symbols, 1 191 files use
+  the API).
+* Rust source: `lib/bitmap_rust.rs`; the C object is **not built** in the Rust
+  variant, and all 29 exported symbols (27 `EXPORT_SYMBOL`, two
+  `EXPORT_SYMBOL_GPL`) are defined exactly once by the Rust object, with their
+  export class preserved by the ksymtab-only shim `lib/bitmap_export.c`.
+* The three global symbols that the C file does *not* export
+  (`__bitmap_or_equal()`, and, with `CONFIG_NUMA`, `bitmap_onto()` and
+  `bitmap_fold()`) are provided as well, because the header's inline helpers
+  call them.
+* The 32-bit variants (`bitmap_from_arr64()`, `bitmap_to_arr64()`) are
+  implemented as well; they are only compiled on a 32-bit target, which Ferret
+  does not build or test yet.
+* The bit numbering (bit `n` is bit `n % BITS_PER_LONG` of word
+  `n / BITS_PER_LONG`), the word size, the treatment of the tail bits above
+  the valid range and the overlapping-buffer behaviour of `bitmap_cut()` are
+  the same as in the C original.
+* Tests: the upstream `test_bitmap` kselftest module (**390 447 cases**, all
+  passing) and a differential suite (`bitmap_diff`, 8 cases) that compiles the
+  unmodified `lib/bitmap.c` a second time under test-only symbol names and
+  compares the two implementations over the whole API: the logical operations,
+  the weight helpers, the set/clear ranges, the shifts, the cut, the zero-area
+  search, the remapping, the 32-bit word conversions and the allocation.
+* Two documented deviations, both where the C code is undefined: a shift
+  larger than the bitmap makes the C code clear memory outside the bitmap
+  (the Rust code clamps it), and `bitmap_cut()` with a `first` past the end of
+  the bitmap makes the C code read and write a word outside the bitmap (the
+  Rust code only touches the words inside it; the bits of the bitmap itself are
+  the same).
+* Remaining C dependency: `lib/bitmap_export.c` (ksymtab only).
+* Text size: 5 807 bytes against 3 712 bytes in C (+56 %, 2 095 bytes in a
+  57 MB kernel). The difference is in the per-bit helpers, which have no
+  unchecked fast path in the C original; the absolute cost is 0.004 % of the
+  kernel.
+
 ### The generic kernel FIFO (checkpoint 003)
 
 * C sources: `lib/kfifo.c` (595 lines, 23 `EXPORT_SYMBOL` exports).

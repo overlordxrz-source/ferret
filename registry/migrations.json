@@ -681,6 +681,224 @@
         "verdict": "deferred until a Rust FileOps/anon-inode layer with poll exists",
         "prerequisites": "kernel::fs::FileOps (poll) + anon_inode_getfile abstraction"
       }
+    },
+    {
+      "id": "bitmap",
+      "title": "Kernel bitmap (lib/bitmap.c)",
+      "subsystem": "lib",
+      "c_sources": [
+        "lib/bitmap.c"
+      ],
+      "rust_sources": [
+        "lib/bitmap_rust.rs"
+      ],
+      "kconfig": {
+        "upstream": "none: lib/bitmap.c is always built",
+        "ferret_switch": "BITMAP_RUST",
+        "diff_test": "BITMAP_DIFF_KUNIT_TEST"
+      },
+      "abi": {
+        "header": "include/linux/bitmap.h",
+        "symbols": [
+          {
+            "name": "__bitmap_and",
+            "signature": "see include/linux/bitmap.h",
+            "export": "EXPORT_SYMBOL"
+          },
+          {
+            "name": "__bitmap_andnot",
+            "signature": "see include/linux/bitmap.h",
+            "export": "EXPORT_SYMBOL"
+          },
+          {
+            "name": "__bitmap_clear",
+            "signature": "see include/linux/bitmap.h",
+            "export": "EXPORT_SYMBOL"
+          },
+          {
+            "name": "__bitmap_complement",
+            "signature": "see include/linux/bitmap.h",
+            "export": "EXPORT_SYMBOL"
+          },
+          {
+            "name": "__bitmap_equal",
+            "signature": "see include/linux/bitmap.h",
+            "export": "EXPORT_SYMBOL"
+          },
+          {
+            "name": "__bitmap_intersects",
+            "signature": "see include/linux/bitmap.h",
+            "export": "EXPORT_SYMBOL"
+          },
+          {
+            "name": "__bitmap_or",
+            "signature": "see include/linux/bitmap.h",
+            "export": "EXPORT_SYMBOL"
+          },
+          {
+            "name": "__bitmap_replace",
+            "signature": "see include/linux/bitmap.h",
+            "export": "EXPORT_SYMBOL"
+          },
+          {
+            "name": "__bitmap_set",
+            "signature": "see include/linux/bitmap.h",
+            "export": "EXPORT_SYMBOL"
+          },
+          {
+            "name": "__bitmap_shift_left",
+            "signature": "see include/linux/bitmap.h",
+            "export": "EXPORT_SYMBOL"
+          },
+          {
+            "name": "__bitmap_shift_right",
+            "signature": "see include/linux/bitmap.h",
+            "export": "EXPORT_SYMBOL"
+          },
+          {
+            "name": "__bitmap_subset",
+            "signature": "see include/linux/bitmap.h",
+            "export": "EXPORT_SYMBOL"
+          },
+          {
+            "name": "__bitmap_weight",
+            "signature": "see include/linux/bitmap.h",
+            "export": "EXPORT_SYMBOL"
+          },
+          {
+            "name": "__bitmap_weight_and",
+            "signature": "see include/linux/bitmap.h",
+            "export": "EXPORT_SYMBOL"
+          },
+          {
+            "name": "__bitmap_weight_andnot",
+            "signature": "see include/linux/bitmap.h",
+            "export": "EXPORT_SYMBOL"
+          },
+          {
+            "name": "__bitmap_xor",
+            "signature": "see include/linux/bitmap.h",
+            "export": "EXPORT_SYMBOL"
+          },
+          {
+            "name": "bitmap_alloc",
+            "signature": "see include/linux/bitmap.h",
+            "export": "EXPORT_SYMBOL"
+          },
+          {
+            "name": "bitmap_alloc_node",
+            "signature": "see include/linux/bitmap.h",
+            "export": "EXPORT_SYMBOL"
+          },
+          {
+            "name": "bitmap_bitremap",
+            "signature": "see include/linux/bitmap.h",
+            "export": "EXPORT_SYMBOL"
+          },
+          {
+            "name": "bitmap_cut",
+            "signature": "see include/linux/bitmap.h",
+            "export": "EXPORT_SYMBOL"
+          },
+          {
+            "name": "bitmap_find_next_zero_area_off",
+            "signature": "see include/linux/bitmap.h",
+            "export": "EXPORT_SYMBOL"
+          },
+          {
+            "name": "bitmap_free",
+            "signature": "see include/linux/bitmap.h",
+            "export": "EXPORT_SYMBOL"
+          },
+          {
+            "name": "bitmap_from_arr32",
+            "signature": "see include/linux/bitmap.h",
+            "export": "EXPORT_SYMBOL"
+          },
+          {
+            "name": "bitmap_remap",
+            "signature": "see include/linux/bitmap.h",
+            "export": "EXPORT_SYMBOL"
+          },
+          {
+            "name": "bitmap_to_arr32",
+            "signature": "see include/linux/bitmap.h",
+            "export": "EXPORT_SYMBOL"
+          },
+          {
+            "name": "bitmap_zalloc",
+            "signature": "see include/linux/bitmap.h",
+            "export": "EXPORT_SYMBOL"
+          },
+          {
+            "name": "bitmap_zalloc_node",
+            "signature": "see include/linux/bitmap.h",
+            "export": "EXPORT_SYMBOL"
+          },
+          {
+            "name": "devm_bitmap_alloc",
+            "signature": "see include/linux/bitmap.h",
+            "export": "EXPORT_SYMBOL_GPL"
+          },
+          {
+            "name": "devm_bitmap_zalloc",
+            "signature": "see include/linux/bitmap.h",
+            "export": "EXPORT_SYMBOL_GPL"
+          }
+        ]
+      },
+      "dependencies": [
+        "the kernel crate needs a way to express a run-time GFP mask (kernel::alloc::Flags::from_gfp) and a NUMA node (kernel::alloc::Vec::with_capacity_in); both were added in this checkpoint"
+      ],
+      "call_sites": "1191 files in the tree use the bitmap API (drivers/net, drivers/gpu, fs/xfs, drivers/infiniband, drivers/scsi, ...)",
+      "status": "migrated",
+      "rust_compiled": true,
+      "c_implementation_replaced": true,
+      "c_object_built_in_rust_variant": false,
+      "tests": [
+        {
+          "name": "upstream-test-bitmap-kselftest",
+          "kind": "upstream-kselftest",
+          "config": "CONFIG_TEST_BITMAP",
+          "result": "PASS",
+          "evidence": "docs/ferret/evidence/boot-x86_64-rust.txt"
+        },
+        {
+          "name": "kunit-bitmap-differential",
+          "kind": "differential-kunit",
+          "config": "CONFIG_BITMAP_DIFF_KUNIT_TEST",
+          "result": "PASS",
+          "evidence": "docs/ferret/evidence/boot-x86_64-rust.txt"
+        },
+        {
+          "name": "linkage-ownership",
+          "kind": "static-analysis",
+          "result": "PASS",
+          "evidence": "docs/ferret/evidence/linkage-x86_64.txt"
+        }
+      ],
+      "risks": [
+        "The C bitmap API is used by 1191 files, so a behavioural divergence would be widely visible; the upstream kselftest suite (390447 cases) and the differential suite are the mitigation.",
+        "The bit numbering, the word size and the tail bits (the bits above the valid range in the last word) are the areas where a divergence would hide; the differential suite compares them explicitly.",
+        "The Rust text is 56 % larger than the C text (+2095 bytes in a 57 MB kernel), mostly in the per-bit helpers, which have no unchecked fast path in the C original."
+      ],
+      "unsafe_boundaries": [
+        "The exported functions take a raw word pointer; the word count is derived from the bit count and every access is inside it.",
+        "bitmap_cut() copies with memmove() semantics, so the destination and the source may overlap, as in the C original.",
+        "The record helpers (find_next_bit() and friends) reproduce the semantics of the FIND_NEXT_BIT/FIND_NTH_BIT macros, including the treatment of the bits above the valid range."
+      ],
+      "remaining_c_dependencies": [
+        {
+          "file": "lib/bitmap_export.c",
+          "kind": "linkage/metadata",
+          "reason": "ksymtab entries only (29 symbols, two of them GPL); no algorithm. Exit condition: per-symbol EXPORT_SYMBOL support for Rust translation units upstream."
+        }
+      ],
+      "investigation": {
+        "document": "docs/ferret/design/COMPONENT_004_INVESTIGATION.md",
+        "verdict": "implemented in checkpoint 003",
+        "prerequisites": "the run-time allocation mask and the node-aware allocation in the kernel crate, both added in this checkpoint"
+      }
     }
   ],
   "benchmarks": [

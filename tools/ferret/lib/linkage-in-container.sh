@@ -108,7 +108,7 @@ section "kernel variant"
 say "variant:  $VARIANT"
 say "vmlinux:  $VMLINUX"
 say "git:      $(git -C /mnt/projects/ferret rev-parse --short HEAD 2>/dev/null || echo unknown)"
-say "config:   $(grep -E '^CONFIG_(CRC16|CRC16_RUST|CRC16_DIFF_KUNIT_TEST|CRC_CCITT|CRC_CCITT_RUST|CRC_CCITT_DIFF_KUNIT_TEST|KFIFO_RUST|KFIFO_DIFF_KUNIT_TEST|RUST|KUNIT)=' "$OUT/.config" | tr '\n' ' ')"
+say "config:   $(grep -E '^CONFIG_(CRC16|CRC16_RUST|CRC16_DIFF_KUNIT_TEST|CRC_CCITT|CRC_CCITT_RUST|CRC_CCITT_DIFF_KUNIT_TEST|KFIFO_RUST|KFIFO_DIFF_KUNIT_TEST|BITMAP_RUST|BITMAP_DIFF_KUNIT_TEST|RUST|KUNIT)=' "$OUT/.config" | tr '\n' ' ')"
 
 # The symbols exported by the generic kernel FIFO.
 KFIFO_SYMBOLS="__kfifo_alloc __kfifo_free __kfifo_init __kfifo_in __kfifo_out
@@ -117,6 +117,16 @@ __kfifo_dma_in_prepare __kfifo_dma_out_prepare __kfifo_max_r __kfifo_len_r
 __kfifo_in_r __kfifo_out_r __kfifo_out_peek_r __kfifo_out_linear_r
 __kfifo_skip_r __kfifo_from_user_r __kfifo_to_user_r
 __kfifo_dma_in_prepare_r __kfifo_dma_in_finish_r __kfifo_dma_out_prepare_r"
+
+# The exported symbols of the kernel bitmap. The two devm_* ones are
+# EXPORT_SYMBOL_GPL in the C original, the others are EXPORT_SYMBOL.
+BITMAP_SYMBOLS="__bitmap_and __bitmap_andnot __bitmap_clear __bitmap_complement
+__bitmap_equal __bitmap_intersects __bitmap_or __bitmap_replace __bitmap_set
+__bitmap_shift_left __bitmap_shift_right __bitmap_subset __bitmap_weight
+__bitmap_weight_and __bitmap_weight_andnot __bitmap_xor bitmap_alloc
+bitmap_alloc_node bitmap_bitremap bitmap_cut bitmap_find_next_zero_area_off
+bitmap_free bitmap_from_arr32 bitmap_remap bitmap_to_arr32 bitmap_zalloc
+bitmap_zalloc_node devm_bitmap_alloc devm_bitmap_zalloc"
 
 section "build tree object ownership"
 if [ "$VARIANT" = rust ]; then
@@ -130,6 +140,7 @@ if [ "$VARIANT" = rust ]; then
 	check_absent "$OUT/lib/crc/crc16.o" "C object lib/crc/crc16.o"
 	check_absent "$OUT/lib/crc/crc-ccitt.o" "C object lib/crc/crc-ccitt.o"
 	check_absent "$OUT/lib/kfifo.o" "C object lib/kfifo.o"
+	check_absent "$OUT/lib/bitmap.o" "C object lib/bitmap.o"
 	for o in crc16_rust.o crc_ccitt_rust.o crc16_export.o crc_ccitt_export.o; do
 		if [ -e "$OUT/lib/crc/$o" ]; then
 			pass "Rust object lib/crc/$o is present"
@@ -137,7 +148,7 @@ if [ "$VARIANT" = rust ]; then
 			bad "Rust object lib/crc/$o is missing"
 		fi
 	done
-	for o in kfifo_rust.o kfifo_export.o; do
+	for o in kfifo_rust.o kfifo_export.o bitmap_rust.o bitmap_export.o; do
 		if [ -e "$OUT/lib/$o" ]; then
 			pass "Rust object lib/$o is present"
 		else
@@ -164,7 +175,12 @@ else
 	else
 		bad "C object lib/kfifo.o is missing from the reference build"
 	fi
-	for o in kfifo_rust.o kfifo_export.o; do
+	if [ -e "$OUT/lib/bitmap.o" ]; then
+		pass "C object lib/bitmap.o is present (reference)"
+	else
+		bad "C object lib/bitmap.o is missing from the reference build"
+	fi
+	for o in kfifo_rust.o kfifo_export.o bitmap_rust.o bitmap_export.o; do
 		if [ -e "$OUT/lib/$o" ]; then
 			bad "Rust object lib/$o present in the reference build"
 		else
@@ -185,6 +201,15 @@ for sym in crc16 crc_ccitt crc_ccitt_table; do
 done
 
 for sym in $KFIFO_SYMBOLS; do
+	n=$(defcount "$sym")
+	if [ "$n" = "1" ]; then
+		pass "$sym is defined exactly once"
+	else
+		bad "$sym must be defined exactly once (found $n)"
+	fi
+done
+
+for sym in $BITMAP_SYMBOLS; do
 	n=$(defcount "$sym")
 	if [ "$n" = "1" ]; then
 		pass "$sym is defined exactly once"
@@ -227,6 +252,25 @@ if [ "$VARIANT" = rust ]; then
 		fi
 	done
 
+	# The kernel bitmap: the Rust object defines every exported symbol, and
+	# the shim only references them.
+	objnm "$OUT/lib/bitmap_rust.o" rustbitmap.nmsize
+	objnm "$OUT/lib/bitmap_export.o" expbitmap.nm
+
+	for sym in $BITMAP_SYMBOLS; do
+		if grep -qE "^[0-9a-f]+ [0-9a-f]+ [TD] $sym\$" "$TMP/rustbitmap.nmsize"; then
+			pass "$sym is defined by lib/bitmap_rust.o"
+			check_size "$sym" "$(symsize "$TMP/rustbitmap.nmsize" "$sym")" "Rust object"
+		else
+			bad "$sym is not defined by lib/bitmap_rust.o"
+		fi
+		if grep -qE "^ +U $sym\$" "$TMP/expbitmap.nm"; then
+			pass "export shim for $sym only references it (no definition)"
+		else
+			bad "export shim for $sym does not reference it"
+		fi
+	done
+
 	# The kernel FIFO: the Rust object defines every exported symbol, and the
 	# shim only references them.
 	objnm "$OUT/lib/kfifo_rust.o" rustkfifo.nmsize
@@ -255,6 +299,11 @@ else
 	objnm "$OUT/lib/kfifo.o" refkfifo.nmsize
 	for sym in $KFIFO_SYMBOLS; do
 		check_size "$sym" "$(symsize "$TMP/refkfifo.nmsize" "$sym")" "C object"
+	done
+
+	objnm "$OUT/lib/bitmap.o" refbitmap.nmsize
+	for sym in $BITMAP_SYMBOLS; do
+		check_size "$sym" "$(symsize "$TMP/refbitmap.nmsize" "$sym")" "C object"
 	done
 fi
 
@@ -287,6 +336,18 @@ check_symvers crc_ccitt_table EXPORT_SYMBOL
 for sym in $KFIFO_SYMBOLS; do
 	check_ksymtab "$sym"
 	check_symvers "$sym" EXPORT_SYMBOL
+done
+
+for sym in $BITMAP_SYMBOLS; do
+	check_ksymtab "$sym"
+	case "$sym" in
+	devm_bitmap_*)
+		check_symvers "$sym" EXPORT_SYMBOL_GPL
+		;;
+	*)
+		check_symvers "$sym" EXPORT_SYMBOL
+		;;
+	esac
 done
 
 section "disassembly fingerprint"
