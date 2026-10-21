@@ -67,10 +67,9 @@ selected the next target explicitly rather than drifting through leaf code.
 1. **`lib/kfifo.c` (checkpoint 003)** — 595 lines, 23 exports, upstream KUnit
    suite, allocation (`__kfifo_alloc`) and buffer-ownership semantics, no lock
    or per-CPU prerequisite. This is the first migration that is not a pure
-   function over a byte buffer. **Implemented**: `lib/kfifo_rust.rs`, with the
-   differential suite `kfifo_diff` and the upstream `KFIFO_KUNIT_TEST`
-   unchanged. The checkpoint still needs a clean cycle before it counts as
-   verified.
+   function over a byte buffer. **Done and verified**: `lib/kfifo_rust.rs`,
+   with the differential suite `kfifo_diff`, the upstream `KFIFO_KUNIT_TEST`
+   unchanged (in both variants), and a clean cycle that passed all 16 steps.
 2. CRC-ITU-T / CRC-8 / CRC-7 as filler work while kfifo is reviewed.
 3. Move the ksymtab shim out of existence by contributing per-symbol
    `EXPORT_SYMBOL` support for Rust translation units upstream, or by adopting
