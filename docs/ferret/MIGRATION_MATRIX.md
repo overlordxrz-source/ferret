@@ -94,17 +94,27 @@ Full analysis: `docs/ferret/design/COMPONENT_003_INVESTIGATION.md`.
 * Concurrency: the FIFO is lock-free by contract, exactly as in C; the Rust
   code adds no locks and no atomics, and the memory ordering of the C
   `smp_wmb()` is kept with a release fence.
-* Tests: the upstream `KFIFO_KUNIT_TEST` suite, ten Rust unit tests
+* Tests: the upstream `KFIFO_KUNIT_TEST` suite (in both variants, so the
+  reference kernel has to satisfy it too), thirteen Rust unit tests
   (`kfifo_rust`), and a differential suite (`kfifo_diff`) that compiles the
   unmodified `lib/kfifo.c` a second time under test-only symbol names and
   compares the two implementations over initialisation, allocation, 2 000
   randomised operation sequences, wrap-around, the record ("_r") API, the
-  length clamp and the scatterlist setup.
+  length clamp, the scatterlist setup (including the split at the wrap
+  point) and the user-copy fault path.
 * Documented deviations, both in cases where the C code is undefined:
   `__kfifo_init()` with `esize == 0` returns `-EINVAL` instead of dividing by
   zero, and `__kfifo_max_r()` with `recsize >= 4` returns `u32::MAX` instead of
   shifting a 32-bit integer by 32 or more.
 * Remaining C dependency: `lib/kfifo_export.c` (ksymtab only).
+* Size and throughput: the Rust text is 3 162 bytes against 2 347 bytes in C
+  (+34.7 %, 815 bytes in a 57 MB kernel). The cause is the bounds checking
+  and the wider arithmetic of the slice-based core, not a different
+  algorithm. A KUnit micro-benchmark measures the two implementations in the
+  same run; the absolute numbers are QEMU TCG figures and only the ratio is
+  meaningful. Details in
+  [`design/COMPONENT_003_INVESTIGATION.md`](design/COMPONENT_003_INVESTIGATION.md)
+  §4.1.2.
 
 ## 3. Platform matrix
 

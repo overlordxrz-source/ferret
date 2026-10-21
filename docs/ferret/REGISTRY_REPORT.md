@@ -43,6 +43,9 @@ Baseline: `v6.18.57` (`2ff600d29ee478d0a8d46ef8a58afb5e038fe692`)
 | `kfifo` | kunit-kfifo-upstream | upstream-kunit | PASS | `docs/ferret/evidence/boot-x86_64-rust.txt` |
 | `kfifo` | kunit-kfifo-rust-vectors | rust-kunit | PASS | `docs/ferret/evidence/boot-x86_64-rust.txt` |
 | `kfifo` | kunit-kfifo-differential | differential-kunit | PASS | `docs/ferret/evidence/boot-x86_64-rust.txt` |
+| `kfifo` | kunit-kfifo-user-copy-fault | differential-kunit | PASS | `docs/ferret/evidence/boot-x86_64-rust.txt` |
+| `kfifo` | kunit-kfifo-dma-wrap | differential-kunit | PASS | `docs/ferret/evidence/boot-x86_64-rust.txt` |
+| `kfifo` | kunit-kfifo-throughput | benchmark | PASS | `docs/ferret/evidence/boot-x86_64-rust.txt` |
 | `kfifo` | linkage-ownership | static-analysis | PASS | `docs/ferret/evidence/linkage-x86_64.txt` |
 
 ## 4. Components with remaining C dependencies

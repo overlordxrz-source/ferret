@@ -560,6 +560,27 @@
           "evidence": "docs/ferret/evidence/boot-x86_64-rust.txt"
         },
         {
+          "name": "kunit-kfifo-user-copy-fault",
+          "kind": "differential-kunit",
+          "config": "CONFIG_KFIFO_DIFF_KUNIT_TEST",
+          "result": "PASS",
+          "evidence": "docs/ferret/evidence/boot-x86_64-rust.txt"
+        },
+        {
+          "name": "kunit-kfifo-dma-wrap",
+          "kind": "differential-kunit",
+          "config": "CONFIG_KFIFO_DIFF_KUNIT_TEST",
+          "result": "PASS",
+          "evidence": "docs/ferret/evidence/boot-x86_64-rust.txt"
+        },
+        {
+          "name": "kunit-kfifo-throughput",
+          "kind": "benchmark",
+          "config": "CONFIG_KFIFO_DIFF_KUNIT_TEST",
+          "result": "PASS",
+          "evidence": "docs/ferret/evidence/boot-x86_64-rust.txt"
+        },
+        {
           "name": "linkage-ownership",
           "kind": "static-analysis",
           "result": "PASS",
@@ -569,11 +590,15 @@
       "risks": [
         "Record-mode framing and partial user-copy semantics are the highest-risk areas; both are covered by the differential suite.",
         "The FIFO is lock-free by contract: the locking rules are the caller's, exactly as in the C original.",
-        "smp_wmb() is mapped to a release fence, which is at least as strong as the C barrier on every supported architecture."
+        "smp_wmb() is mapped to a release fence, which is at least as strong as the C barrier on every supported architecture.",
+        "The Rust text is 34.7 % larger than the C text (+815 bytes in a 57 MB kernel); the cause is the bounds checking and the wider arithmetic, not a different algorithm.",
+        "The throughput measurement was taken under QEMU TCG and is therefore a relative figure only; no native measurement exists."
       ],
       "unsafe_boundaries": [
         "The exported functions take a raw `struct __kfifo *`; the pointer is dereferenced once, at the entry of each function.",
         "The backing buffer is turned into a byte slice; the length is derived from the FIFO's own mask and element size.",
+        "The copy helpers use copy_nonoverlapping() on pointers derived from those validated slices, with the preconditions (offset inside the buffer, length within the buffer) stated in the SAFETY comments.",
+        "The record length bytes are read and written with get_unchecked(): the index is masked to the buffer size, so it is always in bounds.",
         "User memory is accessed through the kernel's copy_from_user()/copy_to_user(), which validate the pointer."
       ],
       "remaining_c_dependencies": [
