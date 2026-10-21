@@ -1,122 +1,166 @@
 Ferret verification evidence
-Source commit: 48fed460f7cf
-Extracted: 2026-10-21T19:25:59Z (UTC)
+Source commit: e117700908ce
+Extracted: 2026-10-21T20:25:51Z (UTC)
 Raw logs: artifacts/ (not published; reproduced by tools/ferret/test.sh)
 ----------------------------------------------------------------------
 Variant: rust
 Architecture: x86_64
 Result: PASS (all required markers present)
 
-Booting from ROM..c[?7l[2J[    0.000000] Linux version 6.18.57-ferret-rust (root@3ea769cb049c) (Ubuntu clang version 18.1.3 (1ubuntu1), Ubuntu LLD 18.1.3) #1 SMP PREEMPT_DYNAMIC Wed Oct 21 18:56:12 UTC 2026
-[    2.796209]     ok 1 test_alignment
-[    2.796378] ok 1 rust_allocator
-[    2.799139]     ok 1 test_kvec_retain
-[    2.799199] ok 2 rust_kvec
-[    2.800370]     ok 1 bitmap_borrow
-[    2.801447]     ok 2 bitmap_copy
-[    2.802351]     ok 3 bitmap_vec_new
-[    2.803779]     ok 4 bitmap_set_clear_find
-[    2.805844]     ok 5 owned_bitmap_out_of_bounds
-[    2.807257]     ok 6 bitmap_copy_and_extend
-[    2.807484] ok 3 rust_kernel_bitmap
-[    2.808804]     ok 1 rust_test_kunit_example_test
-[    2.809935]     ok 2 rust_test_kunit_in_kunit_test
-[    2.811145]     ok 3 rust_test_kunit_always_disabled_test # SKIP 
-[    2.811378] ok 4 rust_kernel_kunit
-[    2.812849]     ok 1 test_cstr_to_str
-[    2.813881]     ok 2 test_cstr_to_str_invalid_utf8
-[    2.814925]     ok 3 test_cstr_as_str_unchecked
-[    2.816780]     ok 4 test_cstr_display
-[    2.818214]     ok 5 test_cstr_display_all_bytes
-[    2.819642]     ok 6 test_cstr_debug
-[    2.821165]     ok 7 test_bstr_display
-[    2.823754]     ok 8 test_bstr_debug
-[    2.823930] ok 5 rust_kernel_str
-[    2.825282]     ok 1 atomic_basic_tests
-[    2.826315]     ok 2 atomic_xchg_tests
-[    2.827601]     ok 3 atomic_cmpxchg_tests
-[    2.828790]     ok 4 atomic_arithmetic_tests
-[    2.829125] ok 6 rust_atomics
-[    2.830402]     ok 1 kfifo_rust_in_out_roundtrip
-[    2.831388]     ok 2 kfifo_rust_out_is_clamped_to_the_content
-[    2.832289]     ok 3 kfifo_rust_in_is_clamped_to_the_free_space
-[    2.833383]     ok 4 kfifo_rust_wrap_around_keeps_the_order
-[    2.834304]     ok 5 kfifo_rust_peek_does_not_consume
-[    2.835250]     ok 6 kfifo_rust_record_roundtrip
-[    2.836106]     ok 7 kfifo_rust_record_skip
-[    2.837021]     ok 8 kfifo_rust_max_r
-[    2.838090]     ok 9 kfifo_rust_max_r_large_recsize
-[    2.839046]     ok 10 kfifo_rust_init_zero_element_size
-[    2.840786]     ok 11 kfifo_rust_user_copy_fault
-[    2.841684]     ok 12 kfifo_rust_power_of_two_helpers
-[    2.842734]     ok 13 kfifo_rust_alloc_and_free
-[    2.843118] ok 7 kfifo_rust
-[    2.844555]     ok 1 kfifo_diff_init
-[    2.845695]     ok 2 kfifo_diff_alloc
-[    2.849550]     ok 3 kfifo_diff_random_sequences
-[    2.850502]     ok 4 kfifo_diff_wrap_around
-[    2.852273]     ok 5 kfifo_diff_records
-[    2.853218]     ok 6 kfifo_diff_max_r
-[    2.854450]     ok 7 kfifo_diff_dma_prepare
-[    2.855488]     ok 8 kfifo_diff_dma_wrap
-[    2.856712]     ok 9 kfifo_diff_user_copy_fault
-[    2.982780]     ok 10 kfifo_diff_benchmark
-[    2.982931] ok 8 kfifo_diff
-[    2.984090]     ok 1 crc16_rust_check_value
-[    2.984966]     ok 2 crc16_rust_empty_buffer
-[    2.986105]     ok 3 crc16_rust_incremental
-[    2.986944]     ok 4 crc16_rust_all_initial_values_single_byte
-[    2.988146]     ok 5 crc16_rust_deterministic_prng
-[    2.988336] ok 9 crc16_rust
-[    2.994469]     ok 1 crc16_diff_edge_cases
-[    3.029227]     ok 2 crc16_diff_random_streams
-[    3.029522] ok 10 crc16_diff
-[    3.032161]     ok 1 crc_ccitt_rust_check_value
-[    3.033320]     ok 2 crc_ccitt_rust_check_value_init_ffff
-[    3.034380]     ok 3 crc_ccitt_rust_empty_buffer
-[    3.035331]     ok 4 crc_ccitt_rust_incremental
-[    3.036336]     ok 5 crc_ccitt_rust_all_initial_values_single_byte
-[    3.037579]     ok 6 crc_ccitt_rust_table_matches_bitwise
-[    3.038804]     ok 7 crc_ccitt_rust_deterministic_prng
-[    3.039374] ok 11 crc_ccitt_rust
-[    3.040837]     ok 1 crc_ccitt_diff_table
-[    3.045284]     ok 2 crc_ccitt_diff_edge_cases
-[    3.079826]     ok 3 crc_ccitt_diff_random_streams
-[    3.080032] ok 12 crc_ccitt_diff
-[    4.184807]     ok 1 crc16_test
-[    4.185668]     ok 2 crc16_benchmark # SKIP not enabled
-[    4.580887]     ok 3 crc32_le_test
-[    4.581839]     ok 4 crc32_le_benchmark # SKIP not enabled
-[    5.396522]     ok 5 crc32_be_test
-[    5.398372]     ok 6 crc32_be_benchmark # SKIP not enabled
-[    6.441193]     ok 7 crc32c_test
-[    6.442460]     ok 8 crc32c_benchmark # SKIP not enabled
-[    6.442786] ok 13 crc
-[    6.444474]     ok 1 kfifo_test_reset_should_clear_the_fifo
-[    6.445360]     ok 2 kfifo_test_define_should_define_an_empty_fifo
-[    6.446358]     ok 3 kfifo_test_len_should_ret_n_of_stored_elements
-[    6.447362]     ok 4 kfifo_test_put_should_insert_and_get_should_pop
-[    6.448402]     ok 5 kfifo_test_in_should_insert_multiple_elements
-[    6.449406]     ok 6 kfifo_test_out_should_pop_multiple_elements
-[    6.450274]     ok 7 kfifo_test_dec_init_should_define_an_empty_fifo
-[    6.451188]     ok 8 kfifo_test_define_should_equal_declare_init
-[    6.452234]     ok 9 kfifo_test_alloc_should_initiliaze_a_ptr_fifo
-[    6.453253]     ok 10 kfifo_test_peek_should_not_remove_elements
-[    6.453470] ok 14 kfifo
-[    6.456843]     ok 1 bitmap_diff_sizes
-[    6.458144]     ok 2 bitmap_diff_set_clear
-[    6.459832]     ok 3 bitmap_diff_shifts
-[    6.461088]     ok 4 bitmap_diff_cut
-[    6.461937]     ok 5 bitmap_diff_cut_out_of_range
-[    6.463717]     ok 6 bitmap_diff_find_next_zero_area
-[    6.466707]     ok 7 bitmap_diff_remap
-[    6.467873]     ok 8 bitmap_diff_arr32
-[    6.468892]     ok 9 bitmap_diff_alloc
-[    6.469955]     ok 10 bitmap_diff_alloc_node
-[    6.505234]     ok 11 bitmap_diff_benchmark
-[    6.505385] ok 15 bitmap_diff
+Booting from ROM..c[?7l[2J[    0.000000] Linux version 6.18.57-ferret-rust (root@3ea769cb049c) (Ubuntu clang version 18.1.3 (1ubuntu1), Ubuntu LLD 18.1.3) #11 SMP PREEMPT_DYNAMIC Wed Oct 21 20:23:31 UTC 2026
+[    1.664528]     ok 1 test_alignment
+[    1.664631] ok 1 rust_allocator
+[    1.666272]     ok 1 test_kvec_retain
+[    1.666314] ok 2 rust_kvec
+[    1.667115]     ok 1 bitmap_borrow
+[    1.667616]     ok 2 bitmap_copy
+[    1.668260]     ok 3 bitmap_vec_new
+[    1.668948]     ok 4 bitmap_set_clear_find
+[    1.670026]     ok 5 owned_bitmap_out_of_bounds
+[    1.670727]     ok 6 bitmap_copy_and_extend
+[    1.670978] ok 3 rust_kernel_bitmap
+[    1.679155]     ok 1 rust_test_kunit_example_test
+[    1.679707]     ok 2 rust_test_kunit_in_kunit_test
+[    1.680189]     ok 3 rust_test_kunit_always_disabled_test # SKIP 
+[    1.680332] ok 4 rust_kernel_kunit
+[    1.681061]     ok 1 test_cstr_to_str
+[    1.681622]     ok 2 test_cstr_to_str_invalid_utf8
+[    1.682060]     ok 3 test_cstr_as_str_unchecked
+[    1.682996]     ok 4 test_cstr_display
+[    1.683782]     ok 5 test_cstr_display_all_bytes
+[    1.684447]     ok 6 test_cstr_debug
+[    1.685193]     ok 7 test_bstr_display
+[    1.685932]     ok 8 test_bstr_debug
+[    1.686031] ok 5 rust_kernel_str
+[    1.686734]     ok 1 atomic_basic_tests
+[    1.687263]     ok 2 atomic_xchg_tests
+[    1.687985]     ok 3 atomic_cmpxchg_tests
+[    1.688534]     ok 4 atomic_arithmetic_tests
+[    1.688778] ok 6 rust_atomics
+[    1.689398]     ok 1 kfifo_rust_in_out_roundtrip
+[    1.689957]     ok 2 kfifo_rust_out_is_clamped_to_the_content
+[    1.690517]     ok 3 kfifo_rust_in_is_clamped_to_the_free_space
+[    1.691161]     ok 4 kfifo_rust_wrap_around_keeps_the_order
+[    1.691722]     ok 5 kfifo_rust_peek_does_not_consume
+[    1.692243]     ok 6 kfifo_rust_record_roundtrip
+[    1.692826]     ok 7 kfifo_rust_record_skip
+[    1.693328]     ok 8 kfifo_rust_max_r
+[    1.693864]     ok 9 kfifo_rust_max_r_large_recsize
+[    1.694410]     ok 10 kfifo_rust_init_zero_element_size
+[    1.695387]     ok 11 kfifo_rust_user_copy_fault
+[    1.696008]     ok 12 kfifo_rust_power_of_two_helpers
+[    1.696642]     ok 13 kfifo_rust_alloc_and_free
+[    1.696751] ok 7 kfifo_rust
+[    1.697616]     ok 1 kfifo_diff_init
+[    1.698256]     ok 2 kfifo_diff_alloc
+[    1.700542]     ok 3 kfifo_diff_random_sequences
+[    1.701097]     ok 4 kfifo_diff_wrap_around
+[    1.702128]     ok 5 kfifo_diff_records
+[    1.702719]     ok 6 kfifo_diff_max_r
+[    1.703396]     ok 7 kfifo_diff_dma_prepare
+[    1.704175]     ok 8 kfifo_diff_dma_wrap
+[    1.704928]     ok 9 kfifo_diff_user_copy_fault
+[    1.777129]     ok 10 kfifo_diff_benchmark
+[    1.777224] ok 8 kfifo_diff
+[    1.777865]     ok 1 crc16_rust_check_value
+[    1.778403]     ok 2 crc16_rust_empty_buffer
+[    1.778982]     ok 3 crc16_rust_incremental
+[    1.779513]     ok 4 crc16_rust_all_initial_values_single_byte
+[    1.780245]     ok 5 crc16_rust_deterministic_prng
+[    1.780352] ok 9 crc16_rust
+[    1.783803]     ok 1 crc16_diff_edge_cases
+[    1.803256]     ok 2 crc16_diff_random_streams
+[    1.803374] ok 10 crc16_diff
+[    1.804069]     ok 1 crc_ccitt_rust_check_value
+[    1.804647]     ok 2 crc_ccitt_rust_check_value_init_ffff
+[    1.805177]     ok 3 crc_ccitt_rust_empty_buffer
+[    1.805718]     ok 4 crc_ccitt_rust_incremental
+[    1.806237]     ok 5 crc_ccitt_rust_all_initial_values_single_byte
+[    1.806844]     ok 6 crc_ccitt_rust_table_matches_bitwise
+[    1.807470]     ok 7 crc_ccitt_rust_deterministic_prng
+[    1.807840] ok 11 crc_ccitt_rust
+[    1.808533]     ok 1 crc_ccitt_diff_table
+[    1.811041]     ok 2 crc_ccitt_diff_edge_cases
+[    1.830589]     ok 3 crc_ccitt_diff_random_streams
+[    1.830756] ok 12 crc_ccitt_diff
+[    2.469972]     ok 1 crc16_test
+[    2.470529]     ok 2 crc16_benchmark # SKIP not enabled
+[    2.774923]     ok 3 crc32_le_test
+[    2.775285]     ok 4 crc32_le_benchmark # SKIP not enabled
+[    3.445773]     ok 5 crc32_be_test
+[    3.446361]     ok 6 crc32_be_benchmark # SKIP not enabled
+[    4.054072]     ok 7 crc32c_test
+[    4.054727]     ok 8 crc32c_benchmark # SKIP not enabled
+[    4.054872] ok 13 crc
+[    4.055602]     ok 1 kfifo_test_reset_should_clear_the_fifo
+[    4.056067]     ok 2 kfifo_test_define_should_define_an_empty_fifo
+[    4.056619]     ok 3 kfifo_test_len_should_ret_n_of_stored_elements
+[    4.057167]     ok 4 kfifo_test_put_should_insert_and_get_should_pop
+[    4.057799]     ok 5 kfifo_test_in_should_insert_multiple_elements
+[    4.058346]     ok 6 kfifo_test_out_should_pop_multiple_elements
+[    4.058855]     ok 7 kfifo_test_dec_init_should_define_an_empty_fifo
+[    4.059368]     ok 8 kfifo_test_define_should_equal_declare_init
+[    4.059944]     ok 9 kfifo_test_alloc_should_initiliaze_a_ptr_fifo
+[    4.060492]     ok 10 kfifo_test_peek_should_not_remove_elements
+[    4.060747] ok 14 kfifo
+[    4.062506]     ok 1 bitmap_diff_sizes
+[    4.063286]     ok 2 bitmap_diff_set_clear
+[    4.064219]     ok 3 bitmap_diff_shifts
+[    4.065004]     ok 4 bitmap_diff_cut
+[    4.065573]     ok 5 bitmap_diff_cut_out_of_range
+[    4.066483]     ok 6 bitmap_diff_find_next_zero_area
+[    4.068247]     ok 7 bitmap_diff_remap
+[    4.068988]     ok 8 bitmap_diff_arr32
+[    4.069638]     ok 9 bitmap_diff_alloc
+[    4.070246]     ok 10 bitmap_diff_alloc_node
+[    4.090315]     ok 11 bitmap_diff_benchmark
+[    4.090414] ok 15 bitmap_diff
+[    4.091246]     ok 1 kref_release_on_drop
+[    4.091914]     ok 2 kref_get_keeps_the_object_alive
+[    4.092538]     ok 3 kref_into_raw_transfers_the_reference
+[    4.093089]     ok 4 dec_if_one_ignores_a_saturated_count
+[    4.093654]     ok 5 dec_not_one_refuses_a_count_of_one
+[    4.094310]     ok 6 dec_not_one_decrements_a_larger_count
+[    4.094430] ok 16 refcount_rust
+[    4.095135]     ok 1 refcount_diff_dec_if_one
+[    4.095788] WARNING: CPU: 0 PID: 260 at /build/src/rust/kernel/sync/refcount.rs:46 _RNvMNtNtCshc5sK6KjdJJ_6kernel4sync8refcountNtB2_8Refcount15try_dec_not_one+0xe3/0x100
+[    4.097440] Call Trace:
+[    4.098714] WARNING: CPU: 0 PID: 260 at lib/refcount.c:87 refcount_dec_not_one_c_ref+0x4f/0x60
+[    4.099550] Call Trace:
+[    4.100257]     ok 2 refcount_diff_dec_not_one
+[    4.100747] WARNING: CPU: 1 PID: 262 at /build/src/rust/kernel/sync/refcount.rs:46 _RNvMNtNtCshc5sK6KjdJJ_6kernel4sync8refcountNtB2_8Refcount13warn_saturate+0x336/0x3e0
+[    4.101745] Call Trace:
+[    4.102352] WARNING: CPU: 1 PID: 262 at lib/refcount.c:19 refcount_warn_saturate_c_ref+0xe0/0x140
+[    4.103231] Call Trace:
+[    4.103866] WARNING: CPU: 1 PID: 262 at /build/src/rust/kernel/sync/refcount.rs:46 _RNvMNtNtCshc5sK6KjdJJ_6kernel4sync8refcountNtB2_8Refcount13warn_saturate+0x171/0x3e0
+[    4.104839] Call Trace:
+[    4.105399] WARNING: CPU: 1 PID: 262 at lib/refcount.c:22 refcount_warn_saturate_c_ref+0x64/0x140
+[    4.106256] Call Trace:
+[    4.106824] WARNING: CPU: 1 PID: 262 at /build/src/rust/kernel/sync/refcount.rs:46 _RNvMNtNtCshc5sK6KjdJJ_6kernel4sync8refcountNtB2_8Refcount13warn_saturate+0x208/0x3e0
+[    4.107729] Call Trace:
+[    4.108289] WARNING: CPU: 1 PID: 262 at lib/refcount.c:25 refcount_warn_saturate_c_ref+0x8c/0x140
+[    4.109128] Call Trace:
+[    4.109636] WARNING: CPU: 1 PID: 262 at /build/src/rust/kernel/sync/refcount.rs:46 _RNvMNtNtCshc5sK6KjdJJ_6kernel4sync8refcountNtB2_8Refcount13warn_saturate+0x29f/0x3e0
+[    4.110677] Call Trace:
+[    4.111234] WARNING: CPU: 1 PID: 262 at lib/refcount.c:28 refcount_warn_saturate_c_ref+0xb4/0x140
+[    4.112050] Call Trace:
+[    4.112562] WARNING: CPU: 1 PID: 262 at /build/src/rust/kernel/sync/refcount.rs:46 _RNvMNtNtCshc5sK6KjdJJ_6kernel4sync8refcountNtB2_8Refcount13warn_saturate+0xc9/0x3e0
+[    4.113406] Call Trace:
+[    4.114072] WARNING: CPU: 1 PID: 262 at lib/refcount.c:31 refcount_warn_saturate_c_ref+0x12b/0x140
+[    4.114925] Call Trace:
+[    4.115435] WARNING: CPU: 1 PID: 262 at /build/src/rust/kernel/sync/refcount.rs:46 _RNvMNtNtCshc5sK6KjdJJ_6kernel4sync8refcountNtB2_8Refcount13warn_saturate+0x3c9/0x3e0
+[    4.116392] Call Trace:
+[    4.117024] WARNING: CPU: 1 PID: 262 at lib/refcount.c:34 refcount_warn_saturate_c_ref+0x10c/0x140
+[    4.117845] Call Trace:
+[    4.118536]     ok 3 refcount_diff_warn_saturate
+[    4.119154]     ok 4 refcount_diff_dec_and_mutex_lock
+[    4.119868]     ok 5 refcount_diff_dec_and_lock
+[    4.120510]     ok 6 refcount_diff_dec_and_lock_irqsave
+[    4.121202]     ok 7 refcount_diff_sequence
+[    4.126079]     ok 8 refcount_diff_concurrent
+[    4.126177] ok 17 refcount_diff
 FERRET-INIT: start
 FERRET-INIT: sysname=Linux release=6.18.57-ferret-rust machine=x86_64
 FERRET-INIT: proc-mounted
-FERRET-INIT: proc-version-prefix=Linux version 6.18.57-ferret-rust (root@3ea769cb049c) (Ubuntu clang version 18.1.3 (1ubuntu1), Ubuntu LLD 18.1.3) #1 SMP PREEMPT_DYNAMIC Wed Oct 21 18:56:12 UTC 2026
+FERRET-INIT: proc-version-prefix=Linux version 6.18.57-ferret-rust (root@3ea769cb049c) (Ubuntu clang version 18.1.3 (1ubuntu1), Ubuntu LLD 18.1.3) #11 SMP PREEMPT_DYNAMIC Wed Oct 21 20:23:31 UTC 2026
 FERRET-INIT: ok

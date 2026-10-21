@@ -1,6 +1,6 @@
 Ferret verification evidence
-Source commit: 48fed460f7cf
-Extracted: 2026-10-21T19:25:59Z (UTC)
+Source commit: e117700908ce
+Extracted: 2026-10-21T20:25:51Z (UTC)
 Raw logs: artifacts/ (not published; reproduced by tools/ferret/test.sh)
 ----------------------------------------------------------------------
 Variant: rust (x86_64)
@@ -10,14 +10,15 @@ Result: PASS (see the checks below)
 == kernel variant ==
 variant:  rust
 vmlinux:  /build/linux-rust/vmlinux
-git:      48fed460f7cf
-config:   CONFIG_RUST=y CONFIG_CRC16=y CONFIG_CRC16_RUST=y CONFIG_CRC16_DIFF_KUNIT_TEST=y CONFIG_CRC_CCITT=y CONFIG_CRC_CCITT_RUST=y CONFIG_CRC_CCITT_DIFF_KUNIT_TEST=y CONFIG_KFIFO_RUST=y CONFIG_BITMAP_RUST=y CONFIG_BITMAP_DIFF_KUNIT_TEST=y CONFIG_KFIFO_DIFF_KUNIT_TEST=y CONFIG_KUNIT=y 
+git:      a03e061d091e
+config:   CONFIG_RUST=y CONFIG_CRC16=y CONFIG_CRC16_RUST=y CONFIG_CRC16_DIFF_KUNIT_TEST=y CONFIG_CRC_CCITT=y CONFIG_CRC_CCITT_RUST=y CONFIG_CRC_CCITT_DIFF_KUNIT_TEST=y CONFIG_KFIFO_RUST=y CONFIG_BITMAP_RUST=y CONFIG_BITMAP_DIFF_KUNIT_TEST=y CONFIG_KFIFO_DIFF_KUNIT_TEST=y CONFIG_REFCOUNT_RUST=y CONFIG_REFCOUNT_DIFF_KUNIT_TEST=y CONFIG_KUNIT=y 
 
 == build tree object ownership ==
 PASS  C object lib/crc/crc16.o is absent from the build
 PASS  C object lib/crc/crc-ccitt.o is absent from the build
 PASS  C object lib/kfifo.o is absent from the build
 PASS  C object lib/bitmap.o is absent from the build
+PASS  C object lib/refcount.o is not linked into the Rust variant
 PASS  Rust object lib/crc/crc16_rust.o is present
 PASS  Rust object lib/crc/crc_ccitt_rust.o is present
 PASS  Rust object lib/crc/crc16_export.o is present
@@ -26,6 +27,8 @@ PASS  Rust object lib/kfifo_rust.o is present
 PASS  Rust object lib/kfifo_export.o is present
 PASS  Rust object lib/bitmap_rust.o is present
 PASS  Rust object lib/bitmap_export.o is present
+PASS  Rust object lib/refcount_rust.o is present
+PASS  Rust object lib/refcount_export.o is present
 
 == symbol definitions ==
       definitions of crc16 in vmlinux: 1
@@ -86,6 +89,12 @@ PASS  bitmap_zalloc is defined exactly once
 PASS  bitmap_zalloc_node is defined exactly once
 PASS  devm_bitmap_alloc is defined exactly once
 PASS  devm_bitmap_zalloc is defined exactly once
+PASS  refcount_warn_saturate is defined exactly once
+PASS  refcount_dec_if_one is defined exactly once
+PASS  refcount_dec_not_one is defined exactly once
+PASS  refcount_dec_and_mutex_lock is defined exactly once
+PASS  refcount_dec_and_lock is defined exactly once
+PASS  refcount_dec_and_lock_irqsave is defined exactly once
 PASS  crc16 is defined by lib/crc/crc16_rust.o
       size crc16: object=0x0000000000000093 vmlinux=0x0000000000000093 bytes
 PASS  linked crc16 has the size of the function in the Rust object
@@ -214,6 +223,30 @@ PASS  devm_bitmap_zalloc is defined by lib/bitmap_rust.o
       size devm_bitmap_zalloc: object=0x0000000000000087 vmlinux=0x0000000000000087 bytes
 PASS  linked devm_bitmap_zalloc has the size of the function in the Rust object
 PASS  export shim for devm_bitmap_zalloc only references it (no definition)
+PASS  refcount_warn_saturate is defined by lib/refcount_rust.o
+      size refcount_warn_saturate: object=0x0000000000000009 vmlinux=0x0000000000000009 bytes
+PASS  linked refcount_warn_saturate has the size of the function in the Rust object
+PASS  export shim for refcount_warn_saturate only references it (no definition)
+PASS  refcount_dec_if_one is defined by lib/refcount_rust.o
+      size refcount_dec_if_one: object=0x000000000000001f vmlinux=0x000000000000001f bytes
+PASS  linked refcount_dec_if_one has the size of the function in the Rust object
+PASS  export shim for refcount_dec_if_one only references it (no definition)
+PASS  refcount_dec_not_one is defined by lib/refcount_rust.o
+      size refcount_dec_not_one: object=0x0000000000000009 vmlinux=0x0000000000000009 bytes
+PASS  linked refcount_dec_not_one has the size of the function in the Rust object
+PASS  export shim for refcount_dec_not_one only references it (no definition)
+PASS  refcount_dec_and_mutex_lock is defined by lib/refcount_rust.o
+      size refcount_dec_and_mutex_lock: object=0x0000000000000045 vmlinux=0x0000000000000045 bytes
+PASS  linked refcount_dec_and_mutex_lock has the size of the function in the Rust object
+PASS  export shim for refcount_dec_and_mutex_lock only references it (no definition)
+PASS  refcount_dec_and_lock is defined by lib/refcount_rust.o
+      size refcount_dec_and_lock: object=0x0000000000000045 vmlinux=0x0000000000000045 bytes
+PASS  linked refcount_dec_and_lock has the size of the function in the Rust object
+PASS  export shim for refcount_dec_and_lock only references it (no definition)
+PASS  refcount_dec_and_lock_irqsave is defined by lib/refcount_rust.o
+      size refcount_dec_and_lock_irqsave: object=0x000000000000004d vmlinux=0x000000000000004d bytes
+PASS  linked refcount_dec_and_lock_irqsave has the size of the function in the Rust object
+PASS  export shim for refcount_dec_and_lock_irqsave only references it (no definition)
 PASS  __kfifo_alloc is defined by lib/kfifo_rust.o
       size __kfifo_alloc: object=0x00000000000000fe vmlinux=0x00000000000000fe bytes
 PASS  linked __kfifo_alloc has the size of the function in the Rust object
@@ -476,51 +509,69 @@ PASS  devm_bitmap_alloc exported as EXPORT_SYMBOL_GPL
 PASS  __ksymtab_devm_bitmap_zalloc exists (module ABI preserved)
       vmlinux.symvers: 0x00000000	devm_bitmap_zalloc	vmlinux	EXPORT_SYMBOL_GPL	
 PASS  devm_bitmap_zalloc exported as EXPORT_SYMBOL_GPL
+PASS  __ksymtab_refcount_warn_saturate exists (module ABI preserved)
+      vmlinux.symvers: 0x00000000	refcount_warn_saturate	vmlinux	EXPORT_SYMBOL	
+PASS  refcount_warn_saturate exported as EXPORT_SYMBOL
+PASS  __ksymtab_refcount_dec_if_one exists (module ABI preserved)
+      vmlinux.symvers: 0x00000000	refcount_dec_if_one	vmlinux	EXPORT_SYMBOL	
+PASS  refcount_dec_if_one exported as EXPORT_SYMBOL
+PASS  __ksymtab_refcount_dec_not_one exists (module ABI preserved)
+      vmlinux.symvers: 0x00000000	refcount_dec_not_one	vmlinux	EXPORT_SYMBOL	
+PASS  refcount_dec_not_one exported as EXPORT_SYMBOL
+PASS  __ksymtab_refcount_dec_and_mutex_lock exists (module ABI preserved)
+      vmlinux.symvers: 0x00000000	refcount_dec_and_mutex_lock	vmlinux	EXPORT_SYMBOL	
+PASS  refcount_dec_and_mutex_lock exported as EXPORT_SYMBOL
+PASS  __ksymtab_refcount_dec_and_lock exists (module ABI preserved)
+      vmlinux.symvers: 0x00000000	refcount_dec_and_lock	vmlinux	EXPORT_SYMBOL	
+PASS  refcount_dec_and_lock exported as EXPORT_SYMBOL
+PASS  __ksymtab_refcount_dec_and_lock_irqsave exists (module ABI preserved)
+      vmlinux.symvers: 0x00000000	refcount_dec_and_lock_irqsave	vmlinux	EXPORT_SYMBOL	
+PASS  refcount_dec_and_lock_irqsave exported as EXPORT_SYMBOL
 
 == disassembly fingerprint ==
-      ffffffff818306c0 <crc16>:
-      ffffffff818306c0:      	endbr64
-      ffffffff818306c4:      	movl	%edi, %eax
-      ffffffff818306c6:      	testq	%rdx, %rdx
-      ffffffff818306c9:      	je	0xffffffff8183074e <crc16+0x8e>
-      ffffffff818306cf:      	testb	$0x1, %dl
-      ffffffff818306d2:      	jne	0xffffffff818306df <crc16+0x1f>
-      ffffffff81831000 <crc_ccitt>:
-      ffffffff81831000:      	endbr64
-      ffffffff81831004:      	movl	%edi, %eax
-      ffffffff81831006:      	testq	%rdx, %rdx
-      ffffffff81831009:      	je	0xffffffff81831085 <crc_ccitt+0x85>
-      ffffffff8183100b:      	testb	$0x1, %dl
-      ffffffff8183100e:      	jne	0xffffffff8183101b <crc_ccitt+0x1b>
-      ffffffff81820cc0 <__kfifo_in>:
-      ffffffff81820cc0:      	endbr64
-      ffffffff81820cc4:      	pushq	%rbp
-      ffffffff81820cc5:      	pushq	%r15
-      ffffffff81820cc7:      	pushq	%r14
-      ffffffff81820cc9:      	pushq	%r13
-      ffffffff81820ccb:      	pushq	%r12
-      ffffffff81820ccd:      	pushq	%rbx
-      ffffffff81820cce:      	pushq	%rax
-      ffffffff81820ccf:      	movq	%rsi, %r15
-      ffffffff81820cd2:      	movq	%rdi, %rbx
-      ffffffff81820cd5:      	movl	(%rdi), %r8d
-      ffffffff81820cd8:      	movl	0x4(%rdi), %ecx
-      ffffffff81820cdb:      	movl	0x8(%rdi), %eax
-      ffffffff81820cde:      	subl	%r8d, %ecx
-      ffffffff81820ce1:      	movl	%r8d, 0x4(%rsp)
-      ffffffff81820ce6:      	leal	(%rcx,%rax), %r14d
-      ffffffff81820cea:      	incl	%r14d
-      ffffffff81820ced:      	cmpl	%r14d, %edx
-      ffffffff81820cf0:      	cmovbl	%edx, %r14d
-      ffffffff81820cf4:      	movl	0xc(%rdi), %ecx
-      ffffffff81820cf7:      	testq	%rcx, %rcx
-      ffffffff81820cfa:      	sete	%dl
-      ffffffff81820cfd:      	movq	%r14, %r12
-      ffffffff81820d00:      	imulq	%rcx, %r12
-      ffffffff81820d04:      	movl	%eax, %edi
-      ffffffff81820d06:      	andl	%r8d, %edi
-      ffffffff81820d09:      	imulq	%rcx, %rdi
-      ffffffff81820d0d:      	incq	%rax
+      ffffffff81830860 <crc16>:
+      ffffffff81830860:      	endbr64
+      ffffffff81830864:      	movl	%edi, %eax
+      ffffffff81830866:      	testq	%rdx, %rdx
+      ffffffff81830869:      	je	0xffffffff818308ee <crc16+0x8e>
+      ffffffff8183086f:      	testb	$0x1, %dl
+      ffffffff81830872:      	jne	0xffffffff8183087f <crc16+0x1f>
+      ffffffff818311a0 <crc_ccitt>:
+      ffffffff818311a0:      	endbr64
+      ffffffff818311a4:      	movl	%edi, %eax
+      ffffffff818311a6:      	testq	%rdx, %rdx
+      ffffffff818311a9:      	je	0xffffffff81831225 <crc_ccitt+0x85>
+      ffffffff818311ab:      	testb	$0x1, %dl
+      ffffffff818311ae:      	jne	0xffffffff818311bb <crc_ccitt+0x1b>
+      ffffffff81820e60 <__kfifo_in>:
+      ffffffff81820e60:      	endbr64
+      ffffffff81820e64:      	pushq	%rbp
+      ffffffff81820e65:      	pushq	%r15
+      ffffffff81820e67:      	pushq	%r14
+      ffffffff81820e69:      	pushq	%r13
+      ffffffff81820e6b:      	pushq	%r12
+      ffffffff81820e6d:      	pushq	%rbx
+      ffffffff81820e6e:      	pushq	%rax
+      ffffffff81820e6f:      	movq	%rsi, %r15
+      ffffffff81820e72:      	movq	%rdi, %rbx
+      ffffffff81820e75:      	movl	(%rdi), %r8d
+      ffffffff81820e78:      	movl	0x4(%rdi), %ecx
+      ffffffff81820e7b:      	movl	0x8(%rdi), %eax
+      ffffffff81820e7e:      	subl	%r8d, %ecx
+      ffffffff81820e81:      	movl	%r8d, 0x4(%rsp)
+      ffffffff81820e86:      	leal	(%rcx,%rax), %r14d
+      ffffffff81820e8a:      	incl	%r14d
+      ffffffff81820e8d:      	cmpl	%r14d, %edx
+      ffffffff81820e90:      	cmovbl	%edx, %r14d
+      ffffffff81820e94:      	movl	0xc(%rdi), %ecx
+      ffffffff81820e97:      	testq	%rcx, %rcx
+      ffffffff81820e9a:      	sete	%dl
+      ffffffff81820e9d:      	movq	%r14, %r12
+      ffffffff81820ea0:      	imulq	%rcx, %r12
+      ffffffff81820ea4:      	movl	%eax, %edi
+      ffffffff81820ea6:      	andl	%r8d, %edi
+      ffffffff81820ea9:      	imulq	%rcx, %rdi
+      ffffffff81820ead:      	incq	%rax
 PASS  disassembly fingerprints captured above
 
 RESULT: PASS
