@@ -124,13 +124,16 @@ reasonable PR budget.
 
 **Status.** The `docs` workflow runs green on every push to `main`. The
 `kernel-smoke` workflow has been executed on GitHub runners: the reference and
-Ferret kernel builds succeed there. Its first two runs exposed two
-environment-only defects in the harness — `llvm-strip` was not linked into the
-toolchain, and the initramfs script could not create `/dev/console` without
-privileges — both fixed in
-`tools/ferret/lib/initramfs-in-container.sh` and the workflow. A full green
-`kernel-smoke` run is the remaining item; until it is green, the authoritative
-verification evidence remains the local clean cycle documented in
+Ferret kernel builds succeed there. Its runs exposed three environment-only
+defects in the harness — `llvm-strip` was not linked into the toolchain, the
+initramfs script could not create `/dev/console` without privileges, and the
+init's `.cargo/config.toml` was never committed (the kernel's `.gitignore`
+ignores dotfiles), so a fresh checkout built a static-PIE init that segfaulted
+when the kernel executed it. All three are fixed
+(`tools/ferret/lib/initramfs-in-container.sh`, the workflow, and the
+force-added cargo configuration). A full green `kernel-smoke` run is the
+remaining item; until it is green, the authoritative verification evidence
+remains the local clean cycle documented in
 [`docs/ferret/evidence/`](evidence/).
 
 ## 5. Resources
