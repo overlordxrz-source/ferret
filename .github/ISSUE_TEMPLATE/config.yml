@@ -1,0 +1,11 @@
+blank_issues_enabled: true
+contact_links:
+  - name: Architecture and porting policy
+    url: https://github.com/overlordxrz-source/ferret/blob/main/docs/ferret/ARCHITECTURE.md
+    about: Read how migrations are designed and reviewed before opening an issue.
+  - name: Security vulnerability
+    url: https://github.com/overlordxrz-source/ferret/blob/main/SECURITY.md
+    about: Report memory-safety or privilege issues privately, not in a public issue.
+  - name: Building and testing
+    url: https://github.com/overlordxrz-source/ferret/blob/main/docs/ferret/BUILDING.md
+    about: Toolchain, build and QEMU boot instructions.

@@ -1,0 +1,78 @@
+name: kernel-smoke
+
+# Heavy, real-kernel validation. Deliberately not run on every pull request:
+# two defconfig kernel builds plus QEMU boots take tens of minutes on a
+# standard 4-core runner. Run it manually or wait for the weekly schedule.
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "0 6 * * 1" # Mondays 06:00 UTC
+
+permissions:
+  contents: read
+
+jobs:
+  build-and-boot:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 180
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install kernel build dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends \
+            bc bison ccache clang-18 cpio flex libclang-18-dev libelf-dev \
+            libssl-dev lld-18 llvm-18 make python3 qemu-system-x86 rsync \
+            xz-utils zstd
+          sudo ln -sf /usr/bin/clang-18 /usr/local/bin/clang
+          sudo ln -sf /usr/bin/ld.lld-18 /usr/local/bin/ld.lld
+          sudo ln -sf /usr/bin/llvm-ar-18 /usr/local/bin/llvm-ar
+          sudo ln -sf /usr/bin/llvm-nm-18 /usr/local/bin/llvm-nm
+          sudo ln -sf /usr/bin/llvm-objcopy-18 /usr/local/bin/llvm-objcopy
+          sudo ln -sf /usr/bin/llvm-objdump-18 /usr/local/bin/llvm-objdump
+
+      - name: Install pinned Rust toolchain
+        run: |
+          curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | \
+            sh -s -- -y --profile minimal --default-toolchain 1.88.0
+          echo "$HOME/.cargo/bin" >> "$GITHUB_PATH"
+          "$HOME/.cargo/bin/rustup" component add rust-src rustfmt
+          "$HOME/.cargo/bin/rustup" target add x86_64-unknown-none
+          "$HOME/.cargo/bin/cargo" install bindgen-cli --version 0.72.1 --locked
+          echo "$HOME/.cargo/bin" >> "$GITHUB_PATH"
+
+      - name: Prepare the paths the harness expects
+        run: |
+          sudo mkdir -p /build /mnt/projects
+          sudo ln -sfn "$GITHUB_WORKSPACE" /mnt/projects/ferret
+          sudo chown -R "$USER" /build /mnt/projects
+
+      - name: Build reference kernel
+        run: bash tools/ferret/lib/build-in-container.sh ref
+
+      - name: Build Ferret kernel
+        run: bash tools/ferret/lib/build-in-container.sh rust
+
+      - name: Build Rust initramfs
+        run: bash tools/ferret/lib/initramfs-in-container.sh
+
+      - name: Boot reference kernel
+        run: bash tools/ferret/lib/boot-in-container.sh ref
+
+      - name: Boot Ferret kernel
+        run: bash tools/ferret/lib/boot-in-container.sh rust
+
+      - name: Linkage evidence
+        run: bash tools/ferret/lib/linkage-in-container.sh rust
+
+      - name: Upload evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: kernel-smoke-evidence
+          path: |
+            artifacts/RESULTS.txt
+            artifacts/ref/
+            artifacts/rust/
+          retention-days: 14

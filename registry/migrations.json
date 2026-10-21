@@ -1,0 +1,347 @@
+{
+  "schema_version": 1,
+  "baseline": {
+    "tag": "v6.18.57",
+    "commit": "2ff600d29ee478d0a8d46ef8a58afb5e038fe692",
+    "tree": "https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git",
+    "selection_reason": "Newest longterm (LTS) series at project start; mature Rust-for-Linux support; years of upstream maintenance remaining. See docs/ferret/DECISIONS.md D-001."
+  },
+  "components": [
+    {
+      "id": "crc16",
+      "title": "CRC-16 (poly 0x8005, reflected)",
+      "subsystem": "lib/crc",
+      "c_sources": [
+        "lib/crc/crc16.c"
+      ],
+      "rust_sources": [
+        "lib/crc/crc16_rust.rs"
+      ],
+      "kconfig": {
+        "upstream": "CRC16",
+        "ferret_switch": "CRC16_RUST",
+        "diff_test": "CRC16_DIFF_KUNIT_TEST"
+      },
+      "abi": {
+        "header": "include/linux/crc16.h",
+        "symbols": [
+          {
+            "name": "crc16",
+            "signature": "u16 crc16(u16 crc, const u8 *p, size_t len)",
+            "export": "EXPORT_SYMBOL",
+            "export_shim": "lib/crc/crc16_export.c"
+          }
+        ]
+      },
+      "dependencies": [],
+      "call_sites": 40,
+      "status": "migrated",
+      "rust_compiled": true,
+      "c_implementation_replaced": true,
+      "c_object_built_in_rust_variant": false,
+      "tests": [
+        {
+          "name": "kunit-crc-suite",
+          "kind": "upstream-kunit",
+          "config": "CONFIG_CRC_KUNIT_TEST",
+          "result": "PASS",
+          "evidence": "artifacts/rust/boot.log"
+        },
+        {
+          "name": "kunit-crc16-differential",
+          "kind": "differential-kunit",
+          "config": "CONFIG_CRC16_DIFF_KUNIT_TEST",
+          "result": "PASS",
+          "evidence": "artifacts/rust/boot.log"
+        },
+        {
+          "name": "kunit-crc16-rust-vectors",
+          "kind": "rust-kunit",
+          "config": "CONFIG_KUNIT",
+          "result": "PASS",
+          "evidence": "artifacts/rust/boot.log"
+        },
+        {
+          "name": "qemu-boot-userspace-abi",
+          "kind": "boot",
+          "result": "PASS",
+          "evidence": "artifacts/rust/boot.log"
+        },
+        {
+          "name": "linkage-ownership",
+          "kind": "static-analysis",
+          "result": "PASS",
+          "evidence": "artifacts/rust/linkage.txt"
+        }
+      ],
+      "risks": [
+        "Rust variant is built-in only (CONFIG_CRC16_RUST depends on CRC16=y); loadable-module CRC16 remains the C implementation.",
+        "Kernel Rust panics abort the kernel; the implementation has no panic path by construction (256-entry table indexed by u8).",
+        "Performance: table-driven byte loop is algorithmically identical to C; measured under QEMU TCG only."
+      ],
+      "unsafe_boundaries": [
+        "extern \"C\" ABI boundary: raw *const u8 with a caller-provided length (same contract as the C original). No other unsafe code."
+      ],
+      "remaining_c_dependencies": [
+        {
+          "file": "lib/crc/crc16_export.c",
+          "reason": "ksymtab entry only, to preserve non-GPL EXPORT_SYMBOL visibility (see DECISIONS D-004)",
+          "algorithm": false
+        }
+      ]
+    },
+    {
+      "id": "crc-ccitt",
+      "title": "CRC-CCITT (poly 0x1021)",
+      "subsystem": "lib/crc",
+      "c_sources": [
+        "lib/crc/crc-ccitt.c"
+      ],
+      "rust_sources": [],
+      "kconfig": {
+        "upstream": "CRC_CCITT",
+        "ferret_switch": null
+      },
+      "abi": {
+        "header": "include/linux/crc-ccitt.h",
+        "symbols": [
+          {
+            "name": "crc_ccitt",
+            "signature": "u16 crc_ccitt(u16 crc, const u8 *buf, size_t len)",
+            "export": "EXPORT_SYMBOL"
+          },
+          {
+            "name": "crc_ccitt_byte",
+            "signature": "u16 crc_ccitt_byte(u16 crc, const u8 c)",
+            "export": "EXPORT_SYMBOL"
+          }
+        ]
+      },
+      "dependencies": [],
+      "status": "candidate",
+      "rust_compiled": false,
+      "c_implementation_replaced": false,
+      "c_object_built_in_rust_variant": true,
+      "tests": [],
+      "risks": [
+        "Two exported symbols share one table; the Rust module must define both with the same visibility."
+      ],
+      "unsafe_boundaries": [],
+      "remaining_c_dependencies": []
+    },
+    {
+      "id": "crc-itu-t",
+      "title": "CRC-ITU-T (poly 0x1021, different bit order)",
+      "subsystem": "lib/crc",
+      "c_sources": [
+        "lib/crc/crc-itu-t.c"
+      ],
+      "rust_sources": [],
+      "kconfig": {
+        "upstream": "CRC_ITU_T",
+        "ferret_switch": null
+      },
+      "abi": {
+        "header": "include/linux/crc-itu-t.h",
+        "symbols": [
+          {
+            "name": "crc_itu_t",
+            "signature": "u16 crc_itu_t(u16 crc, const u8 *buffer, size_t len)",
+            "export": "EXPORT_SYMBOL"
+          }
+        ]
+      },
+      "dependencies": [],
+      "status": "candidate",
+      "rust_compiled": false,
+      "c_implementation_replaced": false,
+      "c_object_built_in_rust_variant": true,
+      "tests": [],
+      "risks": [
+        "Shares the upstream CRC KUnit harness; low risk."
+      ],
+      "unsafe_boundaries": [],
+      "remaining_c_dependencies": []
+    },
+    {
+      "id": "crc8",
+      "title": "CRC-8 (poly 0x07)",
+      "subsystem": "lib/crc",
+      "c_sources": [
+        "lib/crc/crc8.c"
+      ],
+      "rust_sources": [],
+      "kconfig": {
+        "upstream": "CRC8",
+        "ferret_switch": null
+      },
+      "abi": {
+        "header": "include/linux/crc8.h",
+        "symbols": [
+          {
+            "name": "crc8",
+            "signature": "u8 crc8(const u8 table[256], u8 crc, const u8 *p, size_t len)",
+            "export": "EXPORT_SYMBOL"
+          },
+          {
+            "name": "crc8_populate_msb",
+            "signature": "void crc8_populate_msb(u8 table[256], u8 polynomial)",
+            "export": "EXPORT_SYMBOL"
+          },
+          {
+            "name": "crc8_populate_lsb",
+            "signature": "void crc8_populate_lsb(u8 table[256], u8 polynomial)",
+            "export": "EXPORT_SYMBOL"
+          }
+        ]
+      },
+      "dependencies": [],
+      "status": "candidate",
+      "rust_compiled": false,
+      "c_implementation_replaced": false,
+      "c_object_built_in_rust_variant": true,
+      "tests": [],
+      "risks": [
+        "API takes caller-owned 256-byte tables; Rust must not impose alignment or aliasing assumptions beyond the C contract."
+      ],
+      "unsafe_boundaries": [],
+      "remaining_c_dependencies": []
+    },
+    {
+      "id": "crc7",
+      "title": "CRC-7",
+      "subsystem": "lib/crc",
+      "c_sources": [
+        "lib/crc/crc7.c"
+      ],
+      "rust_sources": [],
+      "kconfig": {
+        "upstream": "CRC7",
+        "ferret_switch": null
+      },
+      "abi": {
+        "header": "include/linux/crc7.h",
+        "symbols": [
+          {
+            "name": "crc7_be",
+            "signature": "u8 crc7_be(u8 crc, const u8 *p, size_t len)",
+            "export": "EXPORT_SYMBOL"
+          }
+        ]
+      },
+      "dependencies": [],
+      "status": "candidate",
+      "rust_compiled": false,
+      "c_implementation_replaced": false,
+      "c_object_built_in_rust_variant": true,
+      "tests": [],
+      "risks": [],
+      "unsafe_boundaries": [],
+      "remaining_c_dependencies": []
+    },
+    {
+      "id": "crc32",
+      "title": "CRC-32 / CRC-32c (slice-by-8, arch-accelerated)",
+      "subsystem": "lib/crc",
+      "c_sources": [
+        "lib/crc/crc32-main.c",
+        "lib/crc/gen_crc32table.c"
+      ],
+      "rust_sources": [],
+      "kconfig": {
+        "upstream": "CRC32",
+        "ferret_switch": null
+      },
+      "abi": {
+        "header": "include/linux/crc32.h",
+        "symbols": [
+          {
+            "name": "crc32_le",
+            "signature": "u32 crc32_le(u32 crc, const void *p, size_t len)",
+            "export": "EXPORT_SYMBOL"
+          },
+          {
+            "name": "crc32_be",
+            "signature": "u32 crc32_be(u32 crc, const void *p, size_t len)",
+            "export": "EXPORT_SYMBOL"
+          },
+          {
+            "name": "crc32c",
+            "signature": "u32 crc32c(u32 crc, const void *p, size_t len)",
+            "export": "EXPORT_SYMBOL"
+          }
+        ]
+      },
+      "dependencies": [
+        "CONFIG_CRC32_ARCH (x86 SSE4.2/PCLMUL)"
+      ],
+      "status": "candidate-later",
+      "rust_compiled": false,
+      "c_implementation_replaced": false,
+      "c_object_built_in_rust_variant": true,
+      "tests": [],
+      "risks": [
+        "Hot path (ext4, btrfs, networking); must not regress throughput.",
+        "Arch-accelerated variants are selected by alternatives/patching; aggressive; keep C until SIMD abstraction exists."
+      ],
+      "unsafe_boundaries": [],
+      "remaining_c_dependencies": []
+    },
+    {
+      "id": "crc64",
+      "title": "CRC-64 (ROCm/NVMe)",
+      "subsystem": "lib/crc",
+      "c_sources": [
+        "lib/crc/crc64-main.c",
+        "lib/crc/gen_crc64table.c"
+      ],
+      "rust_sources": [],
+      "kconfig": {
+        "upstream": "CRC64",
+        "ferret_switch": null
+      },
+      "abi": {
+        "header": "include/linux/crc64.h",
+        "symbols": [
+          {
+            "name": "crc64_be",
+            "signature": "u64 crc64_be(u64 crc, const void *p, size_t len)",
+            "export": "EXPORT_SYMBOL"
+          },
+          {
+            "name": "crc64_nvme",
+            "signature": "u64 crc64_nvme(u64 crc, const void *p, size_t len)",
+            "export": "EXPORT_SYMBOL"
+          }
+        ]
+      },
+      "dependencies": [
+        "CONFIG_CRC64_ARCH (x86 PCLMUL)"
+      ],
+      "status": "candidate-later",
+      "rust_compiled": false,
+      "c_implementation_replaced": false,
+      "c_object_built_in_rust_variant": true,
+      "tests": [],
+      "risks": [
+        "Generated table via hostprog; Rust would need a const table or build-time generation to preserve behaviour."
+      ],
+      "unsafe_boundaries": [],
+      "remaining_c_dependencies": []
+    }
+  ],
+  "benchmarks": [
+    {
+      "name": "crc16() text size",
+      "reference": "133 bytes (C, x86_64 defconfig)",
+      "ferret": "147 bytes (Rust, x86_64 defconfig)",
+      "delta": "+14 bytes (+10.5%)",
+      "notes": "nm --print-size on the linked vmlinux; runtime throughput NOT TESTED (QEMU TCG only)"
+    }
+  ],
+  "regressions": [
+    "crc16() code size increased by 14 bytes (+10.5%) versus the C implementation. This is a static footprint measurement, not a runtime measurement.",
+    "Runtime performance of the Rust crc16() has not been measured; no performance claim is made.",
+    "CONFIG_CRC16_RUST requires CRC16=y, so loadable-module CRC16 remains the C implementation."
+  ]
+}

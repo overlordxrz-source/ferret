@@ -1,0 +1,91 @@
+name: Bug report
+description: Report a defect in Ferret, its build or its test harness.
+title: "[BUG] "
+labels: ["type: bug", "status: ready"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Do **not** report security vulnerabilities here. Use the process in
+        [SECURITY.md](https://github.com/overlordxrz-source/ferret/blob/main/SECURITY.md).
+
+  - type: textarea
+    id: summary
+    attributes:
+      label: Summary
+      description: What is wrong, in one or two sentences.
+    validations:
+      required: true
+
+  - type: input
+    id: commit
+    attributes:
+      label: Commit SHA
+      description: Output of `git rev-parse HEAD`.
+    validations:
+      required: true
+
+  - type: dropdown
+    id: variant
+    attributes:
+      label: Kernel variant
+      options:
+        - rust (Ferret)
+        - ref (unmodified upstream reference)
+        - both
+        - tooling only (no kernel)
+    validations:
+      required: true
+
+  - type: input
+    id: arch
+    attributes:
+      label: Architecture
+      placeholder: x86_64 / arm64
+    validations:
+      required: true
+
+  - type: textarea
+    id: reproduce
+    attributes:
+      label: Steps to reproduce
+      description: Exact commands, from a clean checkout if possible.
+      placeholder: |
+        tools/ferret/build.sh rust
+        tools/ferret/boot.sh rust
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected behaviour
+    validations:
+      required: true
+
+  - type: textarea
+    id: actual
+    attributes:
+      label: Actual behaviour
+    validations:
+      required: true
+
+  - type: textarea
+    id: evidence
+    attributes:
+      label: Evidence
+      description: Relevant log excerpt (not the whole log), configuration, error messages.
+    validations:
+      required: true
+
+  - type: checkboxes
+    id: checks
+    attributes:
+      label: Checks
+      options:
+        - label: I searched existing issues before opening this one.
+          required: true
+        - label: This is not a security vulnerability.
+          required: true
+        - label: I can reproduce this on the commit SHA above.
+          required: true

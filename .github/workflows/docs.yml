@@ -1,0 +1,74 @@
+name: docs
+
+# Lightweight checks that every pull request can run: no kernel build, no
+# secrets, read-only token.
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Registry validates and report is current
+        run: |
+          python3 tools/ferret/registry.py --markdown
+          git diff --exit-code docs/ferret/REGISTRY_REPORT.md
+
+      - name: Required documents exist
+        run: |
+          set -eu
+          for f in README.md CONTRIBUTING.md CODE_OF_CONDUCT.md SECURITY.md AGENTS.md \
+                   docs/ferret/ARCHITECTURE.md docs/ferret/ROADMAP.md \
+                   docs/ferret/MIGRATION_MATRIX.md docs/ferret/PORTING_POLICY.md \
+                   docs/ferret/BUILDING.md docs/ferret/TESTING.md \
+                   docs/ferret/ABI_COMPATIBILITY.md docs/ferret/RUST_SAFETY.md \
+                   docs/ferret/UPSTREAM.md docs/ferret/STATUS.md \
+                   docs/ferret/DECISIONS.md; do
+            test -f "$f" || { echo "missing: $f"; exit 1; }
+          done
+
+      - name: Issue templates are valid YAML
+        run: |
+          python3 - <<'PY'
+          import pathlib, sys
+          try:
+              import yaml
+          except ImportError:
+              print("PyYAML not available; skipping template parse")
+              sys.exit(0)
+          failed = False
+          for path in pathlib.Path(".github/ISSUE_TEMPLATE").glob("*.yml"):
+              try:
+                  yaml.safe_load(path.read_text())
+                  print(f"ok {path}")
+              except Exception as exc:
+                  print(f"FAIL {path}: {exc}")
+                  failed = True
+          sys.exit(1 if failed else 0)
+          PY
+
+      - name: Relative links resolve
+        run: python3 tools/ferret/check_links.py .
+
+      - name: No build products or secrets committed
+        run: |
+          set -eu
+          if git ls-files | grep -E '(^|/)(vmlinux|bzImage|Image|\.config)$'; then
+            echo "build products must not be committed"; exit 1
+          fi
+          if git ls-files -z | xargs -0 grep -IlE '(ghp_[A-Za-z0-9]{20,}|github_pat_[A-Za-z0-9_]{20,}|AKIA[0-9A-Z]{16})'; then
+            echo "possible credential committed"; exit 1
+          fi

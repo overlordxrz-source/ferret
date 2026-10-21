@@ -1,0 +1,181 @@
+name: Migration puzzle
+description: Port one bounded C component to Rust and prove the replacement.
+title: "[PORT] "
+labels: ["type: migration", "status: ready"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for proposing a migration. A puzzle is only complete when the C
+        object is no longer built, the Rust object defines the ABI symbols, and
+        the evidence below is attached. Read [the porting
+        policy](https://github.com/overlordxrz-source/ferret/blob/main/docs/ferret/PORTING_POLICY.md)
+        first.
+
+        **To claim this puzzle:** comment with your plan and expected PR date.
+        A maintainer will acknowledge it and add `status: claimed`. Do not
+        self-assign.
+
+  - type: input
+    id: puzzle-id
+    attributes:
+      label: Puzzle ID
+      description: Stable identifier, e.g. `LIB-KFIFO-001`.
+      placeholder: LIB-XXXX-001
+    validations:
+      required: true
+
+  - type: dropdown
+    id: subsystem
+    attributes:
+      label: Subsystem
+      options:
+        - lib
+        - mm
+        - fs
+        - net
+        - drivers
+        - arch
+        - kernel/core
+        - security
+        - tooling/testing
+        - documentation
+    validations:
+      required: true
+
+  - type: dropdown
+    id: difficulty
+    attributes:
+      label: Difficulty
+      description: Level 1 starter, 2 intermediate, 3 advanced, 4 expert, 5 research.
+      options:
+        - "Level 1 — Starter"
+        - "Level 2 — Intermediate"
+        - "Level 3 — Advanced"
+        - "Level 4 — Expert"
+        - "Level 5 — Research"
+    validations:
+      required: true
+
+  - type: input
+    id: c-source
+    attributes:
+      label: Current implementation (C file(s))
+      placeholder: lib/kfifo.c
+    validations:
+      required: true
+
+  - type: input
+    id: rust-dest
+    attributes:
+      label: Expected Rust destination
+      placeholder: lib/kfifo_rust.rs
+    validations:
+      required: true
+
+  - type: textarea
+    id: symbols
+    attributes:
+      label: Symbols and interfaces involved
+      description: Exact exported symbols, signatures, headers and inline users.
+      placeholder: |
+        __kfifo_in, __kfifo_out, ... (include/linux/kfifo.h)
+        Exported with EXPORT_SYMBOL.
+    validations:
+      required: true
+
+  - type: textarea
+    id: dependencies
+    attributes:
+      label: Dependencies
+      description: Prerequisite migrations, Kconfig symbols, Rust API gaps.
+      placeholder: None / blocked on kernel::percpu / ...
+    validations:
+      required: true
+
+  - type: dropdown
+    id: mergeable
+    attributes:
+      label: Independently mergeable?
+      options:
+        - "Yes — one PR can land it"
+        - "No — depends on a prerequisite issue"
+        - "Partially — core first, follow-ups tracked separately"
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected Rust implementation
+      description: Module layout, safe/unsafe split, allocation and locking strategy.
+    validations:
+      required: true
+
+  - type: textarea
+    id: safety
+    attributes:
+      label: Safety invariants
+      description: What must remain true; which invariants are upheld by callers vs the Rust code.
+      placeholder: |
+        - `buf` is valid for `len` bytes while `len > 0`.
+        - Indices stay in [0, size); size is a power of two.
+    validations:
+      required: true
+
+  - type: textarea
+    id: tests
+    attributes:
+      label: Reference tests
+      description: Upstream tests, differential test plan, edge cases, randomised inputs.
+      placeholder: |
+        - CONFIG_KFIFO_KUNIT_TEST (unchanged)
+        - differential: lib/kfifo.c compiled with renamed symbols
+        - wrap-around, size-1, partial user copy
+    validations:
+      required: true
+
+  - type: textarea
+    id: acceptance
+    attributes:
+      label: Acceptance criteria (DONE means all of these)
+      value: |
+        - [ ] C object is not built in the Rust variant (verified in the build tree)
+        - [ ] Rust object defines every ABI symbol
+        - [ ] `tools/ferret/linkage.sh rust` passes (one definition, size match, ksymtab, export type)
+        - [ ] differential KUnit suite passes
+        - [ ] `tools/ferret/boot.sh rust` passes
+        - [ ] registry entry updated and `python3 tools/ferret/registry.py --markdown` exits 0
+        - [ ] no new C algorithm code, no fallback to the C implementation
+    validations:
+      required: true
+
+  - type: input
+    id: build-target
+    attributes:
+      label: Build/boot target
+      value: x86_64 defconfig + QEMU; arm64 when the component is arch-independent
+    validations:
+      required: true
+
+  - type: textarea
+    id: docs
+    attributes:
+      label: Relevant documentation
+      value: |
+        - docs/ferret/PORTING_POLICY.md
+        - docs/ferret/ARCHITECTURE.md
+        - docs/ferret/MIGRATION_MATRIX.md
+    validations:
+      required: true
+
+  - type: dropdown
+    id: claim
+    attributes:
+      label: Claim status
+      options:
+        - "Unclaimed — ready for a contributor"
+        - "Claimed — see comments"
+        - "Blocked — prerequisite missing"
+    validations:
+      required: true

@@ -1,0 +1,63 @@
+name: Testing or verification task
+description: Propose or track a test, verification or reproducibility improvement.
+title: "[TEST] "
+labels: ["type: verification", "status: ready"]
+body:
+  - type: textarea
+    id: what
+    attributes:
+      label: What should be verified?
+      description: The claim, component or failure mode this test covers.
+    validations:
+      required: true
+
+  - type: dropdown
+    id: kind
+    attributes:
+      label: Kind of test
+      options:
+        - KUnit (in-kernel, migrated component)
+        - Differential C vs Rust
+        - Linkage / symbol ownership
+        - QEMU boot smoke test
+        - Ubuntu userspace integration
+        - Static analysis / provenance
+        - CI / reproducibility
+    validations:
+      required: true
+
+  - type: textarea
+    id: gap
+    attributes:
+      label: Why is it not covered today?
+      description: Existing tests, and the specific gap you are closing.
+    validations:
+      required: true
+
+  - type: textarea
+    id: approach
+    attributes:
+      label: Proposed approach
+      description: Harness, inputs, edge cases, where the result is recorded.
+    validations:
+      required: true
+
+  - type: textarea
+    id: done
+    attributes:
+      label: Acceptance criteria
+      value: |
+        - [ ] Test runs in the normal `tools/ferret/test.sh` cycle or a documented CI job
+        - [ ] Result is recorded as PASS / FAIL / NOT RUN, with evidence
+        - [ ] Failure produces a genuine failure, not a skipped step reported as PASS
+        - [ ] Runtime and resource requirements are documented
+    validations:
+      required: true
+
+  - type: input
+    id: resources
+    attributes:
+      label: Resource requirements
+      description: Wall time, RAM, disk, whether it needs KVM or a specific architecture.
+    validations:
+      required: true

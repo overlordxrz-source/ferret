@@ -1,0 +1,16 @@
+[package]
+name = "ferret-init"
+version = "0.1.0"
+edition = "2021"
+license = "GPL-2.0-only"
+description = "Freestanding x86_64 userspace init for Ferret boot tests"
+
+[[bin]]
+name = "init"
+path = "src/main.rs"
+
+[profile.release]
+panic = "abort"
+opt-level = "s"
+lto = true
+codegen-units = 1

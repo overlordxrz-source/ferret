@@ -26,11 +26,70 @@ config CRC16
 	  The CRC16 library functions.  Select this if your module uses any of
 	  the functions from <linux/crc16.h>.
 
+config CRC16_RUST
+	bool "Rust implementation of CRC-16 (Ferret)"
+	depends on RUST
+	# CRC16 has no prompt either; select it to force =y (see CRC_CCITT_RUST).
+	select CRC16
+	help
+	  Build the CRC-16 library functions from the Rust implementation in
+	  lib/crc/crc16_rust.rs instead of the C implementation in
+	  lib/crc/crc16.c.
+
+	  This is a Ferret migration experiment: it requires CRC16 to be
+	  built-in (not modular) and is only enabled by test kernels for now.
+	  The C implementation is kept in the tree as the reference used by
+	  the differential KUnit test.
+
+	  If unsure, say N.
+
+config CRC16_DIFF_KUNIT_TEST
+	bool "Differential KUnit test: CRC-16 C reference vs Rust"
+	depends on CRC16_RUST
+	depends on KUNIT
+	help
+	  Compile the original C implementation of CRC-16 under a test-only
+	  symbol and compare it against the Rust implementation over edge
+	  cases and randomised buffers.
+
+	  This is test-only code; it is never part of a production kernel.
+
 config CRC_CCITT
 	tristate
 	help
 	  The CRC-CCITT library functions.  Select this if your module uses any
 	  of the functions from <linux/crc-ccitt.h>.
+
+config CRC_CCITT_RUST
+	bool "Rust implementation of CRC-CCITT (Ferret)"
+	depends on RUST
+	# CRC_CCITT has no prompt: it is only ever enabled by select. Selecting it
+	# here forces it to =y, which the Rust implementation requires (a built-in
+	# Rust object cannot replace a modular C object).
+	select CRC_CCITT
+	help
+	  Build the CRC-CCITT library functions and the exported
+	  crc_ccitt_table[] from the Rust implementation in
+	  lib/crc/crc_ccitt_rust.rs instead of the C implementation in
+	  lib/crc/crc-ccitt.c.
+
+	  This is a Ferret migration experiment: it requires CRC_CCITT to be
+	  built-in (not modular) and is only enabled by test kernels for now.
+	  The C implementation is kept in the tree as the reference used by the
+	  differential KUnit test.
+
+	  If unsure, say N.
+
+config CRC_CCITT_DIFF_KUNIT_TEST
+	bool "Differential KUnit test: CRC-CCITT C reference vs Rust"
+	depends on CRC_CCITT_RUST
+	depends on KUNIT
+	help
+	  Compile the original C implementation of CRC-CCITT under test-only
+	  symbols and compare it against the Rust implementation and its
+	  generated table over edge cases and randomised buffers.
+
+	  This is test-only code; it is never part of a production kernel.
 
 config CRC_ITU_T
 	tristate
