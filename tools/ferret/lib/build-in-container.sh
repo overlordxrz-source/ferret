@@ -55,6 +55,9 @@ cfg --enable KUNIT
 cfg --enable CRC_KUNIT_TEST
 cfg --enable CRC16
 cfg --enable CRC_CCITT
+# The upstream kernel FIFO suite runs in both variants: the reference kernel
+# must satisfy it too, so that the Rust variant's result is comparable.
+cfg --enable KFIFO_KUNIT_TEST
 
 if [ "$VARIANT" = rust ]; then
 	cfg --enable RUST
