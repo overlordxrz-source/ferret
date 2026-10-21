@@ -83,7 +83,8 @@ else
 fi
 
 if [ "$VARIANT" = rust ]; then
-	for suite in crc16_rust crc16_diff crc_ccitt_rust crc_ccitt_diff; do
+	for suite in crc16_rust crc16_diff crc_ccitt_rust crc_ccitt_diff \
+		     kfifo_rust kfifo_diff kfifo; do
 		if grep -qE "ok [0-9]+ $suite" "$LOG"; then
 			echo "PASS  KUnit $suite"
 		else

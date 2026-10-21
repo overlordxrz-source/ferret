@@ -1,6 +1,10 @@
 # Ferret: substantial-component investigation (checkpoint 002)
 
-Status: investigation only. Nothing in this document is claimed as migrated.
+Status: the investigation below is the record of the analysis that selected
+`lib/kfifo.c`. The component was **implemented in checkpoint 003**
+(`lib/kfifo_rust.rs`), and the section "4.1" now describes what was actually
+built. The other candidates are unchanged.
+
 The only component migrated in checkpoint 002 is CRC-CCITT; the target below
 is the proposed next step, with the evidence needed to plan it honestly.
 
@@ -111,6 +115,34 @@ Risk register:
 | `gfp` flags misused in Rust allocation | Keep the C signature and pass the flags straight through |
 | User-copy partial failure semantics | Test with `copy_from_user` fault injection via a bad user pointer |
 | Compiler reordering with caller-managed indices | Same non-atomic contract as C; document it, do not add atomics |
+
+### 4.1.1 What was actually built (checkpoint 003)
+
+The plan above was followed, with three adjustments that the implementation
+forced:
+
+1. **The allocation flags are a run-time value.** The `kernel` crate's `Flags`
+   type only exposes the fixed flag sets, so `__kfifo_alloc()` could not be
+   expressed with it. `kmalloc_array()` is reached through a three-line C
+   helper (`rust/helpers/slab.c`); the allocation is the kernel's, the FIFO
+   logic is Rust's.
+2. **`sg_set_buf()` is a static inline without a binding.** It is reached the
+   same way (`rust/helpers/scatterlist.c`). The DMA address and length are
+   written directly, because `sg_dma_len()` is a macro that selects between
+   two struct fields depending on `CONFIG_NEED_SG_DMA_LENGTH`.
+3. **The kernel's FFI maps `unsigned long` to `usize`**, not to
+   `core::ffi::c_ulong` (`rust/ffi.rs`), and `size_t` is `usize` as well. The
+   exported signatures use those types, so `#[export]`'s bindgen signature
+   check passes.
+
+What was verified: the upstream `KFIFO_KUNIT_TEST` suite, ten Rust unit tests
+and a differential suite (`kfifo_diff`) that compares the Rust implementation
+against the unmodified C implementation compiled under test-only names — over
+initialisation and allocation (including the error paths), 2 000 randomised
+operation sequences, wrap-around, the record API, and the scatterlist setup.
+The C object is not built in the Rust variant, all 23 symbols are defined
+exactly once by `lib/kfifo_rust.o`, and the non-GPL `EXPORT_SYMBOL` visibility
+is preserved through the ksymtab shim.
 
 ### 4.2 `lib/percpu_counter.c` — deferred, needs a per-CPU abstraction
 

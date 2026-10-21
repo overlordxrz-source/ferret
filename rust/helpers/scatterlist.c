@@ -22,3 +22,17 @@ void rust_helper_dma_unmap_sgtable(struct device *dev, struct sg_table *sgt,
 {
 	return dma_unmap_sgtable(dev, sgt, dir, attrs);
 }
+
+/*
+ * Ferret: expose sg_set_buf() to Rust.
+ *
+ * The generic kernel FIFO (lib/kfifo.c) fills a caller-provided scatterlist
+ * with sg_set_buf() plus a DMA address/length. sg_set_buf() is a static
+ * inline in include/linux/scatterlist.h and has no binding, so it is
+ * exposed here. The FIFO logic itself stays in Rust.
+ */
+void rust_helper_sg_set_buf(struct scatterlist *sg, const void *buf,
+			    unsigned int buflen)
+{
+	sg_set_buf(sg, buf, buflen);
+}

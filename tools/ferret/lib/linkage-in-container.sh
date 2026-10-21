@@ -108,7 +108,15 @@ section "kernel variant"
 say "variant:  $VARIANT"
 say "vmlinux:  $VMLINUX"
 say "git:      $(git -C /mnt/projects/ferret rev-parse --short HEAD 2>/dev/null || echo unknown)"
-say "config:   $(grep -E '^CONFIG_(CRC16|CRC16_RUST|CRC16_DIFF_KUNIT_TEST|CRC_CCITT|CRC_CCITT_RUST|CRC_CCITT_DIFF_KUNIT_TEST|RUST|KUNIT)=' "$OUT/.config" | tr '\n' ' ')"
+say "config:   $(grep -E '^CONFIG_(CRC16|CRC16_RUST|CRC16_DIFF_KUNIT_TEST|CRC_CCITT|CRC_CCITT_RUST|CRC_CCITT_DIFF_KUNIT_TEST|KFIFO_RUST|KFIFO_DIFF_KUNIT_TEST|RUST|KUNIT)=' "$OUT/.config" | tr '\n' ' ')"
+
+# The symbols exported by the generic kernel FIFO.
+KFIFO_SYMBOLS="__kfifo_alloc __kfifo_free __kfifo_init __kfifo_in __kfifo_out
+__kfifo_out_peek __kfifo_out_linear __kfifo_from_user __kfifo_to_user
+__kfifo_dma_in_prepare __kfifo_dma_out_prepare __kfifo_max_r __kfifo_len_r
+__kfifo_in_r __kfifo_out_r __kfifo_out_peek_r __kfifo_out_linear_r
+__kfifo_skip_r __kfifo_from_user_r __kfifo_to_user_r
+__kfifo_dma_in_prepare_r __kfifo_dma_in_finish_r __kfifo_dma_out_prepare_r"
 
 section "build tree object ownership"
 if [ "$VARIANT" = rust ]; then
@@ -121,11 +129,19 @@ if [ "$VARIANT" = rust ]; then
 	}
 	check_absent "$OUT/lib/crc/crc16.o" "C object lib/crc/crc16.o"
 	check_absent "$OUT/lib/crc/crc-ccitt.o" "C object lib/crc/crc-ccitt.o"
+	check_absent "$OUT/lib/kfifo.o" "C object lib/kfifo.o"
 	for o in crc16_rust.o crc_ccitt_rust.o crc16_export.o crc_ccitt_export.o; do
 		if [ -e "$OUT/lib/crc/$o" ]; then
 			pass "Rust object lib/crc/$o is present"
 		else
 			bad "Rust object lib/crc/$o is missing"
+		fi
+	done
+	for o in kfifo_rust.o kfifo_export.o; do
+		if [ -e "$OUT/lib/$o" ]; then
+			pass "Rust object lib/$o is present"
+		else
+			bad "Rust object lib/$o is missing"
 		fi
 	done
 else
@@ -143,12 +159,33 @@ else
 			pass "Rust object lib/crc/$o absent from the reference build"
 		fi
 	done
+	if [ -e "$OUT/lib/kfifo.o" ]; then
+		pass "C object lib/kfifo.o is present (reference)"
+	else
+		bad "C object lib/kfifo.o is missing from the reference build"
+	fi
+	for o in kfifo_rust.o kfifo_export.o; do
+		if [ -e "$OUT/lib/$o" ]; then
+			bad "Rust object lib/$o present in the reference build"
+		else
+			pass "Rust object lib/$o absent from the reference build"
+		fi
+	done
 fi
 
 section "symbol definitions"
 for sym in crc16 crc_ccitt crc_ccitt_table; do
 	n=$(defcount "$sym")
 	note "definitions of $sym in vmlinux: $n"
+	if [ "$n" = "1" ]; then
+		pass "$sym is defined exactly once"
+	else
+		bad "$sym must be defined exactly once (found $n)"
+	fi
+done
+
+for sym in $KFIFO_SYMBOLS; do
+	n=$(defcount "$sym")
 	if [ "$n" = "1" ]; then
 		pass "$sym is defined exactly once"
 	else
@@ -189,12 +226,36 @@ if [ "$VARIANT" = rust ]; then
 			bad "export shim for $2 does not reference it"
 		fi
 	done
+
+	# The kernel FIFO: the Rust object defines every exported symbol, and the
+	# shim only references them.
+	objnm "$OUT/lib/kfifo_rust.o" rustkfifo.nmsize
+	objnm "$OUT/lib/kfifo_export.o" expkfifo.nm
+
+	for sym in $KFIFO_SYMBOLS; do
+		if grep -qE "^[0-9a-f]+ [0-9a-f]+ T $sym\$" "$TMP/rustkfifo.nmsize"; then
+			pass "$sym is defined by lib/kfifo_rust.o"
+			check_size "$sym" "$(symsize "$TMP/rustkfifo.nmsize" "$sym")" "Rust object"
+		else
+			bad "$sym is not defined by lib/kfifo_rust.o"
+		fi
+		if grep -qE "^ +U $sym\$" "$TMP/expkfifo.nm"; then
+			pass "export shim for $sym only references it (no definition)"
+		else
+			bad "export shim for $sym does not reference it"
+		fi
+	done
 else
 	objnm "$OUT/lib/crc/crc16.o" ref16.nmsize
 	objnm "$OUT/lib/crc/crc-ccitt.o" refccitt.nmsize
 	check_size crc16 "$(symsize "$TMP/ref16.nmsize" crc16)" "C object"
 	check_size crc_ccitt "$(symsize "$TMP/refccitt.nmsize" crc_ccitt)" "C object"
 	check_size crc_ccitt_table "$(symsize "$TMP/refccitt.nmsize" crc_ccitt_table)" "C object"
+
+	objnm "$OUT/lib/kfifo.o" refkfifo.nmsize
+	for sym in $KFIFO_SYMBOLS; do
+		check_size "$sym" "$(symsize "$TMP/refkfifo.nmsize" "$sym")" "C object"
+	done
 fi
 
 section "debug-info provenance"
@@ -222,6 +283,11 @@ done
 check_symvers crc16 EXPORT_SYMBOL
 check_symvers crc_ccitt EXPORT_SYMBOL
 check_symvers crc_ccitt_table EXPORT_SYMBOL
+
+for sym in $KFIFO_SYMBOLS; do
+	check_ksymtab "$sym"
+	check_symvers "$sym" EXPORT_SYMBOL
+done
 
 section "disassembly fingerprint"
 if command -v llvm-objdump >/dev/null; then
