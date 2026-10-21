@@ -1,6 +1,6 @@
 Ferret verification evidence
-Source commit: 9b6e30aa6b86
-Extracted: 2026-10-21T15:10:13Z (UTC)
+Source commit: 48fed460f7cf
+Extracted: 2026-10-21T19:25:59Z (UTC)
 Raw logs: artifacts/ (not published; reproduced by tools/ferret/test.sh)
 ----------------------------------------------------------------------
 Guest: Ubuntu 24.04 root filesystem, arm64
@@ -8,74 +8,73 @@ Mode: systemd PID 1
 Architecture: arm64
 Result: PASS (required marker found)
 
-[    0.000000] Linux version 6.18.57-ferret-rust (root@3ea769cb049c) (Ubuntu clang version 18.1.3 (1ubuntu1), Ubuntu LLD 18.1.3) #1 SMP PREEMPT Wed Oct 21 14:49:12 UTC 2026
-[   28.377304] EXT4-fs (vda): recovery complete
-[   28.392427] EXT4-fs (vda): mounted filesystem 18023fa2-061e-46dc-a9a9-e6e6684e0285 r/w with ordered data mode. Quota mode: none.
-[   32.407811] systemd[1]: systemd 255.4-1ubuntu8.18 running in system mode (+PAM +AUDIT +SELINUX +APPARMOR +IMA +SMACK +SECCOMP +GCRYPT -GNUTLS +OPENSSL +ACL +BLKID +CURL +ELFUTILS +FIDO2 +IDN2 -IDN +IPTC +KMOD +LIBCRYPTSETUP +LIBFDISK +PCRE2 -PWQUALITY +P11KIT +QRENCODE +TPM2 +BZIP2 +LZ4 +XZ +ZLIB +ZSTD -BPF_FRAMEWORK -XKBCOMMON +UTMP +SYSVINIT default-hierarchy=unified)
-[   32.409734] systemd[1]: Detected virtualization qemu.
-[   32.410255] systemd[1]: Detected architecture arm64.
-[   32.675107] systemd[1]: Hostname set to <ferret>.
-[   64.492637] systemd[1]: Binding to IPv6 address not available since kernel does not support IPv6.
-[   72.449403] systemd[1]: Queued start job for default target multi-user.target.
-[   73.168348] systemd[1]: Created slice system-modprobe.slice - Slice /system/modprobe.
-[   73.927307] systemd[1]: Created slice system-serial\x2dgetty.slice - Slice /system/serial-getty.
-[[0;32m  OK  [0m] Created slice [0;1;39muser.slice[0m - User and Session Slice.[   74.018338] systemd[1]: Created slice user.slice - User and Session Slice.
-[   74.061399] systemd[1]: Started systemd-ask-password-wall.path - Forward Password Requests to Wall Directory Watch.
-[   74.121295] systemd[1]: proc-sys-fs-binfmt_misc.automount - Arbitrary Executable File Formats File System Automount Point was skipped because of an unmet condition check (ConditionPathExists=/proc/sys/fs/binfmt_misc).
-[   74.129579] systemd[1]: Expecting device dev-ttyAMA0.device - /dev/ttyAMA0...
-[   74.208264] systemd[1]: Reached target integritysetup.target - Local Integrity Protected Volumes.
+[    0.000000] Linux version 6.18.57-ferret-rust (root@3ea769cb049c) (Ubuntu clang version 18.1.3 (1ubuntu1), Ubuntu LLD 18.1.3) #1 SMP PREEMPT Wed Oct 21 19:09:54 UTC 2026
+[    6.225037] EXT4-fs (vda): recovery complete
+[    6.226284] EXT4-fs (vda): mounted filesystem 8f01e456-e8c1-420e-94c8-57cbc7fbd43f r/w with ordered data mode. Quota mode: none.
+[    6.923481] systemd[1]: systemd 255.4-1ubuntu8.18 running in system mode (+PAM +AUDIT +SELINUX +APPARMOR +IMA +SMACK +SECCOMP +GCRYPT -GNUTLS +OPENSSL +ACL +BLKID +CURL +ELFUTILS +FIDO2 +IDN2 -IDN +IPTC +KMOD +LIBCRYPTSETUP +LIBFDISK +PCRE2 -PWQUALITY +P11KIT +QRENCODE +TPM2 +BZIP2 +LZ4 +XZ +ZLIB +ZSTD -BPF_FRAMEWORK -XKBCOMMON +UTMP +SYSVINIT default-hierarchy=unified)
+[    6.924019] systemd[1]: Detected virtualization qemu.
+[    6.924162] systemd[1]: Detected architecture arm64.
+[    6.965758] systemd[1]: Hostname set to <ferret>.
+[   10.302493] systemd[1]: Binding to IPv6 address not available since kernel does not support IPv6.
+[   11.666329] systemd[1]: Queued start job for default target multi-user.target.
+[   11.788047] systemd[1]: Created slice system-modprobe.slice - Slice /system/modprobe.
+[   11.805040] systemd[1]: Created slice system-serial\x2dgetty.slice - Slice /system/serial-getty.
+[   11.813600] systemd[1]: Created slice user.slice - User and Session Slice.
+[   11.840579] systemd[1]: Started systemd-ask-password-wall.path - Forward Password Requests to Wall Directory Watch.
+[   11.845403] systemd[1]: proc-sys-fs-binfmt_misc.automount - Arbitrary Executable File Formats File System Automount Point was skipped because of an unmet condition check (ConditionPathExists=/proc/sys/fs/binfmt_misc).
+[   11.846137] systemd[1]: Expecting device dev-ttyAMA0.device - /dev/ttyAMA0...
 [[0;32m  OK  [0m] Reached target [0;1;39mintegritysetup.targ…[0m Local Integrity Protected Volumes.
-[   74.268796] systemd[1]: Reached target slices.target - Slice Units.
-[[0;32m  OK  [0m] Reached target [0;1;39mslices.target[0m - Slice Units.
-[   74.316515] systemd[1]: Reached target snapd.mounts-pre.target - Mounting snaps.
+[[0;32m  OK  [0m] Reached target [0;1;39mslices.target[0m - Slice Units.[   11.879426] systemd[1]: Reached target integritysetup.target - Local Integrity Protected Volumes.
+[   11.883106] systemd[1]: Reached target slices.target - Slice Units.
 [[0;32m  OK  [0m] Reached target [0;1;39msnapd.mounts-pre.target[0m - Mounting snaps.
-[   74.353648] systemd[1]: Reached target snapd.mounts.target - Mounted snaps.
-[[0;32m  OK  [0m] Reached target [0;1;39msnapd.mounts.target[0m - Mounted snaps.
-[[0;32m  OK  [0m] Reached target [0;1;39mswap.target[0m - Swaps.[   74.391761] systemd[1]: Reached target swap.target - Swaps.
-[   74.432671] systemd[1]: Reached target veritysetup.target - Local Verity Protected Volumes.
+[[0;32m  OK  [0m] Reached target [0;1;39msnapd.mounts.target[0m - Mounted snaps.[   11.908401] systemd[1]: Reached target snapd.mounts-pre.target - Mounting snaps.
+[   11.910732] systemd[1]: Reached target snapd.mounts.target - Mounted snaps.
+[[0;32m  OK  [0m] Reached target [0;1;39mswap.target[0m - Swaps.
 [[0;32m  OK  [0m] Reached target [0;1;39mveritysetup.target[0m - Local Verity Protected Volumes.
-[[0;32m  OK  [0m] Listening on [0;1;39mdm-event.socket[0m - Device-mapper event daemon FIFOs.[   74.496341] systemd[1]: Listening on dm-event.socket - Device-mapper event daemon FIFOs.
-[   74.564896] systemd[1]: Listening on lvm2-lvmpolld.socket - LVM2 poll daemon socket.
-[   74.625805] systemd[1]: syslog.socket: SO_PASSSEC failed: Operation not supported
-[   74.627423] systemd[1]: Listening on syslog.socket - Syslog Socket.
-[[0;32m  OK  [0m] Listening on [0;1;39msystemd-fsckd.socket[0m …fsck to fsckd communication Socket.[   74.700172] systemd[1]: Listening on systemd-fsckd.socket - fsck to fsckd communication Socket.
-[   74.758326] systemd[1]: Listening on systemd-initctl.socket - initctl Compatibility Named Pipe.
-[   74.820905] systemd[1]: systemd-journald-dev-log.socket: SO_PASSSEC failed: Operation not supported
-[   74.825782] systemd[1]: Listening on systemd-journald-dev-log.socket - Journal Socket (/dev/log).
-[   74.925292] systemd[1]: systemd-journald.socket: SO_PASSSEC failed: Operation not supported
-[[0;32m  OK  [0m] Listening on [0;1;39msystemd-journald.socket[0m - Journal Socket.[   74.931564] systemd[1]: systemd-journald.socket: SO_PASSSEC failed: Operation not supported
-[   74.933249] systemd[1]: Listening on systemd-journald.socket - Journal Socket.
-[[0;32m  OK  [0m] Listening on [0;1;39msystemd-networkd.socket[0m - Network Service Netlink Socket.[   75.059594] systemd[1]: Listening on systemd-networkd.socket - Network Service Netlink Socket.
-[   75.111537] systemd[1]: systemd-pcrextend.socket - TPM2 PCR Extension (Varlink) was skipped because of an unmet condition check (ConditionSecurity=measured-uki).
-[   75.145499] systemd[1]: Listening on systemd-udevd-control.socket - udev Control Socket.
-[   75.260082] systemd[1]: Listening on systemd-udevd-kernel.socket - udev Kernel Socket.
-[   75.572379] systemd[1]: Mounting dev-hugepages.mount - Huge Pages File System...
-[   75.800539] systemd[1]: Mounting dev-mqueue.mount - POSIX Message Queue File System...
-[   76.272583] systemd[1]: Mounting sys-kernel-debug.mount - Kernel Debug File System...
-[   76.585098] systemd[1]: sys-kernel-tracing.mount - Kernel Trace File System was skipped because of an unmet condition check (ConditionPathExists=/sys/kernel/tracing).
-[   77.881189] systemd[1]: Starting systemd-journald.service - Journal Service...
-[   78.701140] systemd[1]: Starting keyboard-setup.service - Set the console keyboard layout...
-[   79.462184] systemd[1]: kmod-static-nodes.service - Create List of Static Device Nodes was skipped because of an unmet condition check (ConditionFileNotEmpty=/lib/modules/6.18.57-ferret-rust/modules.devname).
-[   79.862710] systemd[1]: Starting lvm2-monitor.service - Monitoring of LVM2 mirrors, snapshots etc. using dmeventd or progress polling...
-         Starting [0;1;39mmodprobe@configfs.service[0m - Load Kernel Module configfs...[   81.061683] systemd[1]: Starting modprobe@configfs.service - Load Kernel Module configfs...
-         Starting [0;1;39mmodprobe@dm_mod.service[0m - Load Kernel Module dm_mod...[   82.578620] systemd[1]: Starting modprobe@dm_mod.service - Load Kernel Module dm_mod...
-[   84.048501] systemd[1]: Starting modprobe@drm.service - Load Kernel Module drm...
-[   85.857605] systemd[1]: Starting modprobe@efi_pstore.service - Load Kernel Module efi_pstore...
-[   88.970300] systemd[1]: Starting modprobe@fuse.service - Load Kernel Module fuse...
-[   93.499798] systemd[1]: Starting modprobe@loop.service - Load Kernel Module loop...
-[   93.742158] systemd[1]: netplan-ovs-cleanup.service - OpenVSwitch configuration for cleanup was skipped because of an unmet condition check (ConditionFileIsExecutable=/usr/bin/ovs-vsctl).
-[   93.927500] systemd[1]: systemd-fsck-root.service - File System Check on Root Device was skipped because of an unmet condition check (ConditionPathIsReadWrite=!/).
-[   95.495589] systemd[1]: Starting systemd-modules-load.service - Load Kernel Modules...
-[   96.330396] systemd[1]: systemd-pcrmachine.service - TPM2 PCR Machine ID Measurement was skipped because of an unmet condition check (ConditionSecurity=measured-uki).
-[   97.108284] systemd[1]: Starting systemd-remount-fs.service - Remount Root and Kernel File Systems...
-[   98.794900] systemd[1]: Starting systemd-tmpfiles-setup-dev-early.service - Create Static Device Nodes in /dev gracefully...
-[   99.045521] systemd[1]: systemd-tpm2-setup-early.service - TPM2 SRK Setup (Early) was skipped because of an unmet condition check (ConditionSecurity=measured-uki).
-[  100.045366] systemd[1]: Starting systemd-udev-trigger.service - Coldplug All udev Devices...
-[  102.579774] EXT4-fs (vda): re-mounted 18023fa2-061e-46dc-a9a9-e6e6684e0285.
-[  103.601897] systemd[1]: Started systemd-journald.service - Journal Service.
-[K[[0;32m  OK  [0m] Reached target [0;1;39mlocal-fs-pre.target[0m…Preparation for Local File Systems.
+[   11.936424] systemd[1]: Reached target swap.target - Swaps.
+[   11.939100] systemd[1]: Reached target veritysetup.target - Local Verity Protected Volumes.
+[   11.956318] systemd[1]: Listening on dm-event.socket - Device-mapper event daemon FIFOs.
+[[0;32m  OK  [0m] Listening on [0;1;39mlvm2-lvmpolld.socket[0m - LVM2 poll daemon socket.[   11.966161] systemd[1]: Listening on lvm2-lvmpolld.socket - LVM2 poll daemon socket.
+[   11.984521] systemd[1]: syslog.socket: SO_PASSSEC failed: Operation not supported
+[   11.984743] systemd[1]: Listening on syslog.socket - Syslog Socket.
+[   11.989763] systemd[1]: Listening on systemd-fsckd.socket - fsck to fsckd communication Socket.
+[   12.016781] systemd[1]: Listening on systemd-initctl.socket - initctl Compatibility Named Pipe.
+[   12.021137] systemd[1]: systemd-journald-dev-log.socket: SO_PASSSEC failed: Operation not supported
+[   12.021696] systemd[1]: Listening on systemd-journald-dev-log.socket - Journal Socket (/dev/log).
+[   12.060754] systemd[1]: systemd-journald.socket: SO_PASSSEC failed: Operation not supported
+[[0;32m  OK  [0m] Listening on [0;1;39msystemd-networkd.socket[0m - Network Service Netlink Socket.[   12.061334] systemd[1]: systemd-journald.socket: SO_PASSSEC failed: Operation not supported
+[   12.061546] systemd[1]: Listening on systemd-journald.socket - Journal Socket.
+[   12.068356] systemd[1]: Listening on systemd-networkd.socket - Network Service Netlink Socket.
+[   12.112538] systemd[1]: systemd-pcrextend.socket - TPM2 PCR Extension (Varlink) was skipped because of an unmet condition check (ConditionSecurity=measured-uki).
+[   12.116567] systemd[1]: Listening on systemd-udevd-control.socket - udev Control Socket.
+[[0;32m  OK  [0m] Listening on [0;1;39msystemd-udevd-kernel.socket[0m - udev Kernel Socket.[   12.135101] systemd[1]: Listening on systemd-udevd-kernel.socket - udev Kernel Socket.
+         Mounting [0;1;39mdev-hugepages.mount[0m - Huge Pages File System...[   12.192629] systemd[1]: Mounting dev-hugepages.mount - Huge Pages File System...
+         Mounting [0;1;39mdev-mqueue.mount[0m - POSIX Message Queue File System...[   12.277578] systemd[1]: Mounting dev-mqueue.mount - POSIX Message Queue File System...
+         Mounting [0;1;39msys-kernel-debug.mount[0m - Kernel Debug File System...[   12.405647] systemd[1]: Mounting sys-kernel-debug.mount - Kernel Debug File System...
+[   12.469506] systemd[1]: sys-kernel-tracing.mount - Kernel Trace File System was skipped because of an unmet condition check (ConditionPathExists=/sys/kernel/tracing).
+         Starting [0;1;39msystemd-journald.service[0m - Journal Service...[   12.616455] systemd[1]: Starting systemd-journald.service - Journal Service...
+         Starting [0;1;39mkeyboard-setup.service[0m - Set the console keyboard layout...[   12.716933] systemd[1]: Starting keyboard-setup.service - Set the console keyboard layout...
+[   12.800769] systemd[1]: kmod-static-nodes.service - Create List of Static Device Nodes was skipped because of an unmet condition check (ConditionFileNotEmpty=/lib/modules/6.18.57-ferret-rust/modules.devname).
+         Starting [0;1;39mlvm2-monitor.service[0m - Mo…ing dmeventd or progress polling...[   12.870681] systemd[1]: Starting lvm2-monitor.service - Monitoring of LVM2 mirrors, snapshots etc. using dmeventd or progress polling...
+         Starting [0;1;39mmodprobe@configfs.service[0m - Load Kernel Module configfs...[   13.017868] systemd[1]: Starting modprobe@configfs.service - Load Kernel Module configfs...
+         Starting [0;1;39mmodprobe@dm_mod.service[0m - Load Kernel Module dm_mod...[   13.262780] systemd[1]: Starting modprobe@dm_mod.service - Load Kernel Module dm_mod...
+[   13.592945] systemd[1]: Starting modprobe@drm.service - Load Kernel Module drm...
+         Starting [0;1;39mmodprobe@efi_pstore.servi…[0m - Load Kernel Module efi_pstore...[   13.933635] systemd[1]: Starting modprobe@efi_pstore.service - Load Kernel Module efi_pstore...
+         Starting [0;1;39mmodprobe@fuse.service[0m - Load Kernel Module fuse...[   14.361380] systemd[1]: Starting modprobe@fuse.service - Load Kernel Module fuse...
+         Starting [0;1;39mmodprobe@loop.service[0m - Load Kernel Module loop...[   14.645921] systemd[1]: Starting modprobe@loop.service - Load Kernel Module loop...
+[   14.677504] systemd[1]: netplan-ovs-cleanup.service - OpenVSwitch configuration for cleanup was skipped because of an unmet condition check (ConditionFileIsExecutable=/usr/bin/ovs-vsctl).
+[   14.721922] systemd[1]: systemd-fsck-root.service - File System Check on Root Device was skipped because of an unmet condition check (ConditionPathIsReadWrite=!/).
+[   14.932609] systemd[1]: Starting systemd-modules-load.service - Load Kernel Modules...
+[   14.935359] systemd[1]: systemd-pcrmachine.service - TPM2 PCR Machine ID Measurement was skipped because of an unmet condition check (ConditionSecurity=measured-uki).
+         Starting [0;1;39msystemd-remount-fs.servic…[0munt Root and Kernel File Systems...[   15.117838] systemd[1]: Starting systemd-remount-fs.service - Remount Root and Kernel File Systems...
+         Starting [0;1;39msystemd-tmpfiles-setup-de…[0m Device Nodes in /dev gracefully...[   15.369340] systemd[1]: Starting systemd-tmpfiles-setup-dev-early.service - Create Static Device Nodes in /dev gracefully...
+[   15.407796] systemd[1]: systemd-tpm2-setup-early.service - TPM2 SRK Setup (Early) was skipped because of an unmet condition check (ConditionSecurity=measured-uki).
+         Starting [0;1;39msystemd-udev-trigger.service[0m - Coldplug All udev Devices...[   15.509835] systemd[1]: Starting systemd-udev-trigger.service - Coldplug All udev Devices...
+[[0;32m  OK  [0m] Started [0;1;39msystemd-journald.service[0m - Journal Service.[   15.856112] systemd[1]: Started systemd-journald.service - Journal Service.
+[[0;32m  OK  [0m] Mounted [0;1;39msys-kernel-debug.mount[0m - Kernel Debug File System.[   16.177315] EXT4-fs (vda): re-mounted 8f01e456-e8c1-420e-94c8-57cbc7fbd43f.
+[[0;32m  OK  [0m] Reached target [0;1;39mlocal-fs-pre.target[0m…Preparation for Local File Systems.
 [[0;32m  OK  [0m] Reached target [0;1;39mlocal-fs.target[0m - Local File Systems.
-[K[[0;32m  OK  [0m] Reached target [0;1;39mnetwork-pre.target[0m - Preparation for Network.
+[[0;32m  OK  [0m] Reached target [0;1;39mnetwork-pre.target[0m - Preparation for Network.
 [[0;32m  OK  [0m] Reached target [0;1;39mcryptsetup.target[0m - Local Encrypted Volumes.
 [[0;32m  OK  [0m] Reached target [0;1;39mtime-set.target[0m - System Time Set.
 [K[[0;32m  OK  [0m] Reached target [0;1;39mnetwork.target[0m - Network.
@@ -90,4 +89,4 @@ Result: PASS (required marker found)
 [[0;32m  OK  [0m] Reached target [0;1;39mbasic.target[0m - Basic System.
 [[0;32m  OK  [0m] Reached target [0;1;39mgetty-pre.target[0m - Preparation for Logins.
 ferret login: root (automatic login)
-[  444.477224] ferret-systemd-check[447]: SYSTEMD-CHECK: ok
+[   66.770449] ferret-systemd-check[486]: SYSTEMD-CHECK: ok

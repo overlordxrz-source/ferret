@@ -506,6 +506,22 @@ where
         Ok(v)
     }
 
+    /// Creates a `Vec<T, A>` with at least the given capacity, allocating on
+    /// the given NUMA node.
+    ///
+    /// This is the node-aware counterpart of [`Vec::with_capacity()`].
+    pub fn with_capacity_in(
+        capacity: usize,
+        flags: Flags,
+        nid: NumaNode,
+    ) -> Result<Self, AllocError> {
+        let mut v = Vec::new();
+
+        v.reserve_in(capacity, flags, nid)?;
+
+        Ok(v)
+    }
+
     /// Creates a `Vec<T, A>` from a pointer, a length and a capacity using the allocator `A`.
     ///
     /// # Examples
@@ -620,6 +636,22 @@ where
     /// # Ok::<(), Error>(())
     /// ```
     pub fn reserve(&mut self, additional: usize, flags: Flags) -> Result<(), AllocError> {
+        self.reserve_in(additional, flags, NumaNode::NO_NODE)
+    }
+
+    /// Ensures that the capacity exceeds the length by at least `additional`
+    /// elements, allocating on the given NUMA node.
+    ///
+    /// This is the node-aware counterpart of [`Vec::reserve()`]; the
+    /// allocator interface already carries the node, so exposing it here is
+    /// enough to implement C interfaces that take a node argument (for
+    /// example `kmalloc_node()`).
+    pub fn reserve_in(
+        &mut self,
+        additional: usize,
+        flags: Flags,
+        nid: NumaNode,
+    ) -> Result<(), AllocError> {
         let len = self.len();
         let cap = self.capacity();
 
@@ -647,7 +679,7 @@ where
                 layout.into(),
                 self.layout.into(),
                 flags,
-                NumaNode::NO_NODE,
+                nid,
             )?
         };
 

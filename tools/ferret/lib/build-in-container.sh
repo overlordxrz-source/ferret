@@ -55,6 +55,9 @@ cfg --enable KUNIT
 cfg --enable CRC_KUNIT_TEST
 cfg --enable CRC16
 cfg --enable CRC_CCITT
+# The upstream bitmap kselftest module runs in both variants: the reference
+# kernel has to satisfy it too, so the Rust result has a baseline.
+cfg --enable TEST_BITMAP
 # The upstream kernel FIFO suite runs in both variants: the reference kernel
 # must satisfy it too, so that the Rust variant's result is comparable.
 cfg --enable KFIFO_KUNIT_TEST
@@ -67,6 +70,8 @@ if [ "$VARIANT" = rust ]; then
 	cfg --enable CRC_CCITT_DIFF_KUNIT_TEST
 	cfg --enable KFIFO_RUST
 	cfg --enable KFIFO_DIFF_KUNIT_TEST
+	cfg --enable BITMAP_RUST
+	cfg --enable BITMAP_DIFF_KUNIT_TEST
 	# Rust KUnit tests (the migrated modules ship their own vectors tests).
 	# KUNIT_ALL_TESTS is deliberately not enabled: unrelated suites must not
 	# be able to obscure the result of the Ferret migrations.
@@ -78,6 +83,8 @@ else
 	cfg --disable CRC_CCITT_DIFF_KUNIT_TEST 2>/dev/null || true
 	cfg --disable KFIFO_RUST 2>/dev/null || true
 	cfg --disable KFIFO_DIFF_KUNIT_TEST 2>/dev/null || true
+	cfg --disable BITMAP_RUST 2>/dev/null || true
+	cfg --disable BITMAP_DIFF_KUNIT_TEST 2>/dev/null || true
 fi
 
 # Keep the build reproducible and reasonably fast.

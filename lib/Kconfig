@@ -175,6 +175,32 @@ config KFIFO_RUST
 
 	  If unsure, say N.
 
+config BITMAP_RUST
+	bool "Rust implementation of the kernel bitmap (Ferret)"
+	depends on RUST
+	help
+	  Build the kernel bitmap from the Rust implementation in
+	  lib/bitmap_rust.rs instead of the C implementation in lib/bitmap.c.
+
+	  This is a Ferret migration experiment. The C implementation is kept
+	  in the tree as the reference used by the differential KUnit test, and
+	  the exported symbols keep their original visibility.
+
+	  If unsure, say N.
+
+config BITMAP_DIFF_KUNIT_TEST
+	bool "Differential KUnit test: kernel bitmap C reference vs Rust"
+	depends on BITMAP_RUST
+	depends on KUNIT
+	help
+	  Compile the original C implementation of the kernel bitmap under
+	  test-only symbol names and compare it against the Rust
+	  implementation over the whole API: the logical operations, the
+	  weight helpers, the set/clear ranges, the shifts, the cut, the
+	  zero-area search, the remapping and the 32-bit word conversions.
+
+	  This is test-only code; it is never part of a production kernel.
+
 config KFIFO_DIFF_KUNIT_TEST
 	bool "Differential KUnit test: kernel FIFO C reference vs Rust"
 	depends on KFIFO_RUST

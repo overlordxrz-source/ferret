@@ -25,6 +25,8 @@ pub struct AllocError;
 use crate::error::{code::EINVAL, Result};
 use core::{alloc::Layout, ptr::NonNull};
 
+use crate::bindings;
+
 /// Flags to be used when allocating memory.
 ///
 /// They can be combined with the operators `|`, `&`, and `!`.
@@ -37,6 +39,28 @@ impl Flags {
     /// Get the raw representation of this flag.
     pub(crate) fn as_raw(self) -> u32 {
         self.0
+    }
+
+    /// Get the raw representation of this flag set.
+    ///
+    /// This is the counterpart of [`Flags::from_gfp()`]: a component that
+    /// received a `gfp_t` from a C caller can hand it on unchanged.
+    pub fn as_gfp(self) -> bindings::gfp_t {
+        self.0 as bindings::gfp_t
+    }
+
+    /// Create a flag set from a raw `gfp_t` mask.
+    ///
+    /// The fixed flag sets in the [`flags`] module cannot express an
+    /// arbitrary mask. A Rust implementation of a C function that takes a
+    /// `gfp_t` argument has to forward the caller's mask unchanged, which is
+    /// what this constructor is for.
+    ///
+    /// `gfp_t` is an `unsigned int` on every architecture, so the raw value
+    /// maps one to one; the mask is not validated, exactly like the C code,
+    /// which passes the caller's flags straight to the allocator.
+    pub const fn from_gfp(gfp: bindings::gfp_t) -> Self {
+        Self(gfp as u32)
     }
 
     /// Check whether `flags` is contained in `self`.

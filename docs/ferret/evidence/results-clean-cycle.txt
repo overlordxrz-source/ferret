@@ -1,9 +1,9 @@
 Ferret verification evidence
-Source commit: 9b6e30aa6b86
-Extracted: 2026-10-21T15:10:13Z (UTC)
+Source commit: 48fed460f7cf
+Extracted: 2026-10-21T19:25:59Z (UTC)
 Raw logs: artifacts/ (not published; reproduced by tools/ferret/test.sh)
 ----------------------------------------------------------------------
-Clean cycle: CLEAN=1 tools/ferret/test.sh
+Cycle: CLEAN=1 tools/ferret/test.sh
 
 build-ref    PASS
 build-rust   PASS

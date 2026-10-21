@@ -162,6 +162,30 @@ prerequisite but also the waitqueue for its blocking path), `idr` (a good
 candidate, but it competes with the bitmap for the same review attention), and
 the memory manager itself.
 
+## 6.1 What the port needed (checkpoint 003)
+
+The plan in section 7 was followed, and it confirmed the two gaps of section 5:
+
+* **The run-time allocation mask.** `bitmap_alloc(nbits, flags)` takes the
+  caller's GFP mask, so the kernel crate needed `Flags::from_gfp()` before the
+  bitmap could be written at all. The same extension let the kernel FIFO drop
+  its C helper.
+* **The node-aware allocation.** `bitmap_alloc_node()` needs a NUMA node, and
+  the kernel crate's `Vec` only allocated on the local node. The allocator
+  interface already carries the node, so exposing it (`Vec::reserve_in()`,
+  `Vec::with_capacity_in()`) was enough.
+
+The port itself found one real defect, and the *upstream* test suite found it:
+`bitmap_cut()` in the C original reads and writes the word that `first` points
+at, even when that word is outside the bitmap (the C code then accesses memory
+past the allocation). The Rust version only touches the words that are inside
+the bitmap; the bits of the bitmap itself are the same. The upstream
+`test_bitmap` kselftest, which is built into the test kernel, caught this on
+the first boot.
+
+The upstream suite is a strong independent check: **390 447 cases**, all
+passing against the Rust implementation.
+
 ## 7. Plan
 
 1. Land the `Flags` run-time mask in the kernel crate, with unit tests, and

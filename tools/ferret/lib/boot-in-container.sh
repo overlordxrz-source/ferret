@@ -80,6 +80,13 @@ else
 	echo "FAIL  KUnit kfifo (upstream suite)"
 	fail=1
 fi
+if grep -qE 'test_bitmap: all [0-9]+ tests passed' "$LOG"; then
+	echo "PASS  upstream test_bitmap kselftest ($(grep -aoE 'test_bitmap: all [0-9]+ tests passed' "$LOG" | tail -1))"
+else
+	echo "FAIL  upstream test_bitmap kselftest did not report success"
+	grep -aE 'test_bitmap:' "$LOG" | tail -5 || true
+	fail=1
+fi
 if grep -qE 'not ok [0-9]+ ' "$LOG"; then
 	echo "FAIL  KUnit suite reported failures:"
 	grep -E 'not ok [0-9]+ ' "$LOG" || true
@@ -90,7 +97,7 @@ fi
 
 if [ "$VARIANT" = rust ]; then
 	for suite in crc16_rust crc16_diff crc_ccitt_rust crc_ccitt_diff \
-		     kfifo_rust kfifo_diff kfifo; do
+		     kfifo_rust kfifo_diff kfifo bitmap_diff; do
 		if grep -qE "ok [0-9]+ $suite" "$LOG"; then
 			echo "PASS  KUnit $suite"
 		else

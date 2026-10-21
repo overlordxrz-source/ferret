@@ -63,3 +63,16 @@ unsigned long _find_next_bit(const unsigned long *addr, unsigned long size,
 	return find_next_bit(addr, size, offset);
 }
 #endif /* find_next_bit */
+
+/*
+ * The kernel's hweight64() is a macro over the architecture's
+ * __arch_hweight64(), which uses the alternatives mechanism: the generic
+ * software version is patched to the popcount instruction at boot when the
+ * CPU has it. A Rust count_ones() is compiled to the software sequence
+ * instead, so the Rust bitmap calls this helper to be on par with the C
+ * implementation.
+ */
+unsigned long rust_helper_hweight64(u64 w)
+{
+	return hweight64(w);
+}

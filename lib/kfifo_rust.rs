@@ -48,6 +48,7 @@
 
 use core::ffi::{c_int, c_uint, c_void};
 
+use kernel::alloc::{Flags, KVec};
 use kernel::bindings;
 use kernel::sync::barrier::smp_wmb;
 use kernel::error::code::{EFAULT, EINVAL, ENOMEM};
@@ -357,17 +358,33 @@ pub unsafe extern "C" fn __kfifo_alloc(
         return EINVAL.to_errno();
     }
 
-    // SAFETY: `kmalloc_array()` is the kernel's allocator; the flags are the
-    // caller's, and are used exactly as in the C original.
-    let data = unsafe { bindings::kmalloc_array(esize, size as usize, gfp_mask) };
+    // The C original calls kmalloc_array(esize, size, gfp_mask), which
+    // returns NULL when the multiplication overflows.
+    let total = match (esize as usize).checked_mul(size as usize) {
+        Some(total) => total,
+        None => {
+            fifo.data = core::ptr::null_mut();
+            fifo.mask = 0;
+            return ENOMEM.to_errno();
+        }
+    };
+
+    // Allocate with the caller's flags, exactly like kmalloc_array() does:
+    // the kernel crate's allocator calls krealloc_node_align(), which is
+    // kmalloc() for a null pointer, with the flags the caller passed.
+    let data = match KVec::<u8>::with_capacity(total, Flags::from_gfp(gfp_mask)) {
+        Ok(buf) => {
+            let (ptr, _, _) = buf.into_raw_parts();
+            ptr.cast::<c_void>()
+        }
+        Err(_) => {
+            fifo.data = core::ptr::null_mut();
+            fifo.mask = 0;
+            return ENOMEM.to_errno();
+        }
+    };
 
     fifo.data = data;
-
-    if data.is_null() {
-        fifo.mask = 0;
-        return ENOMEM.to_errno();
-    }
-
     fifo.mask = size - 1;
 
     0
@@ -386,10 +403,19 @@ pub unsafe extern "C" fn __kfifo_free(fifo: *mut Kfifo) {
     // SAFETY: the caller passes a valid `struct __kfifo`.
     let fifo = unsafe { &mut *fifo };
 
-    // SAFETY: `fifo->data` was allocated by `kmalloc_array()` in
-    // `__kfifo_alloc()`; `kfree()` of a null pointer is a no-op, exactly as
-    // in the C original.
-    unsafe { bindings::kfree(fifo.data.cast_const()) };
+    if !fifo.data.is_null() {
+        // The buffer was allocated by `__kfifo_alloc()` with exactly this
+        // capacity: `(mask + 1)` elements of `esize` bytes.
+        let total = (fifo.mask as usize + 1) * (fifo.esize as usize);
+
+        // SAFETY: `fifo->data` was allocated by `__kfifo_alloc()` with this
+        // capacity and is released exactly once. Dropping the vector calls
+        // the kernel allocator's deallocation, i.e. `kfree()`, exactly as in
+        // the C original.
+        drop(unsafe {
+            KVec::<u8>::from_raw_parts(fifo.data.cast::<u8>(), 0, total)
+        });
+    }
 
     fifo.in_ = 0;
     fifo.out = 0;
