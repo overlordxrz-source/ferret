@@ -201,8 +201,8 @@ and the same run, keeping the best of three rounds.
 
 | Workload | Rust | C | ratio |
 | --- | --- | --- | --- |
-| all operations (2 000 iterations over 1 024 bits) | 5.72 ms | 4.31 ms | **1 327 per mille** |
-| without the weight helpers | 4.18 ms | 4.73 ms | **884 per mille** |
+| all operations (2 000 iterations over 1 024 bits) | 3.23 ms | 2.77 ms | **1 168 per mille** |
+| without the weight helpers | 2.47 ms | 2.56 ms | **964 per mille** |
 
 The reading is unambiguous: the logical operations, the set/clear ranges and
 the shifts are at parity (slightly faster in Rust), and the whole gap comes
@@ -217,14 +217,19 @@ units. A Rust `count_ones()` is therefore compiled to the software sequence,
 and calling the kernel's `hweight64()` through a helper costs a call per word.
 
 Measured variants: the software sequence (`count_ones()`) gives 1 590 per
-mille, the helper call gives 1 327 per mille; the helper is kept.
+mille, the helper call gives 1 327 per mille; the helper is kept. The clean
+cycle measured 1 168 per mille for the same workload — the spread between
+runs is the reason every figure here is a ratio measured in one run.
 
 **Caveat on the numbers themselves:** they are QEMU TCG figures (the test
 kernel runs under an instruction-level emulator), and their run-to-run spread
-is large — the upstream kselftest, which measures *identical* header code in
-both builds, varied by about 30 % between two boots of the same kernel. Only
-the ratio between the two implementations, measured in the same run, is
-meaningful.
+is large. The clean cycle gives a calibration for that: the upstream
+kselftest measures `bitmap_read()` and `bitmap_write()`, which are static
+inlines in `include/linux/bitmap.h` and therefore *identical code* in both
+builds — and the two kernels of the same cycle still differed by 48 %
+(`test_bitmap_read_perf`: 3.98 ms in the Rust kernel against 5.90 ms in the
+reference kernel). Only a ratio measured inside one run is meaningful; a
+single number from a single boot is not.
 
 ## 9. Code size
 

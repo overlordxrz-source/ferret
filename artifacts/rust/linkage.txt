@@ -2,7 +2,7 @@
 == kernel variant ==
 variant:  rust
 vmlinux:  /build/linux-rust/vmlinux
-git:      491a428865a5
+git:      48fed460f7cf
 config:   CONFIG_RUST=y CONFIG_CRC16=y CONFIG_CRC16_RUST=y CONFIG_CRC16_DIFF_KUNIT_TEST=y CONFIG_CRC_CCITT=y CONFIG_CRC_CCITT_RUST=y CONFIG_CRC_CCITT_DIFF_KUNIT_TEST=y CONFIG_KFIFO_RUST=y CONFIG_BITMAP_RUST=y CONFIG_BITMAP_DIFF_KUNIT_TEST=y CONFIG_KFIFO_DIFF_KUNIT_TEST=y CONFIG_KUNIT=y 
 
 == build tree object ownership ==
@@ -139,15 +139,15 @@ PASS  __bitmap_subset is defined by lib/bitmap_rust.o
 PASS  linked __bitmap_subset has the size of the function in the Rust object
 PASS  export shim for __bitmap_subset only references it (no definition)
 PASS  __bitmap_weight is defined by lib/bitmap_rust.o
-      size __bitmap_weight: object=0x00000000000000fd vmlinux=0x00000000000000fd bytes
+      size __bitmap_weight: object=0x0000000000000091 vmlinux=0x0000000000000091 bytes
 PASS  linked __bitmap_weight has the size of the function in the Rust object
 PASS  export shim for __bitmap_weight only references it (no definition)
 PASS  __bitmap_weight_and is defined by lib/bitmap_rust.o
-      size __bitmap_weight_and: object=0x0000000000000106 vmlinux=0x0000000000000106 bytes
+      size __bitmap_weight_and: object=0x00000000000000a7 vmlinux=0x00000000000000a7 bytes
 PASS  linked __bitmap_weight_and has the size of the function in the Rust object
 PASS  export shim for __bitmap_weight_and only references it (no definition)
 PASS  __bitmap_weight_andnot is defined by lib/bitmap_rust.o
-      size __bitmap_weight_andnot: object=0x000000000000010f vmlinux=0x000000000000010f bytes
+      size __bitmap_weight_andnot: object=0x00000000000000ac vmlinux=0x00000000000000ac bytes
 PASS  linked __bitmap_weight_andnot has the size of the function in the Rust object
 PASS  export shim for __bitmap_weight_andnot only references it (no definition)
 PASS  __bitmap_xor is defined by lib/bitmap_rust.o
@@ -163,7 +163,7 @@ PASS  bitmap_alloc_node is defined by lib/bitmap_rust.o
 PASS  linked bitmap_alloc_node has the size of the function in the Rust object
 PASS  export shim for bitmap_alloc_node only references it (no definition)
 PASS  bitmap_bitremap is defined by lib/bitmap_rust.o
-      size bitmap_bitremap: object=0x0000000000000207 vmlinux=0x0000000000000207 bytes
+      size bitmap_bitremap: object=0x000000000000015d vmlinux=0x000000000000015d bytes
 PASS  linked bitmap_bitremap has the size of the function in the Rust object
 PASS  export shim for bitmap_bitremap only references it (no definition)
 PASS  bitmap_cut is defined by lib/bitmap_rust.o
@@ -183,7 +183,7 @@ PASS  bitmap_from_arr32 is defined by lib/bitmap_rust.o
 PASS  linked bitmap_from_arr32 has the size of the function in the Rust object
 PASS  export shim for bitmap_from_arr32 only references it (no definition)
 PASS  bitmap_remap is defined by lib/bitmap_rust.o
-      size bitmap_remap: object=0x0000000000000306 vmlinux=0x0000000000000306 bytes
+      size bitmap_remap: object=0x000000000000022c vmlinux=0x000000000000022c bytes
 PASS  linked bitmap_remap has the size of the function in the Rust object
 PASS  export shim for bitmap_remap only references it (no definition)
 PASS  bitmap_to_arr32 is defined by lib/bitmap_rust.o
@@ -470,49 +470,49 @@ PASS  __ksymtab_devm_bitmap_zalloc exists (module ABI preserved)
 PASS  devm_bitmap_zalloc exported as EXPORT_SYMBOL_GPL
 
 == disassembly fingerprint ==
-      ffffffff818306a0 <crc16>:
-      ffffffff818306a0:      	endbr64
-      ffffffff818306a4:      	movl	%edi, %eax
-      ffffffff818306a6:      	testq	%rdx, %rdx
-      ffffffff818306a9:      	je	0xffffffff8183072e <crc16+0x8e>
-      ffffffff818306af:      	testb	$0x1, %dl
-      ffffffff818306b2:      	jne	0xffffffff818306bf <crc16+0x1f>
-      ffffffff81830fe0 <crc_ccitt>:
-      ffffffff81830fe0:      	endbr64
-      ffffffff81830fe4:      	movl	%edi, %eax
-      ffffffff81830fe6:      	testq	%rdx, %rdx
-      ffffffff81830fe9:      	je	0xffffffff81831065 <crc_ccitt+0x85>
-      ffffffff81830feb:      	testb	$0x1, %dl
-      ffffffff81830fee:      	jne	0xffffffff81830ffb <crc_ccitt+0x1b>
-      ffffffff81820ca0 <__kfifo_in>:
-      ffffffff81820ca0:      	endbr64
-      ffffffff81820ca4:      	pushq	%rbp
-      ffffffff81820ca5:      	pushq	%r15
-      ffffffff81820ca7:      	pushq	%r14
-      ffffffff81820ca9:      	pushq	%r13
-      ffffffff81820cab:      	pushq	%r12
-      ffffffff81820cad:      	pushq	%rbx
-      ffffffff81820cae:      	pushq	%rax
-      ffffffff81820caf:      	movq	%rsi, %r15
-      ffffffff81820cb2:      	movq	%rdi, %rbx
-      ffffffff81820cb5:      	movl	(%rdi), %r8d
-      ffffffff81820cb8:      	movl	0x4(%rdi), %ecx
-      ffffffff81820cbb:      	movl	0x8(%rdi), %eax
-      ffffffff81820cbe:      	subl	%r8d, %ecx
-      ffffffff81820cc1:      	movl	%r8d, 0x4(%rsp)
-      ffffffff81820cc6:      	leal	(%rcx,%rax), %r14d
-      ffffffff81820cca:      	incl	%r14d
-      ffffffff81820ccd:      	cmpl	%r14d, %edx
-      ffffffff81820cd0:      	cmovbl	%edx, %r14d
-      ffffffff81820cd4:      	movl	0xc(%rdi), %ecx
-      ffffffff81820cd7:      	testq	%rcx, %rcx
-      ffffffff81820cda:      	sete	%dl
-      ffffffff81820cdd:      	movq	%r14, %r12
-      ffffffff81820ce0:      	imulq	%rcx, %r12
-      ffffffff81820ce4:      	movl	%eax, %edi
-      ffffffff81820ce6:      	andl	%r8d, %edi
-      ffffffff81820ce9:      	imulq	%rcx, %rdi
-      ffffffff81820ced:      	incq	%rax
+      ffffffff818306c0 <crc16>:
+      ffffffff818306c0:      	endbr64
+      ffffffff818306c4:      	movl	%edi, %eax
+      ffffffff818306c6:      	testq	%rdx, %rdx
+      ffffffff818306c9:      	je	0xffffffff8183074e <crc16+0x8e>
+      ffffffff818306cf:      	testb	$0x1, %dl
+      ffffffff818306d2:      	jne	0xffffffff818306df <crc16+0x1f>
+      ffffffff81831000 <crc_ccitt>:
+      ffffffff81831000:      	endbr64
+      ffffffff81831004:      	movl	%edi, %eax
+      ffffffff81831006:      	testq	%rdx, %rdx
+      ffffffff81831009:      	je	0xffffffff81831085 <crc_ccitt+0x85>
+      ffffffff8183100b:      	testb	$0x1, %dl
+      ffffffff8183100e:      	jne	0xffffffff8183101b <crc_ccitt+0x1b>
+      ffffffff81820cc0 <__kfifo_in>:
+      ffffffff81820cc0:      	endbr64
+      ffffffff81820cc4:      	pushq	%rbp
+      ffffffff81820cc5:      	pushq	%r15
+      ffffffff81820cc7:      	pushq	%r14
+      ffffffff81820cc9:      	pushq	%r13
+      ffffffff81820ccb:      	pushq	%r12
+      ffffffff81820ccd:      	pushq	%rbx
+      ffffffff81820cce:      	pushq	%rax
+      ffffffff81820ccf:      	movq	%rsi, %r15
+      ffffffff81820cd2:      	movq	%rdi, %rbx
+      ffffffff81820cd5:      	movl	(%rdi), %r8d
+      ffffffff81820cd8:      	movl	0x4(%rdi), %ecx
+      ffffffff81820cdb:      	movl	0x8(%rdi), %eax
+      ffffffff81820cde:      	subl	%r8d, %ecx
+      ffffffff81820ce1:      	movl	%r8d, 0x4(%rsp)
+      ffffffff81820ce6:      	leal	(%rcx,%rax), %r14d
+      ffffffff81820cea:      	incl	%r14d
+      ffffffff81820ced:      	cmpl	%r14d, %edx
+      ffffffff81820cf0:      	cmovbl	%edx, %r14d
+      ffffffff81820cf4:      	movl	0xc(%rdi), %ecx
+      ffffffff81820cf7:      	testq	%rcx, %rcx
+      ffffffff81820cfa:      	sete	%dl
+      ffffffff81820cfd:      	movq	%r14, %r12
+      ffffffff81820d00:      	imulq	%rcx, %r12
+      ffffffff81820d04:      	movl	%eax, %edi
+      ffffffff81820d06:      	andl	%r8d, %edi
+      ffffffff81820d09:      	imulq	%rcx, %rdi
+      ffffffff81820d0d:      	incq	%rax
 PASS  disassembly fingerprints captured above
 
 RESULT: PASS

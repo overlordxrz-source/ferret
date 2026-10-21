@@ -1,5 +1,5 @@
 [    0.000000] Booting Linux on physical CPU 0x0000000000 [0x000f0510]
-[    0.000000] Linux version 6.18.57-ferret-rust (root@3ea769cb049c) (Ubuntu clang version 18.1.3 (1ubuntu1), Ubuntu LLD 18.1.3) #2 SMP PREEMPT Wed Oct 21 17:38:07 UTC 2026
+[    0.000000] Linux version 6.18.57-ferret-rust (root@3ea769cb049c) (Ubuntu clang version 18.1.3 (1ubuntu1), Ubuntu LLD 18.1.3) #1 SMP PREEMPT Wed Oct 21 19:09:54 UTC 2026
 [    0.000000] KASLR enabled
 [    0.000000] random: crng init done
 [    0.000000] Machine model: linux,dummy-virt
@@ -58,499 +58,504 @@
 [    0.000000] clocksource: jiffies: mask: 0xffffffff max_cycles: 0xffffffff, max_idle_ns: 7645041785100000 ns
 [    0.000000] arch_timer: cp15 timer running at 62.50MHz (virt).
 [    0.000000] clocksource: arch_sys_counter: mask: 0x1ffffffffffffff max_cycles: 0x1cd42e208c, max_idle_ns: 881590405314 ns
-[    0.000110] sched_clock: 57 bits at 63MHz, resolution 16ns, wraps every 4398046511096ns
-[    0.037078] Console: colour dummy device 80x25
-[    0.053400] Calibrating delay loop (skipped), value calculated using timer frequency.. 125.00 BogoMIPS (lpj=250000)
-[    0.057927] pid_max: default: 32768 minimum: 301
-[    0.072289] LSM: initializing lsm=capability
-[    0.082965] Mount-cache hash table entries: 4096 (order: 3, 32768 bytes, linear)
-[    0.083510] Mountpoint-cache hash table entries: 4096 (order: 3, 32768 bytes, linear)
-[    0.285358] rcu: Hierarchical SRCU implementation.
-[    0.285715] rcu: 	Max phase no-delay instances is 1000.
-[    0.299234] Timer migration: 1 hierarchy levels; 8 children per group; 1 crossnode level
-[    0.335237] EFI services will not be available.
-[    0.340999] smp: Bringing up secondary CPUs ...
-[    0.374147] Detected PIPT I-cache on CPU1
-[    0.390338] CPU1: Booted secondary processor 0x0000000001 [0x000f0510]
-[    0.412301] smp: Brought up 1 node, 2 CPUs
-[    0.412676] SMP: Total of 2 processors activated.
-[    0.412964] CPU: All CPU(s) started at EL1
-[    0.414485] CPU features: detected: 32-bit EL0 Support
-[    0.414691] CPU features: detected: 32-bit EL1 Support
-[    0.414920] CPU features: detected: ARMv8.4 Translation Table Level
-[    0.416050] CPU features: detected: Data cache clean to the PoU not required for I/D coherence
-[    0.416248] CPU features: detected: Common not Private translations
-[    0.417113] CPU features: detected: CRC32 instructions
-[    0.417182] CPU features: detected: Data independent timing control (DIT)
-[    0.417238] CPU features: detected: E0PD
-[    0.417301] CPU features: detected: Enhanced Privileged Access Never
-[    0.417363] CPU features: detected: Enhanced Virtualization Traps
-[    0.417420] CPU features: detected: Fine Grained Traps
-[    0.417639] CPU features: detected: Generic authentication (architected QARMA5 algorithm)
-[    0.417923] CPU features: detected: RCpc load-acquire (LDAPR)
-[    0.418081] CPU features: detected: 52-bit Virtual Addressing for KVM (LPA2)
-[    0.418144] CPU features: detected: LSE atomic instructions
-[    0.418231] CPU features: detected: Memory Copy and Memory Set instructions
-[    0.418294] CPU features: detected: Privileged Access Never
-[    0.418458] CPU features: detected: PMUv3
-[    0.418555] CPU features: detected: RAS Extension Support
-[    0.418721] CPU features: detected: RASv1p1 Extension Support
-[    0.418789] CPU features: detected: Random Number Generator
-[    0.418842] CPU features: detected: Speculation barrier (SB)
-[    0.418902] CPU features: detected: Stage-2 Force Write-Back
-[    0.418964] CPU features: detected: Trap EL0 IMPLEMENTATION DEFINED functionality
-[    0.419110] CPU features: detected: TLB range maintenance instructions
-[    0.419442] CPU features: detected: Scalable Matrix Extension
-[    0.419499] CPU features: detected: FA64
-[    0.419596] CPU features: detected: Speculative Store Bypassing Safe (SSBS)
-[    0.419653] CPU features: detected: Scalable Vector Extension
-[    0.453983] alternatives: applying system-wide alternatives
-[    0.507005] CPU features: detected: Hardware dirty bit management on CPU0-1
-[    0.509352] SVE: maximum available vector length 256 bytes per vector
-[    0.509873] SVE: default vector length 64 bytes per vector
-[    0.513237] SME: minimum available vector length 16 bytes per vector
-[    0.513331] SME: maximum available vector length 256 bytes per vector
-[    0.513396] SME: default vector length 32 bytes per vector
-[    0.570923] Memory: 1974720K/2097152K available (18752K kernel code, 5490K rwdata, 13720K rodata, 2816K init, 692K bss, 86016K reserved, 32768K cma-reserved)
-[    0.667389] devtmpfs: initialized
-[    0.868830] posixtimers hash table entries: 1024 (order: 2, 16384 bytes, linear)
-[    0.870419] futex hash table entries: 512 (32768 bytes on 1 NUMA nodes, total 32 KiB, linear).
-[    0.875346] 2G module region forced by RANDOMIZE_MODULE_REGION_FULL
-[    0.875679] 0 pages in range for non-PLT usage
-[    0.875828] 513856 pages in range for PLT usage
-[    0.883212] pinctrl core: initialized pinctrl subsystem
-[    0.932476] DMI not present or invalid.
-[    0.986747] NET: Registered PF_NETLINK/PF_ROUTE protocol family
-[    1.018440] DMA: preallocated 256 KiB GFP_KERNEL pool for atomic allocations
-[    1.027879] DMA: preallocated 256 KiB GFP_KERNEL|GFP_DMA pool for atomic allocations
-[    1.040694] DMA: preallocated 256 KiB GFP_KERNEL|GFP_DMA32 pool for atomic allocations
-[    1.042373] audit: initializing netlink subsys (disabled)
-[    1.048764] audit: type=2000 audit(0.628:1): state=initialized audit_enabled=0 res=1
-[    1.075691] thermal_sys: Registered thermal governor 'step_wise'
-[    1.075828] thermal_sys: Registered thermal governor 'power_allocator'
-[    1.078743] cpuidle: using governor menu
-[    1.084041] hw-breakpoint: found 6 breakpoint and 4 watchpoint registers.
-[    1.086269] ASID allocator initialised with 65536 entries
-[    1.149554] Serial: AMBA PL011 UART driver
-[    1.909756] 9000000.pl011: ttyAMA0 at MMIO 0x9000000 (irq = 13, base_baud = 0) is a PL011 rev1
-[    1.918970] printk: console [ttyAMA0] enabled
-[    2.250833] HugeTLB: registered 1.00 GiB page size, pre-allocated 0 pages
-[    2.255342] HugeTLB: 0 KiB vmemmap can be freed for a 1.00 GiB page
-[    2.255568] HugeTLB: registered 32.0 MiB page size, pre-allocated 0 pages
-[    2.256466] HugeTLB: 0 KiB vmemmap can be freed for a 32.0 MiB page
-[    2.257462] HugeTLB: registered 2.00 MiB page size, pre-allocated 0 pages
-[    2.257901] HugeTLB: 0 KiB vmemmap can be freed for a 2.00 MiB page
-[    2.261225] HugeTLB: registered 64.0 KiB page size, pre-allocated 0 pages
-[    2.263359] HugeTLB: 0 KiB vmemmap can be freed for a 64.0 KiB page
-[    2.692484] ACPI: Interpreter disabled.
-[    3.028072] iommu: Default domain type: Translated
-[    3.029072] iommu: DMA domain TLB invalidation policy: strict mode
-[    3.094065] SCSI subsystem initialized
-[    3.210059] usbcore: registered new interface driver usbfs
-[    3.213365] usbcore: registered new interface driver hub
-[    3.217058] usbcore: registered new device driver usb
-[    3.308038] pps_core: LinuxPPS API ver. 1 registered
-[    3.308259] pps_core: Software ver. 5.3.6 - Copyright 2005-2007 Rodolfo Giometti <giometti@linux.it>
-[    3.313807] PTP clock support registered
-[    3.318494] EDAC MC: Ver: 3.0.0
-[    3.349069] scmi_core: SCMI protocol bus registered
-[    3.482133] FPGA manager framework
-[    3.591623] vgaarb: loaded
-[    3.638715] clocksource: Switched to clocksource arch_sys_counter
-[    3.662587] VFS: Disk quotas dquot_6.6.0
-[    3.662980] VFS: Dquot-cache hash table entries: 512 (order 0, 4096 bytes)
-[    3.673581] pnp: PnP ACPI: disabled
-[    3.972112] NET: Registered PF_INET protocol family
-[    3.976786] IP idents hash table entries: 32768 (order: 6, 262144 bytes, linear)
-[    3.993855] tcp_listen_portaddr_hash hash table entries: 1024 (order: 2, 16384 bytes, linear)
-[    3.994244] Table-perturb hash table entries: 65536 (order: 6, 262144 bytes, linear)
-[    3.994597] TCP established hash table entries: 16384 (order: 5, 131072 bytes, linear)
-[    3.995950] TCP bind hash table entries: 16384 (order: 7, 524288 bytes, linear)
-[    3.997099] TCP: Hash tables configured (established 16384 bind 16384)
-[    3.998924] UDP hash table entries: 1024 (order: 4, 65536 bytes, linear)
-[    3.999434] UDP-Lite hash table entries: 1024 (order: 4, 65536 bytes, linear)
-[    4.002737] NET: Registered PF_UNIX/PF_LOCAL protocol family
-[    4.023463] RPC: Registered named UNIX socket transport module.
-[    4.023692] RPC: Registered udp transport module.
-[    4.023791] RPC: Registered tcp transport module.
-[    4.023869] RPC: Registered tcp-with-tls transport module.
-[    4.023934] RPC: Registered tcp NFSv4.1 backchannel transport module.
-[    4.024641] PCI: CLS 0 bytes, default 64
-[    4.041087] kvm [1]: HYP mode not available
-[    4.062879] Initialise system trusted keyrings
-[    4.067893] workingset: timestamp_bits=42 max_order=19 bucket_order=0
-[    4.075792] squashfs: version 4.0 (2009/01/31) Phillip Lougher
-[    4.081594] NFS: Registering the id_resolver key type
-[    4.082098] Key type id_resolver registered
-[    4.082199] Key type id_legacy registered
-[    4.082806] nfs4filelayout_init: NFSv4 File Layout Driver Registering...
-[    4.082979] nfs4flexfilelayout_init: NFSv4 Flexfile Layout Driver Registering...
-[    4.086865] 9p: Installing v9fs 9p2000 file system support
-[    4.346560] Key type asymmetric registered
-[    4.346747] Asymmetric key parser 'x509' registered
-[    4.347995] Block layer SCSI generic (bsg) driver version 0.4 loaded (major 244)
-[    4.348500] io scheduler mq-deadline registered
-[    4.349246] io scheduler kyber registered
-[    4.350516] io scheduler bfq registered
-[    4.351278] test_bitmap: loaded.
-[    4.367984] test_bitmap: parselist: 14: input is '0-2047:128/256' OK, Time: 13120
-[    4.370436] test_bitmap: bitmap_print_to_pagebuf: input is '0-32767
-[    4.370436] ', Time: 248672
-[    5.542443] test_bitmap: Time spent in test_bitmap_read_perf:	5774800
-[    5.551603] test_bitmap: Time spent in test_bitmap_write_perf:	8251664
-[    5.580451] test_bitmap: all 390447 tests passed
-[    5.871570] pl061_gpio 9030000.pl061: PL061 GPIO chip registered
-[    5.909223] ledtrig-cpu: registered to indicate activity on CPUs
-[    5.927973] pci-host-generic 4010000000.pcie: host bridge /pcie@10000000 ranges:
-[    5.929553] pci-host-generic 4010000000.pcie:       IO 0x003eff0000..0x003effffff -> 0x0000000000
-[    5.930741] pci-host-generic 4010000000.pcie:      MEM 0x0010000000..0x003efeffff -> 0x0010000000
-[    5.930976] pci-host-generic 4010000000.pcie:      MEM 0x8000000000..0xffffffffff -> 0x8000000000
-[    5.932245] pci-host-generic 4010000000.pcie: Memory resource size exceeds max for 32 bits
-[    5.933651] pci-host-generic 4010000000.pcie: ECAM at [mem 0x4010000000-0x401fffffff] for [bus 00-ff]
-[    5.938074] pci-host-generic 4010000000.pcie: PCI host bridge to bus 0000:00
-[    5.938711] pci_bus 0000:00: root bus resource [bus 00-ff]
-[    5.938930] pci_bus 0000:00: root bus resource [io  0x0000-0xffff]
-[    5.939094] pci_bus 0000:00: root bus resource [mem 0x10000000-0x3efeffff]
-[    5.939213] pci_bus 0000:00: root bus resource [mem 0x8000000000-0xffffffffff]
-[    5.942280] pci 0000:00:00.0: [1b36:0008] type 00 class 0x060000 conventional PCI endpoint
-[    5.952772] pci 0000:00:01.0: [1af4:1000] type 00 class 0x020000 conventional PCI endpoint
-[    5.954083] pci 0000:00:01.0: BAR 0 [io  0x0000-0x001f]
-[    5.954367] pci 0000:00:01.0: BAR 1 [mem 0x00000000-0x00000fff]
-[    5.954545] pci 0000:00:01.0: BAR 4 [mem 0x00000000-0x00003fff 64bit pref]
-[    5.954819] pci 0000:00:01.0: ROM [mem 0x00000000-0x0007ffff pref]
-[    5.958519] pci 0000:00:02.0: [1af4:1001] type 00 class 0x010000 conventional PCI endpoint
-[    5.958906] pci 0000:00:02.0: BAR 0 [io  0x0000-0x007f]
-[    5.959039] pci 0000:00:02.0: BAR 1 [mem 0x00000000-0x00000fff]
-[    5.959201] pci 0000:00:02.0: BAR 4 [mem 0x00000000-0x00003fff 64bit pref]
-[    5.974232] pci 0000:00:01.0: ROM [mem 0x10000000-0x1007ffff pref]: assigned
-[    5.975162] pci 0000:00:01.0: BAR 4 [mem 0x8000000000-0x8000003fff 64bit pref]: assigned
-[    5.975586] pci 0000:00:02.0: BAR 4 [mem 0x8000004000-0x8000007fff 64bit pref]: assigned
-[    5.975784] pci 0000:00:01.0: BAR 1 [mem 0x10080000-0x10080fff]: assigned
-[    5.975978] pci 0000:00:02.0: BAR 1 [mem 0x10081000-0x10081fff]: assigned
-[    5.976137] pci 0000:00:02.0: BAR 0 [io  0x1000-0x107f]: assigned
-[    5.976301] pci 0000:00:01.0: BAR 0 [io  0x1080-0x109f]: assigned
-[    5.977326] pci_bus 0000:00: resource 4 [io  0x0000-0xffff]
-[    5.977488] pci_bus 0000:00: resource 5 [mem 0x10000000-0x3efeffff]
-[    5.977615] pci_bus 0000:00: resource 6 [mem 0x8000000000-0xffffffffff]
-[    6.455958] virtio-pci 0000:00:01.0: enabling device (0000 -> 0003)
-[    6.468188] virtio-pci 0000:00:02.0: enabling device (0000 -> 0003)
-[    6.632646] Serial: 8250/16550 driver, 4 ports, IRQ sharing enabled
-[    6.728485] msm_serial: driver initialized
-[    6.738191] SuperH (H)SCI(F) driver initialized
-[    6.744511] STM32 USART driver initialized
-[    7.143059] loop: module loaded
-[    7.146836] virtio_blk virtio1: 2/0/0 default/read/poll queues
-[    7.177958] virtio_blk virtio1: [vda] 8388608 512-byte logical blocks (4.29 GB/4.00 GiB)
-[    7.263577] megasas: 07.734.00.00-rc1
-[    7.311459] physmap-flash 0.flash: physmap platform flash device: [mem 0x00000000-0x03ffffff]
-[    7.319779] 0.flash: Found 2 x16 devices at 0x0 in 32-bit bank. Manufacturer ID 0x000000 Chip ID 0x000000
-[    7.320765] Intel/Sharp Extended Query Table at 0x0031
-[    7.324912] Using buffer write method
-[    7.327113] physmap-flash 0.flash: physmap platform flash device: [mem 0x04000000-0x07ffffff]
-[    7.329804] 0.flash: Found 2 x16 devices at 0x0 in 32-bit bank. Manufacturer ID 0x000000 Chip ID 0x000000
-[    7.330011] Intel/Sharp Extended Query Table at 0x0031
-[    7.331222] Using buffer write method
-[    7.331529] Concatenating MTD devices:
-[    7.331602] (0): "0.flash"
-[    7.331704] (1): "0.flash"
-[    7.331780] into device "0.flash"
-[    7.532523] tun: Universal TUN/TAP device driver, 1.6
-[    7.614478] thunder_xcv, ver 1.0
-[    7.615629] thunder_bgx, ver 1.0
-[    7.616668] nicpf, ver 1.0
-[    7.655469] e1000: Intel(R) PRO/1000 Network Driver
-[    7.655566] e1000: Copyright (c) 1999-2006 Intel Corporation.
-[    7.657394] e1000e: Intel(R) PRO/1000 Network Driver
-[    7.657463] e1000e: Copyright(c) 1999 - 2015 Intel Corporation.
-[    7.658896] igb: Intel(R) Gigabit Ethernet Network Driver
-[    7.659017] igb: Copyright (c) 2007-2014 Intel Corporation.
-[    7.660184] igbvf: Intel(R) Gigabit Virtual Function Network Driver
-[    7.660262] igbvf: Copyright (c) 2009 - 2012 Intel Corporation.
-[    7.669850] sky2: driver version 1.30
-[    7.711385] VFIO - User Level meta-driver version: 0.3
-[    7.777691] usbcore: registered new interface driver usb-storage
-[    7.840960] rtc-pl031 9010000.pl031: registered as rtc0
-[    7.842498] rtc-pl031 9010000.pl031: setting system clock to 2026-10-21T17:43:38 UTC (1792604618)
-[    7.855307] i2c_dev: i2c /dev entries driver
-[    8.009601] sdhci: Secure Digital Host Controller Interface driver
-[    8.009676] sdhci: Copyright(c) Pierre Ossman
-[    8.026854] Synopsys Designware Multimedia Card Interface Driver
-[    8.045858] sdhci-pltfm: SDHCI platform and OF driver helper
-[    8.126457] usbcore: registered new interface driver usbhid
-[    8.126568] usbhid: USB HID core driver
-[    8.198302] hw perfevents: enabled with armv8_pmuv3 PMU driver, 7 (0,8000003f) counters available
-[    8.266441] NET: Registered PF_PACKET protocol family
-[    8.268312] 9pnet: Installing 9P2000 support
-[    8.269097] Key type dns_resolver registered
-[    8.522395] registered taskstats version 1
-[    8.527379] Loading compiled-in X.509 certificates
-[    8.853507] Demotion targets for Node 0: null
-[    8.892326] input: gpio-keys as /devices/platform/gpio-keys/input/input0
-[    8.918176] clk: Disabling unused clocks
-[    8.918909] PM: genpd: Disabling unused power domains
-[    8.919837] KTAP version 1
-[    8.919917] 1..15
-[    8.938554]     KTAP version 1
-[    8.938627]     # Subtest: rust_allocator
-[    8.938818]     # speed: normal
-[    8.939701]     1..1
-[    8.947637]     # test_alignment.speed: normal
-[    8.947932]     ok 1 test_alignment
-[    8.948283] ok 1 rust_allocator
-[    8.948696]     KTAP version 1
-[    8.948735]     # Subtest: rust_kvec
-[    8.948783]     # speed: normal
-[    8.949807]     1..1
-[    8.991409]     # test_kvec_retain.speed: normal
-[    8.991667]     ok 1 test_kvec_retain
-[    8.991922] ok 2 rust_kvec
-[    8.992507]     KTAP version 1
-[    8.992573]     # Subtest: rust_kernel_bitmap
-[    8.992669]     # speed: normal
-[    8.992910]     1..6
-[    9.001877]     # bitmap_borrow.speed: normal
-[    9.002150]     ok 1 bitmap_borrow
-[    9.009594]     # bitmap_copy.speed: normal
-[    9.009855]     ok 2 bitmap_copy
-[    9.014801]     # bitmap_vec_new.speed: normal
-[    9.015015]     ok 3 bitmap_vec_new
-[    9.023655]     # bitmap_set_clear_find.speed: normal
-[    9.023996]     ok 4 bitmap_set_clear_find
-[    9.034331] rust_kernel: Bit `index` must be < 128, was 2048
-[    9.036003] rust_kernel: Bit `index` must be < 128, was 2048
-[    9.036186] rust_kernel: Bit `index` must be < 128, was 2048
-[    9.037209] rust_kernel: Bit `index` must be < 128, was 2048
-[    9.043017]     # owned_bitmap_out_of_bounds.speed: normal
-[    9.043322]     ok 5 owned_bitmap_out_of_bounds
-[    9.051134]     # bitmap_copy_and_extend.speed: normal
-[    9.051366]     ok 6 bitmap_copy_and_extend
-[    9.051592] # rust_kernel_bitmap: pass:6 fail:0 skip:0 total:6
-[    9.051799] # Totals: pass:6 fail:0 skip:0 total:6
-[    9.051950] ok 3 rust_kernel_bitmap
-[    9.052640]     KTAP version 1
-[    9.053819]     # Subtest: rust_kernel_kunit
-[    9.053897]     # speed: normal
-[    9.054075]     1..3
-[    9.058898]     # rust_test_kunit_example_test.speed: normal
-[    9.059082]     ok 1 rust_test_kunit_example_test
-[    9.063572]     # rust_test_kunit_in_kunit_test.speed: normal
-[    9.063810]     ok 2 rust_test_kunit_in_kunit_test
-[    9.067925]     # rust_test_kunit_always_disabled_test.speed: normal
-[    9.068110]     ok 3 rust_test_kunit_always_disabled_test # SKIP 
-[    9.068362] # rust_kernel_kunit: pass:2 fail:0 skip:1 total:3
-[    9.068544] # Totals: pass:2 fail:0 skip:1 total:3
-[    9.068705] ok 4 rust_kernel_kunit
-[    9.070024]     KTAP version 1
-[    9.070129]     # Subtest: rust_kernel_str
-[    9.070588]     # speed: normal
-[    9.070808]     1..8
-[    9.078894]     # test_cstr_to_str.speed: normal
-[    9.079229]     ok 1 test_cstr_to_str
-[    9.088028]     # test_cstr_to_str_invalid_utf8.speed: normal
-[    9.088339]     ok 2 test_cstr_to_str_invalid_utf8
-[    9.094040]     # test_cstr_as_str_unchecked.speed: normal
-[    9.094453]     ok 3 test_cstr_as_str_unchecked
-[    9.100980]     # test_cstr_display.speed: normal
-[    9.101198]     ok 4 test_cstr_display
-[    9.109609]     # test_cstr_display_all_bytes.speed: normal
-[    9.109790]     ok 5 test_cstr_display_all_bytes
-[    9.115993]     # test_cstr_debug.speed: normal
-[    9.116925]     ok 6 test_cstr_debug
-[    9.133894]     # test_bstr_display.speed: normal
-[    9.134326]     ok 7 test_bstr_display
-[    9.142654]     # test_bstr_debug.speed: normal
-[    9.142918]     ok 8 test_bstr_debug
-[    9.143474] # rust_kernel_str: pass:8 fail:0 skip:0 total:8
-[    9.143661] # Totals: pass:8 fail:0 skip:0 total:8
-[    9.143837] ok 5 rust_kernel_str
-[    9.145153]     KTAP version 1
-[    9.145301]     # Subtest: rust_atomics
-[    9.148254]     # speed: normal
-[    9.148521]     1..4
-[    9.157388]     # atomic_basic_tests.speed: normal
-[    9.157926]     ok 1 atomic_basic_tests
-[    9.161921]     # atomic_xchg_tests.speed: normal
-[    9.162152]     ok 2 atomic_xchg_tests
-[    9.170108]     # atomic_cmpxchg_tests.speed: normal
-[    9.170399]     ok 3 atomic_cmpxchg_tests
-[    9.174356]     # atomic_arithmetic_tests.speed: normal
-[    9.174572]     ok 4 atomic_arithmetic_tests
-[    9.174761] # rust_atomics: pass:4 fail:0 skip:0 total:4
-[    9.174909] # Totals: pass:4 fail:0 skip:0 total:4
-[    9.175037] ok 6 rust_atomics
-[    9.176026]     KTAP version 1
-[    9.176333]     # Subtest: kfifo_rust
-[    9.177778]     # speed: normal
-[    9.177964]     1..13
-[    9.182390]     # kfifo_rust_in_out_roundtrip.speed: normal
-[    9.182594]     ok 1 kfifo_rust_in_out_roundtrip
-[    9.187930]     # kfifo_rust_out_is_clamped_to_the_content.speed: normal
-[    9.188405]     ok 2 kfifo_rust_out_is_clamped_to_the_content
-[    9.192531]     # kfifo_rust_in_is_clamped_to_the_free_space.speed: normal
-[    9.192694]     ok 3 kfifo_rust_in_is_clamped_to_the_free_space
-[    9.197213]     # kfifo_rust_wrap_around_keeps_the_order.speed: normal
-[    9.197389]     ok 4 kfifo_rust_wrap_around_keeps_the_order
-[    9.201109]     # kfifo_rust_peek_does_not_consume.speed: normal
-[    9.201282]     ok 5 kfifo_rust_peek_does_not_consume
-[    9.203692]     # kfifo_rust_record_roundtrip.speed: normal
-[    9.203873]     ok 6 kfifo_rust_record_roundtrip
-[    9.210887]     # kfifo_rust_record_skip.speed: normal
-[    9.211156]     ok 7 kfifo_rust_record_skip
-[    9.214973]     # kfifo_rust_max_r.speed: normal
-[    9.215181]     ok 8 kfifo_rust_max_r
-[    9.219124]     # kfifo_rust_max_r_large_recsize.speed: normal
-[    9.219294]     ok 9 kfifo_rust_max_r_large_recsize
-[    9.222712]     # kfifo_rust_init_zero_element_size.speed: normal
-[    9.222874]     ok 10 kfifo_rust_init_zero_element_size
-[    9.250554]     # kfifo_rust_user_copy_fault.speed: normal
-[    9.250769]     ok 11 kfifo_rust_user_copy_fault
-[    9.256260]     # kfifo_rust_power_of_two_helpers.speed: normal
-[    9.256494]     ok 12 kfifo_rust_power_of_two_helpers
-[    9.260508]     # kfifo_rust_alloc_and_free.speed: normal
-[    9.260721]     ok 13 kfifo_rust_alloc_and_free
-[    9.261478] # kfifo_rust: pass:13 fail:0 skip:0 total:13
-[    9.261664] # Totals: pass:13 fail:0 skip:0 total:13
-[    9.261814] ok 7 kfifo_rust
-[    9.262334]     KTAP version 1
-[    9.262394]     # Subtest: kfifo_diff
-[    9.262559]     # module: kfifo_diff_kunit
-[    9.262733]     1..10
-[    9.268700]     ok 1 kfifo_diff_init
-[    9.286314]     ok 2 kfifo_diff_alloc
-[    9.304486]     ok 3 kfifo_diff_random_sequences
-[    9.308332]     ok 4 kfifo_diff_wrap_around
-[    9.313580]     ok 5 kfifo_diff_records
-[    9.326895]     ok 6 kfifo_diff_max_r
-[    9.330870]     ok 7 kfifo_diff_dma_prepare
-[    9.334175]     ok 8 kfifo_diff_dma_wrap
-[    9.338620]     ok 9 kfifo_diff_user_copy_fault
-[    9.887381] kfifo benchmark: 20000 iterations of in(64)+out(64), best of 3
-[    9.887526] kfifo benchmark: rust 84587088 ns, c 78094048 ns
-[    9.887634] kfifo benchmark: rust/c ratio 1083 per mille
-[    9.891302]     ok 10 kfifo_diff_benchmark
-[    9.891547] # kfifo_diff: pass:10 fail:0 skip:0 total:10
-[    9.891704] # Totals: pass:10 fail:0 skip:0 total:10
-[    9.891829] ok 8 kfifo_diff
-[    9.892245]     KTAP version 1
-[    9.892284]     # Subtest: crc16_rust
-[    9.892333]     # speed: normal
-[    9.892450]     1..5
-[    9.895792]     # crc16_rust_check_value.speed: normal
-[    9.895954]     ok 1 crc16_rust_check_value
-[    9.899054]     # crc16_rust_empty_buffer.speed: normal
-[    9.899205]     ok 2 crc16_rust_empty_buffer
-[    9.901788]     # crc16_rust_incremental.speed: normal
-[    9.901942]     ok 3 crc16_rust_incremental
-[    9.904228]     # crc16_rust_all_initial_values_single_byte.speed: normal
-[    9.904395]     ok 4 crc16_rust_all_initial_values_single_byte
-[    9.907396]     # crc16_rust_deterministic_prng.speed: normal
-[    9.907549]     ok 5 crc16_rust_deterministic_prng
-[    9.907707] # crc16_rust: pass:5 fail:0 skip:0 total:5
-[    9.907841] # Totals: pass:5 fail:0 skip:0 total:5
-[    9.907952] ok 9 crc16_rust
-[    9.908298]     KTAP version 1
-[    9.908336]     # Subtest: crc16_diff
-[    9.908390]     # module: crc16_diff_kunit
-[    9.908503]     1..2
-[   10.024181]     ok 1 crc16_diff_edge_cases
-[   10.073877]     ok 2 crc16_diff_random_streams
-[   10.074109] # crc16_diff: pass:2 fail:0 skip:0 total:2
-[   10.074330] # Totals: pass:2 fail:0 skip:0 total:2
-[   10.074458] ok 10 crc16_diff
-[   10.074849]     KTAP version 1
-[   10.074888]     # Subtest: crc_ccitt_rust
-[   10.074939]     # speed: normal
-[   10.075071]     1..7
-[   10.080365]     # crc_ccitt_rust_check_value.speed: normal
-[   10.080523]     ok 1 crc_ccitt_rust_check_value
-[   10.083619]     # crc_ccitt_rust_check_value_init_ffff.speed: normal
-[   10.083800]     ok 2 crc_ccitt_rust_check_value_init_ffff
-[   10.086305]     # crc_ccitt_rust_empty_buffer.speed: normal
-[   10.086463]     ok 3 crc_ccitt_rust_empty_buffer
-[   10.089582]     # crc_ccitt_rust_incremental.speed: normal
-[   10.089730]     ok 4 crc_ccitt_rust_incremental
-[   10.092148]     # crc_ccitt_rust_all_initial_values_single_byte.speed: normal
-[   10.092298]     ok 5 crc_ccitt_rust_all_initial_values_single_byte
-[   10.095369]     # crc_ccitt_rust_table_matches_bitwise.speed: normal
-[   10.095523]     ok 6 crc_ccitt_rust_table_matches_bitwise
-[   10.103540]     # crc_ccitt_rust_deterministic_prng.speed: normal
-[   10.103753]     ok 7 crc_ccitt_rust_deterministic_prng
-[   10.103979] # crc_ccitt_rust: pass:7 fail:0 skip:0 total:7
-[   10.104131] # Totals: pass:7 fail:0 skip:0 total:7
-[   10.104250] ok 11 crc_ccitt_rust
-[   10.105696]     KTAP version 1
-[   10.105746]     # Subtest: crc_ccitt_diff
-[   10.105804]     # module: crc_ccitt_diff_kunit
-[   10.105927]     1..3
-[   10.109701]     ok 1 crc_ccitt_diff_table
-[   10.125433]     ok 2 crc_ccitt_diff_edge_cases
-[   10.185900]     ok 3 crc_ccitt_diff_random_streams
-[   10.186130] # crc_ccitt_diff: pass:3 fail:0 skip:0 total:3
-[   10.186268] # Totals: pass:3 fail:0 skip:0 total:3
-[   10.186382] ok 12 crc_ccitt_diff
-[   10.187309]     KTAP version 1
-[   10.187353]     # Subtest: crc
-[   10.187409]     # module: crc_kunit
-[   10.187525]     1..16
-[   10.921284] hrtimer: interrupt took 1529696 ns
-[   11.923400]     ok 1 crc7_be_test
-[   11.927548]     ok 2 crc7_be_benchmark # SKIP not enabled
-[   13.486458]     ok 3 crc16_test
-[   13.495420]     ok 4 crc16_benchmark # SKIP not enabled
-[   15.101385]     ok 5 crc_t10dif_test
-[   15.117069]     ok 6 crc_t10dif_benchmark # SKIP not enabled
-[   16.317478]     ok 7 crc32_le_test
-[   16.323360]     ok 8 crc32_le_benchmark # SKIP not enabled
-[   17.586154]     ok 9 crc32_be_test
-[   17.597019]     ok 10 crc32_be_benchmark # SKIP not enabled
-[   18.666322]     ok 11 crc32c_test
-[   18.674511]     ok 12 crc32c_benchmark # SKIP not enabled
-[   20.040498]     ok 13 crc64_be_test
-[   20.046261]     ok 14 crc64_be_benchmark # SKIP not enabled
-[   21.567469]     ok 15 crc64_nvme_test
-[   21.573977]     ok 16 crc64_nvme_benchmark # SKIP not enabled
-[   21.574566] # crc: pass:8 fail:0 skip:8 total:16
-[   21.574739] # Totals: pass:8 fail:0 skip:8 total:16
-[   21.574872] ok 13 crc
-[   21.575587]     KTAP version 1
-[   21.575701]     # Subtest: kfifo
-[   21.575778]     # module: kfifo_kunit
-[   21.576005]     1..10
-[   21.581811]     ok 1 kfifo_test_reset_should_clear_the_fifo
-[   21.584638]     ok 2 kfifo_test_define_should_define_an_empty_fifo
-[   21.588173]     ok 3 kfifo_test_len_should_ret_n_of_stored_elements
-[   21.592431]     ok 4 kfifo_test_put_should_insert_and_get_should_pop
-[   21.598917]     ok 5 kfifo_test_in_should_insert_multiple_elements
-[   21.603363]     ok 6 kfifo_test_out_should_pop_multiple_elements
-[   21.607803]     ok 7 kfifo_test_dec_init_should_define_an_empty_fifo
-[   21.612535]     ok 8 kfifo_test_define_should_equal_declare_init
-[   21.615940]     ok 9 kfifo_test_alloc_should_initiliaze_a_ptr_fifo
-[   21.621545]     ok 10 kfifo_test_peek_should_not_remove_elements
-[   21.621785] # kfifo: pass:10 fail:0 skip:0 total:10
-[   21.621967] # Totals: pass:10 fail:0 skip:0 total:10
-[   21.622333] ok 14 kfifo
-[   21.622843]     KTAP version 1
-[   21.622891]     # Subtest: bitmap_diff
-[   21.622955]     # module: bitmap_diff_kunit
-[   21.623165]     1..8
-[   21.630579]     ok 1 bitmap_diff_sizes
-[   21.638174]     ok 2 bitmap_diff_set_clear
-[   21.647618]     ok 3 bitmap_diff_shifts
-[   21.653194]     ok 4 bitmap_diff_cut
-[   21.662844]     ok 5 bitmap_diff_find_next_zero_area
-[   21.685802]     ok 6 bitmap_diff_remap
-[   21.705459]     ok 7 bitmap_diff_arr32
-[   21.711663]     ok 8 bitmap_diff_alloc
-[   21.711944] # bitmap_diff: pass:8 fail:0 skip:0 total:8
-[   21.712139] # Totals: pass:8 fail:0 skip:0 total:8
-[   21.712448] ok 15 bitmap_diff
-[   21.793891] check access for rdinit=/init failed: -2, ignoring
-[   22.667797] EXT4-fs (vda): recovery complete
-[   22.675863] EXT4-fs (vda): mounted filesystem 18023fa2-061e-46dc-a9a9-e6e6684e0285 r/w with ordered data mode. Quota mode: none.
-[   22.677514] VFS: Mounted root (ext4 filesystem) on device 254:0.
-[   22.685713] devtmpfs: mounted
-[   23.312238] Freeing unused kernel memory: 2816K
-[   23.315230] Run /sbin/ferret-init as init process
+[    0.000034] sched_clock: 57 bits at 63MHz, resolution 16ns, wraps every 4398046511096ns
+[    0.010072] Console: colour dummy device 80x25
+[    0.013508] Calibrating delay loop (skipped), value calculated using timer frequency.. 125.00 BogoMIPS (lpj=250000)
+[    0.014190] pid_max: default: 32768 minimum: 301
+[    0.016384] LSM: initializing lsm=capability
+[    0.018523] Mount-cache hash table entries: 4096 (order: 3, 32768 bytes, linear)
+[    0.018607] Mountpoint-cache hash table entries: 4096 (order: 3, 32768 bytes, linear)
+[    0.053594] rcu: Hierarchical SRCU implementation.
+[    0.053640] rcu: 	Max phase no-delay instances is 1000.
+[    0.055374] Timer migration: 1 hierarchy levels; 8 children per group; 1 crossnode level
+[    0.064069] EFI services will not be available.
+[    0.065159] smp: Bringing up secondary CPUs ...
+[    0.070749] Detected PIPT I-cache on CPU1
+[    0.073267] CPU1: Booted secondary processor 0x0000000001 [0x000f0510]
+[    0.076438] smp: Brought up 1 node, 2 CPUs
+[    0.076483] SMP: Total of 2 processors activated.
+[    0.076518] CPU: All CPU(s) started at EL1
+[    0.076703] CPU features: detected: 32-bit EL0 Support
+[    0.076730] CPU features: detected: 32-bit EL1 Support
+[    0.076751] CPU features: detected: ARMv8.4 Translation Table Level
+[    0.076780] CPU features: detected: Data cache clean to the PoU not required for I/D coherence
+[    0.076815] CPU features: detected: Common not Private translations
+[    0.076835] CPU features: detected: CRC32 instructions
+[    0.076855] CPU features: detected: Data independent timing control (DIT)
+[    0.076875] CPU features: detected: E0PD
+[    0.076896] CPU features: detected: Enhanced Privileged Access Never
+[    0.076916] CPU features: detected: Enhanced Virtualization Traps
+[    0.076937] CPU features: detected: Fine Grained Traps
+[    0.076991] CPU features: detected: Generic authentication (architected QARMA5 algorithm)
+[    0.077050] CPU features: detected: RCpc load-acquire (LDAPR)
+[    0.077091] CPU features: detected: 52-bit Virtual Addressing for KVM (LPA2)
+[    0.077111] CPU features: detected: LSE atomic instructions
+[    0.077130] CPU features: detected: Memory Copy and Memory Set instructions
+[    0.077151] CPU features: detected: Privileged Access Never
+[    0.077189] CPU features: detected: PMUv3
+[    0.077210] CPU features: detected: RAS Extension Support
+[    0.077240] CPU features: detected: RASv1p1 Extension Support
+[    0.077260] CPU features: detected: Random Number Generator
+[    0.077279] CPU features: detected: Speculation barrier (SB)
+[    0.077299] CPU features: detected: Stage-2 Force Write-Back
+[    0.077320] CPU features: detected: Trap EL0 IMPLEMENTATION DEFINED functionality
+[    0.077339] CPU features: detected: TLB range maintenance instructions
+[    0.077400] CPU features: detected: Scalable Matrix Extension
+[    0.077420] CPU features: detected: FA64
+[    0.077441] CPU features: detected: Speculative Store Bypassing Safe (SSBS)
+[    0.077460] CPU features: detected: Scalable Vector Extension
+[    0.083198] alternatives: applying system-wide alternatives
+[    0.094679] CPU features: detected: Hardware dirty bit management on CPU0-1
+[    0.095380] SVE: maximum available vector length 256 bytes per vector
+[    0.095573] SVE: default vector length 64 bytes per vector
+[    0.096311] SME: minimum available vector length 16 bytes per vector
+[    0.096340] SME: maximum available vector length 256 bytes per vector
+[    0.096363] SME: default vector length 32 bytes per vector
+[    0.107924] Memory: 1974720K/2097152K available (18752K kernel code, 5490K rwdata, 13724K rodata, 2816K init, 692K bss, 86016K reserved, 32768K cma-reserved)
+[    0.125738] devtmpfs: initialized
+[    0.162140] posixtimers hash table entries: 1024 (order: 2, 16384 bytes, linear)
+[    0.162370] futex hash table entries: 512 (32768 bytes on 1 NUMA nodes, total 32 KiB, linear).
+[    0.163982] 2G module region forced by RANDOMIZE_MODULE_REGION_FULL
+[    0.164028] 0 pages in range for non-PLT usage
+[    0.164079] 513856 pages in range for PLT usage
+[    0.166197] pinctrl core: initialized pinctrl subsystem
+[    0.181512] DMI not present or invalid.
+[    0.197985] NET: Registered PF_NETLINK/PF_ROUTE protocol family
+[    0.208249] DMA: preallocated 256 KiB GFP_KERNEL pool for atomic allocations
+[    0.211281] DMA: preallocated 256 KiB GFP_KERNEL|GFP_DMA pool for atomic allocations
+[    0.215626] DMA: preallocated 256 KiB GFP_KERNEL|GFP_DMA32 pool for atomic allocations
+[    0.215868] audit: initializing netlink subsys (disabled)
+[    0.217711] audit: type=2000 audit(0.152:1): state=initialized audit_enabled=0 res=1
+[    0.225836] thermal_sys: Registered thermal governor 'step_wise'
+[    0.225879] thermal_sys: Registered thermal governor 'power_allocator'
+[    0.226387] cpuidle: using governor menu
+[    0.227755] hw-breakpoint: found 6 breakpoint and 4 watchpoint registers.
+[    0.228245] ASID allocator initialised with 65536 entries
+[    0.244057] Serial: AMBA PL011 UART driver
+[    0.394467] 9000000.pl011: ttyAMA0 at MMIO 0x9000000 (irq = 13, base_baud = 0) is a PL011 rev1
+[    0.396411] printk: console [ttyAMA0] enabled
+[    0.537750] HugeTLB: registered 1.00 GiB page size, pre-allocated 0 pages
+[    0.539792] HugeTLB: 0 KiB vmemmap can be freed for a 1.00 GiB page
+[    0.541145] HugeTLB: registered 32.0 MiB page size, pre-allocated 0 pages
+[    0.541276] HugeTLB: 0 KiB vmemmap can be freed for a 32.0 MiB page
+[    0.542353] HugeTLB: registered 2.00 MiB page size, pre-allocated 0 pages
+[    0.543744] HugeTLB: 0 KiB vmemmap can be freed for a 2.00 MiB page
+[    0.544628] HugeTLB: registered 64.0 KiB page size, pre-allocated 0 pages
+[    0.545182] HugeTLB: 0 KiB vmemmap can be freed for a 64.0 KiB page
+[    0.623187] ACPI: Interpreter disabled.
+[    0.645564] iommu: Default domain type: Translated
+[    0.645605] iommu: DMA domain TLB invalidation policy: strict mode
+[    0.648171] SCSI subsystem initialized
+[    0.654273] usbcore: registered new interface driver usbfs
+[    0.654638] usbcore: registered new interface driver hub
+[    0.654838] usbcore: registered new device driver usb
+[    0.664164] pps_core: LinuxPPS API ver. 1 registered
+[    0.664191] pps_core: Software ver. 5.3.6 - Copyright 2005-2007 Rodolfo Giometti <giometti@linux.it>
+[    0.664293] PTP clock support registered
+[    0.665042] EDAC MC: Ver: 3.0.0
+[    0.667548] scmi_core: SCMI protocol bus registered
+[    0.677890] FPGA manager framework
+[    0.688883] vgaarb: loaded
+[    0.691283] clocksource: Switched to clocksource arch_sys_counter
+[    0.695470] VFS: Disk quotas dquot_6.6.0
+[    0.695649] VFS: Dquot-cache hash table entries: 512 (order 0, 4096 bytes)
+[    0.701303] pnp: PnP ACPI: disabled
+[    0.752916] NET: Registered PF_INET protocol family
+[    0.753769] IP idents hash table entries: 32768 (order: 6, 262144 bytes, linear)
+[    0.760119] tcp_listen_portaddr_hash hash table entries: 1024 (order: 2, 16384 bytes, linear)
+[    0.760201] Table-perturb hash table entries: 65536 (order: 6, 262144 bytes, linear)
+[    0.760325] TCP established hash table entries: 16384 (order: 5, 131072 bytes, linear)
+[    0.767509] TCP bind hash table entries: 16384 (order: 7, 524288 bytes, linear)
+[    0.767825] TCP: Hash tables configured (established 16384 bind 16384)
+[    0.768451] UDP hash table entries: 1024 (order: 4, 65536 bytes, linear)
+[    0.768659] UDP-Lite hash table entries: 1024 (order: 4, 65536 bytes, linear)
+[    0.769471] NET: Registered PF_UNIX/PF_LOCAL protocol family
+[    0.771798] RPC: Registered named UNIX socket transport module.
+[    0.771840] RPC: Registered udp transport module.
+[    0.771864] RPC: Registered tcp transport module.
+[    0.771888] RPC: Registered tcp-with-tls transport module.
+[    0.771911] RPC: Registered tcp NFSv4.1 backchannel transport module.
+[    0.771990] PCI: CLS 0 bytes, default 64
+[    0.775385] kvm [1]: HYP mode not available
+[    0.780978] Initialise system trusted keyrings
+[    0.783643] workingset: timestamp_bits=42 max_order=19 bucket_order=0
+[    0.785796] squashfs: version 4.0 (2009/01/31) Phillip Lougher
+[    0.792957] NFS: Registering the id_resolver key type
+[    0.793122] Key type id_resolver registered
+[    0.793156] Key type id_legacy registered
+[    0.793385] nfs4filelayout_init: NFSv4 File Layout Driver Registering...
+[    0.793443] nfs4flexfilelayout_init: NFSv4 Flexfile Layout Driver Registering...
+[    0.794397] 9p: Installing v9fs 9p2000 file system support
+[    0.861613] Key type asymmetric registered
+[    0.861665] Asymmetric key parser 'x509' registered
+[    0.861932] Block layer SCSI generic (bsg) driver version 0.4 loaded (major 244)
+[    0.862009] io scheduler mq-deadline registered
+[    0.862066] io scheduler kyber registered
+[    0.862364] io scheduler bfq registered
+[    0.862561] test_bitmap: loaded.
+[    0.866905] test_bitmap: parselist: 14: input is '0-2047:128/256' OK, Time: 4544
+[    0.867350] test_bitmap: bitmap_print_to_pagebuf: input is '0-32767
+[    0.867350] ', Time: 24368
+[    1.203110] test_bitmap: Time spent in test_bitmap_read_perf:	1750704
+[    1.205391] test_bitmap: Time spent in test_bitmap_write_perf:	2218880
+[    1.214366] test_bitmap: all 390447 tests passed
+[    1.300202] pl061_gpio 9030000.pl061: PL061 GPIO chip registered
+[    1.313488] ledtrig-cpu: registered to indicate activity on CPUs
+[    1.319766] pci-host-generic 4010000000.pcie: host bridge /pcie@10000000 ranges:
+[    1.320236] pci-host-generic 4010000000.pcie:       IO 0x003eff0000..0x003effffff -> 0x0000000000
+[    1.320678] pci-host-generic 4010000000.pcie:      MEM 0x0010000000..0x003efeffff -> 0x0010000000
+[    1.320770] pci-host-generic 4010000000.pcie:      MEM 0x8000000000..0xffffffffff -> 0x8000000000
+[    1.321232] pci-host-generic 4010000000.pcie: Memory resource size exceeds max for 32 bits
+[    1.321567] pci-host-generic 4010000000.pcie: ECAM at [mem 0x4010000000-0x401fffffff] for [bus 00-ff]
+[    1.322970] pci-host-generic 4010000000.pcie: PCI host bridge to bus 0000:00
+[    1.323185] pci_bus 0000:00: root bus resource [bus 00-ff]
+[    1.323257] pci_bus 0000:00: root bus resource [io  0x0000-0xffff]
+[    1.323315] pci_bus 0000:00: root bus resource [mem 0x10000000-0x3efeffff]
+[    1.323364] pci_bus 0000:00: root bus resource [mem 0x8000000000-0xffffffffff]
+[    1.324213] pci 0000:00:00.0: [1b36:0008] type 00 class 0x060000 conventional PCI endpoint
+[    1.327537] pci 0000:00:01.0: [1af4:1000] type 00 class 0x020000 conventional PCI endpoint
+[    1.327805] pci 0000:00:01.0: BAR 0 [io  0x0000-0x001f]
+[    1.327874] pci 0000:00:01.0: BAR 1 [mem 0x00000000-0x00000fff]
+[    1.327945] pci 0000:00:01.0: BAR 4 [mem 0x00000000-0x00003fff 64bit pref]
+[    1.328047] pci 0000:00:01.0: ROM [mem 0x00000000-0x0007ffff pref]
+[    1.329383] pci 0000:00:02.0: [1af4:1001] type 00 class 0x010000 conventional PCI endpoint
+[    1.329537] pci 0000:00:02.0: BAR 0 [io  0x0000-0x007f]
+[    1.329589] pci 0000:00:02.0: BAR 1 [mem 0x00000000-0x00000fff]
+[    1.329650] pci 0000:00:02.0: BAR 4 [mem 0x00000000-0x00003fff 64bit pref]
+[    1.334682] pci 0000:00:01.0: ROM [mem 0x10000000-0x1007ffff pref]: assigned
+[    1.334841] pci 0000:00:01.0: BAR 4 [mem 0x8000000000-0x8000003fff 64bit pref]: assigned
+[    1.334991] pci 0000:00:02.0: BAR 4 [mem 0x8000004000-0x8000007fff 64bit pref]: assigned
+[    1.335067] pci 0000:00:01.0: BAR 1 [mem 0x10080000-0x10080fff]: assigned
+[    1.335146] pci 0000:00:02.0: BAR 1 [mem 0x10081000-0x10081fff]: assigned
+[    1.335209] pci 0000:00:02.0: BAR 0 [io  0x1000-0x107f]: assigned
+[    1.335274] pci 0000:00:01.0: BAR 0 [io  0x1080-0x109f]: assigned
+[    1.335469] pci_bus 0000:00: resource 4 [io  0x0000-0xffff]
+[    1.335522] pci_bus 0000:00: resource 5 [mem 0x10000000-0x3efeffff]
+[    1.335570] pci_bus 0000:00: resource 6 [mem 0x8000000000-0xffffffffff]
+[    1.526606] virtio-pci 0000:00:01.0: enabling device (0000 -> 0003)
+[    1.532600] virtio-pci 0000:00:02.0: enabling device (0000 -> 0003)
+[    1.575690] Serial: 8250/16550 driver, 4 ports, IRQ sharing enabled
+[    1.602133] msm_serial: driver initialized
+[    1.604643] SuperH (H)SCI(F) driver initialized
+[    1.606173] STM32 USART driver initialized
+[    1.662896] loop: module loaded
+[    1.663598] virtio_blk virtio1: 2/0/0 default/read/poll queues
+[    1.672603] virtio_blk virtio1: [vda] 8388608 512-byte logical blocks (4.29 GB/4.00 GiB)
+[    1.691120] megasas: 07.734.00.00-rc1
+[    1.702217] physmap-flash 0.flash: physmap platform flash device: [mem 0x00000000-0x03ffffff]
+[    1.703809] 0.flash: Found 2 x16 devices at 0x0 in 32-bit bank. Manufacturer ID 0x000000 Chip ID 0x000000
+[    1.704023] Intel/Sharp Extended Query Table at 0x0031
+[    1.704451] Using buffer write method
+[    1.704849] physmap-flash 0.flash: physmap platform flash device: [mem 0x04000000-0x07ffffff]
+[    1.705248] 0.flash: Found 2 x16 devices at 0x0 in 32-bit bank. Manufacturer ID 0x000000 Chip ID 0x000000
+[    1.705311] Intel/Sharp Extended Query Table at 0x0031
+[    1.705846] Using buffer write method
+[    1.705935] Concatenating MTD devices:
+[    1.705958] (0): "0.flash"
+[    1.705988] (1): "0.flash"
+[    1.706013] into device "0.flash"
+[    1.767447] tun: Universal TUN/TAP device driver, 1.6
+[    1.789327] thunder_xcv, ver 1.0
+[    1.789672] thunder_bgx, ver 1.0
+[    1.790053] nicpf, ver 1.0
+[    1.799329] e1000: Intel(R) PRO/1000 Network Driver
+[    1.799353] e1000: Copyright (c) 1999-2006 Intel Corporation.
+[    1.799669] e1000e: Intel(R) PRO/1000 Network Driver
+[    1.799686] e1000e: Copyright(c) 1999 - 2015 Intel Corporation.
+[    1.800015] igb: Intel(R) Gigabit Ethernet Network Driver
+[    1.800038] igb: Copyright (c) 2007-2014 Intel Corporation.
+[    1.800353] igbvf: Intel(R) Gigabit Virtual Function Network Driver
+[    1.800382] igbvf: Copyright (c) 2009 - 2012 Intel Corporation.
+[    1.802762] sky2: driver version 1.30
+[    1.812690] VFIO - User Level meta-driver version: 0.3
+[    1.835803] usbcore: registered new interface driver usb-storage
+[    1.858177] rtc-pl031 9010000.pl031: registered as rtc0
+[    1.858552] rtc-pl031 9010000.pl031: setting system clock to 2026-10-21T19:14:06 UTC (1792610046)
+[    1.863035] i2c_dev: i2c /dev entries driver
+[    1.915313] sdhci: Secure Digital Host Controller Interface driver
+[    1.915333] sdhci: Copyright(c) Pierre Ossman
+[    1.921051] Synopsys Designware Multimedia Card Interface Driver
+[    1.927578] sdhci-pltfm: SDHCI platform and OF driver helper
+[    1.955015] usbcore: registered new interface driver usbhid
+[    1.955058] usbhid: USB HID core driver
+[    1.980180] hw perfevents: enabled with armv8_pmuv3 PMU driver, 7 (0,8000003f) counters available
+[    2.005222] NET: Registered PF_PACKET protocol family
+[    2.006067] 9pnet: Installing 9P2000 support
+[    2.006327] Key type dns_resolver registered
+[    2.089388] registered taskstats version 1
+[    2.090327] Loading compiled-in X.509 certificates
+[    2.173595] Demotion targets for Node 0: null
+[    2.181740] input: gpio-keys as /devices/platform/gpio-keys/input/input0
+[    2.191913] clk: Disabling unused clocks
+[    2.192366] PM: genpd: Disabling unused power domains
+[    2.192557] KTAP version 1
+[    2.192577] 1..15
+[    2.198660]     KTAP version 1
+[    2.198681]     # Subtest: rust_allocator
+[    2.198751]     # speed: normal
+[    2.199008]     1..1
+[    2.217178]     # test_alignment.speed: normal
+[    2.217288]     ok 1 test_alignment
+[    2.217425] ok 1 rust_allocator
+[    2.217559]     KTAP version 1
+[    2.217574]     # Subtest: rust_kvec
+[    2.217593]     # speed: normal
+[    2.217646]     1..1
+[    2.229807]     # test_kvec_retain.speed: normal
+[    2.229864]     ok 1 test_kvec_retain
+[    2.229927] ok 2 rust_kvec
+[    2.230053]     KTAP version 1
+[    2.230068]     # Subtest: rust_kernel_bitmap
+[    2.230088]     # speed: normal
+[    2.230139]     1..6
+[    2.232741]     # bitmap_borrow.speed: normal
+[    2.232797]     ok 1 bitmap_borrow
+[    2.240688]     # bitmap_copy.speed: normal
+[    2.240756]     ok 2 bitmap_copy
+[    2.248125]     # bitmap_vec_new.speed: normal
+[    2.248183]     ok 3 bitmap_vec_new
+[    2.249129]     # bitmap_set_clear_find.speed: normal
+[    2.249185]     ok 4 bitmap_set_clear_find
+[    2.249520] rust_kernel: Bit `index` must be < 128, was 2048
+[    2.249902] rust_kernel: Bit `index` must be < 128, was 2048
+[    2.249945] rust_kernel: Bit `index` must be < 128, was 2048
+[    2.249987] rust_kernel: Bit `index` must be < 128, was 2048
+[    2.250549]     # owned_bitmap_out_of_bounds.speed: normal
+[    2.250605]     ok 5 owned_bitmap_out_of_bounds
+[    2.251581]     # bitmap_copy_and_extend.speed: normal
+[    2.251848]     ok 6 bitmap_copy_and_extend
+[    2.251921] # rust_kernel_bitmap: pass:6 fail:0 skip:0 total:6
+[    2.251983] # Totals: pass:6 fail:0 skip:0 total:6
+[    2.252031] ok 3 rust_kernel_bitmap
+[    2.252150]     KTAP version 1
+[    2.252165]     # Subtest: rust_kernel_kunit
+[    2.252184]     # speed: normal
+[    2.252229]     1..3
+[    2.253023]     # rust_test_kunit_example_test.speed: normal
+[    2.253078]     ok 1 rust_test_kunit_example_test
+[    2.253943]     # rust_test_kunit_in_kunit_test.speed: normal
+[    2.254000]     ok 2 rust_test_kunit_in_kunit_test
+[    2.254780]     # rust_test_kunit_always_disabled_test.speed: normal
+[    2.254843]     ok 3 rust_test_kunit_always_disabled_test # SKIP 
+[    2.254930] # rust_kernel_kunit: pass:2 fail:0 skip:1 total:3
+[    2.254983] # Totals: pass:2 fail:0 skip:1 total:3
+[    2.255034] ok 4 rust_kernel_kunit
+[    2.255188]     KTAP version 1
+[    2.255204]     # Subtest: rust_kernel_str
+[    2.255223]     # speed: normal
+[    2.255280]     1..8
+[    2.256327]     # test_cstr_to_str.speed: normal
+[    2.256383]     ok 1 test_cstr_to_str
+[    2.257286]     # test_cstr_to_str_invalid_utf8.speed: normal
+[    2.257342]     ok 2 test_cstr_to_str_invalid_utf8
+[    2.258131]     # test_cstr_as_str_unchecked.speed: normal
+[    2.258187]     ok 3 test_cstr_as_str_unchecked
+[    2.259855]     # test_cstr_display.speed: normal
+[    2.259912]     ok 4 test_cstr_display
+[    2.261977]     # test_cstr_display_all_bytes.speed: normal
+[    2.262034]     ok 5 test_cstr_display_all_bytes
+[    2.263232]     # test_cstr_debug.speed: normal
+[    2.263289]     ok 6 test_cstr_debug
+[    2.264525]     # test_bstr_display.speed: normal
+[    2.264582]     ok 7 test_bstr_display
+[    2.265823]     # test_bstr_debug.speed: normal
+[    2.265880]     ok 8 test_bstr_debug
+[    2.265942] # rust_kernel_str: pass:8 fail:0 skip:0 total:8
+[    2.265994] # Totals: pass:8 fail:0 skip:0 total:8
+[    2.266037] ok 5 rust_kernel_str
+[    2.266156]     KTAP version 1
+[    2.266171]     # Subtest: rust_atomics
+[    2.266190]     # speed: normal
+[    2.266234]     1..4
+[    2.267021]     # atomic_basic_tests.speed: normal
+[    2.267075]     ok 1 atomic_basic_tests
+[    2.267991]     # atomic_xchg_tests.speed: normal
+[    2.268049]     ok 2 atomic_xchg_tests
+[    2.269204]     # atomic_cmpxchg_tests.speed: normal
+[    2.269261]     ok 3 atomic_cmpxchg_tests
+[    2.270138]     # atomic_arithmetic_tests.speed: normal
+[    2.270194]     ok 4 atomic_arithmetic_tests
+[    2.270256] # rust_atomics: pass:4 fail:0 skip:0 total:4
+[    2.270308] # Totals: pass:4 fail:0 skip:0 total:4
+[    2.270352] ok 6 rust_atomics
+[    2.270523]     KTAP version 1
+[    2.270538]     # Subtest: kfifo_rust
+[    2.270557]     # speed: normal
+[    2.270601]     1..13
+[    2.271344]     # kfifo_rust_in_out_roundtrip.speed: normal
+[    2.271398]     ok 1 kfifo_rust_in_out_roundtrip
+[    2.272210]     # kfifo_rust_out_is_clamped_to_the_content.speed: normal
+[    2.272267]     ok 2 kfifo_rust_out_is_clamped_to_the_content
+[    2.273154]     # kfifo_rust_in_is_clamped_to_the_free_space.speed: normal
+[    2.273212]     ok 3 kfifo_rust_in_is_clamped_to_the_free_space
+[    2.274003]     # kfifo_rust_wrap_around_keeps_the_order.speed: normal
+[    2.274059]     ok 4 kfifo_rust_wrap_around_keeps_the_order
+[    2.274813]     # kfifo_rust_peek_does_not_consume.speed: normal
+[    2.274869]     ok 5 kfifo_rust_peek_does_not_consume
+[    2.275905]     # kfifo_rust_record_roundtrip.speed: normal
+[    2.275962]     ok 6 kfifo_rust_record_roundtrip
+[    2.276835]     # kfifo_rust_record_skip.speed: normal
+[    2.276890]     ok 7 kfifo_rust_record_skip
+[    2.277746]     # kfifo_rust_max_r.speed: normal
+[    2.277801]     ok 8 kfifo_rust_max_r
+[    2.278600]     # kfifo_rust_max_r_large_recsize.speed: normal
+[    2.278707]     ok 9 kfifo_rust_max_r_large_recsize
+[    2.279544]     # kfifo_rust_init_zero_element_size.speed: normal
+[    2.279600]     ok 10 kfifo_rust_init_zero_element_size
+[    2.280788]     # kfifo_rust_user_copy_fault.speed: normal
+[    2.280844]     ok 11 kfifo_rust_user_copy_fault
+[    2.281720]     # kfifo_rust_power_of_two_helpers.speed: normal
+[    2.281776]     ok 12 kfifo_rust_power_of_two_helpers
+[    2.282720]     # kfifo_rust_alloc_and_free.speed: normal
+[    2.282776]     ok 13 kfifo_rust_alloc_and_free
+[    2.282840] # kfifo_rust: pass:13 fail:0 skip:0 total:13
+[    2.282897] # Totals: pass:13 fail:0 skip:0 total:13
+[    2.282945] ok 7 kfifo_rust
+[    2.283083]     KTAP version 1
+[    2.283098]     # Subtest: kfifo_diff
+[    2.283130]     # module: kfifo_diff_kunit
+[    2.283181]     1..10
+[    2.284295]     ok 1 kfifo_diff_init
+[    2.285510]     ok 2 kfifo_diff_alloc
+[    2.290682]     ok 3 kfifo_diff_random_sequences
+[    2.291757]     ok 4 kfifo_diff_wrap_around
+[    2.293357]     ok 5 kfifo_diff_records
+[    2.299143]     ok 6 kfifo_diff_max_r
+[    2.308491]     ok 7 kfifo_diff_dma_prepare
+[    2.309452]     ok 8 kfifo_diff_dma_wrap
+[    2.310569]     ok 9 kfifo_diff_user_copy_fault
+[    2.482851] kfifo benchmark: 20000 iterations of in(64)+out(64), best of 3
+[    2.482886] kfifo benchmark: rust 27840848 ns, c 25816288 ns
+[    2.482917] kfifo benchmark: rust/c ratio 1078 per mille
+[    2.484851]     ok 10 kfifo_diff_benchmark
+[    2.484919] # kfifo_diff: pass:10 fail:0 skip:0 total:10
+[    2.484977] # Totals: pass:10 fail:0 skip:0 total:10
+[    2.485025] ok 8 kfifo_diff
+[    2.485149]     KTAP version 1
+[    2.485164]     # Subtest: crc16_rust
+[    2.485183]     # speed: normal
+[    2.485228]     1..5
+[    2.486031]     # crc16_rust_check_value.speed: normal
+[    2.486086]     ok 1 crc16_rust_check_value
+[    2.486969]     # crc16_rust_empty_buffer.speed: normal
+[    2.487025]     ok 2 crc16_rust_empty_buffer
+[    2.487847]     # crc16_rust_incremental.speed: normal
+[    2.488161]     ok 3 crc16_rust_incremental
+[    2.488977]     # crc16_rust_all_initial_values_single_byte.speed: normal
+[    2.489033]     ok 4 crc16_rust_all_initial_values_single_byte
+[    2.489966]     # crc16_rust_deterministic_prng.speed: normal
+[    2.490022]     ok 5 crc16_rust_deterministic_prng
+[    2.490084] # crc16_rust: pass:5 fail:0 skip:0 total:5
+[    2.490136] # Totals: pass:5 fail:0 skip:0 total:5
+[    2.490179] ok 9 crc16_rust
+[    2.490299]     KTAP version 1
+[    2.490314]     # Subtest: crc16_diff
+[    2.490334]     # module: crc16_diff_kunit
+[    2.490378]     1..2
+[    2.533519]     ok 1 crc16_diff_edge_cases
+[    2.559585]     ok 2 crc16_diff_random_streams
+[    2.559682] # crc16_diff: pass:2 fail:0 skip:0 total:2
+[    2.559740] # Totals: pass:2 fail:0 skip:0 total:2
+[    2.559787] ok 10 crc16_diff
+[    2.560308]     KTAP version 1
+[    2.560327]     # Subtest: crc_ccitt_rust
+[    2.560348]     # speed: normal
+[    2.560398]     1..7
+[    2.561233]     # crc_ccitt_rust_check_value.speed: normal
+[    2.561294]     ok 1 crc_ccitt_rust_check_value
+[    2.562187]     # crc_ccitt_rust_check_value_init_ffff.speed: normal
+[    2.562252]     ok 2 crc_ccitt_rust_check_value_init_ffff
+[    2.563176]     # crc_ccitt_rust_empty_buffer.speed: normal
+[    2.563237]     ok 3 crc_ccitt_rust_empty_buffer
+[    2.564227]     # crc_ccitt_rust_incremental.speed: normal
+[    2.564288]     ok 4 crc_ccitt_rust_incremental
+[    2.565345]     # crc_ccitt_rust_all_initial_values_single_byte.speed: normal
+[    2.565408]     ok 5 crc_ccitt_rust_all_initial_values_single_byte
+[    2.566421]     # crc_ccitt_rust_table_matches_bitwise.speed: normal
+[    2.566482]     ok 6 crc_ccitt_rust_table_matches_bitwise
+[    2.567467]     # crc_ccitt_rust_deterministic_prng.speed: normal
+[    2.567527]     ok 7 crc_ccitt_rust_deterministic_prng
+[    2.567592] # crc_ccitt_rust: pass:7 fail:0 skip:0 total:7
+[    2.567648] # Totals: pass:7 fail:0 skip:0 total:7
+[    2.567693] ok 11 crc_ccitt_rust
+[    2.567826]     KTAP version 1
+[    2.567842]     # Subtest: crc_ccitt_diff
+[    2.567863]     # module: crc_ccitt_diff_kunit
+[    2.567910]     1..3
+[    2.568967]     ok 1 crc_ccitt_diff_table
+[    2.572766]     ok 2 crc_ccitt_diff_edge_cases
+[    2.592352]     ok 3 crc_ccitt_diff_random_streams
+[    2.592436] # crc_ccitt_diff: pass:3 fail:0 skip:0 total:3
+[    2.592492] # Totals: pass:3 fail:0 skip:0 total:3
+[    2.592768] ok 12 crc_ccitt_diff
+[    2.593133]     KTAP version 1
+[    2.593150]     # Subtest: crc
+[    2.593172]     # module: crc_kunit
+[    2.593221]     1..16
+[    2.816783] hrtimer: interrupt took 131088 ns
+[    3.053123]     ok 1 crc7_be_test
+[    3.054206]     ok 2 crc7_be_benchmark # SKIP not enabled
+[    3.540920]     ok 3 crc16_test
+[    3.555846]     ok 4 crc16_benchmark # SKIP not enabled
+[    4.194906]     ok 5 crc_t10dif_test
+[    4.197268]     ok 6 crc_t10dif_benchmark # SKIP not enabled
+[    4.601048]     ok 7 crc32_le_test
+[    4.609759]     ok 8 crc32_le_benchmark # SKIP not enabled
+[    5.039772]     ok 9 crc32_be_test
+[    5.049789]     ok 10 crc32_be_benchmark # SKIP not enabled
+[    5.459822]     ok 11 crc32c_test
+[    5.464675]     ok 12 crc32c_benchmark # SKIP not enabled
+[    5.868655]     ok 13 crc64_be_test
+[    5.874051]     ok 14 crc64_be_benchmark # SKIP not enabled
+[    6.343736]     ok 15 crc64_nvme_test
+[    6.351917]     ok 16 crc64_nvme_benchmark # SKIP not enabled
+[    6.352030] # crc: pass:8 fail:0 skip:8 total:16
+[    6.352087] # Totals: pass:8 fail:0 skip:8 total:16
+[    6.352418] ok 13 crc
+[    6.352575]     KTAP version 1
+[    6.352590]     # Subtest: kfifo
+[    6.352610]     # module: kfifo_kunit
+[    6.352660]     1..10
+[    6.353528]     ok 1 kfifo_test_reset_should_clear_the_fifo
+[    6.354492]     ok 2 kfifo_test_define_should_define_an_empty_fifo
+[    6.355410]     ok 3 kfifo_test_len_should_ret_n_of_stored_elements
+[    6.356357]     ok 4 kfifo_test_put_should_insert_and_get_should_pop
+[    6.357462]     ok 5 kfifo_test_in_should_insert_multiple_elements
+[    6.358483]     ok 6 kfifo_test_out_should_pop_multiple_elements
+[    6.359360]     ok 7 kfifo_test_dec_init_should_define_an_empty_fifo
+[    6.360325]     ok 8 kfifo_test_define_should_equal_declare_init
+[    6.361410]     ok 9 kfifo_test_alloc_should_initiliaze_a_ptr_fifo
+[    6.362426]     ok 10 kfifo_test_peek_should_not_remove_elements
+[    6.362496] # kfifo: pass:10 fail:0 skip:0 total:10
+[    6.362554] # Totals: pass:10 fail:0 skip:0 total:10
+[    6.362603] ok 14 kfifo
+[    6.362747]     KTAP version 1
+[    6.362763]     # Subtest: bitmap_diff
+[    6.362783]     # module: bitmap_diff_kunit
+[    6.362828]     1..11
+[    6.364939]     ok 1 bitmap_diff_sizes
+[    6.366210]     ok 2 bitmap_diff_set_clear
+[    6.368220]     ok 3 bitmap_diff_shifts
+[    6.369427]     ok 4 bitmap_diff_cut
+[    6.370721]     ok 5 bitmap_diff_cut_out_of_range
+[    6.372591]     ok 6 bitmap_diff_find_next_zero_area
+[    6.384434]     ok 7 bitmap_diff_remap
+[    6.385656]     ok 8 bitmap_diff_arr32
+[    6.386874]     ok 9 bitmap_diff_alloc
+[    6.388188]     ok 10 bitmap_diff_alloc_node
+[    6.482840] bitmap benchmark: 2000 iterations over 1024 bits, best of 3
+[    6.482884] bitmap benchmark: all operations, rust 26301168 ns, c 3369296 ns, ratio 7806 per mille
+[    6.508191] bitmap benchmark: without the weight helpers, rust 6136160 ns, c 1905088 ns, ratio 3220 per mille
+[    6.513063]     ok 11 bitmap_diff_benchmark
+[    6.513132] # bitmap_diff: pass:11 fail:0 skip:0 total:11
+[    6.513191] # Totals: pass:11 fail:0 skip:0 total:11
+[    6.513239] ok 15 bitmap_diff
+[    6.562248] check access for rdinit=/init failed: -2, ignoring
+[    6.588787] EXT4-fs (vda): mounted filesystem 8f01e456-e8c1-420e-94c8-57cbc7fbd43f r/w with ordered data mode. Quota mode: none.
+[    6.589164] VFS: Mounted root (ext4 filesystem) on device 254:0.
+[    6.591984] devtmpfs: mounted
+[    6.820605] Freeing unused kernel memory: 2816K
+[    6.821396] Run /sbin/ferret-init as init process
 UBUNTU-RELEASE: Ubuntu 24.04.5 LTS
 UBUNTU-KERNEL: 6.18.57-ferret-rust
 UBUNTU-MACHINE: aarch64

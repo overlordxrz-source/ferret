@@ -2,7 +2,7 @@
 == kernel variant ==
 variant:  rust
 vmlinux:  /build/linux-rust-arm64/vmlinux
-git:      c87b73b1a096
+git:      48fed460f7cf
 config:   CONFIG_RUST=y CONFIG_CRC16=y CONFIG_CRC16_RUST=y CONFIG_CRC16_DIFF_KUNIT_TEST=y CONFIG_CRC_CCITT=y CONFIG_CRC_CCITT_RUST=y CONFIG_CRC_CCITT_DIFF_KUNIT_TEST=y CONFIG_KFIFO_RUST=y CONFIG_BITMAP_RUST=y CONFIG_BITMAP_DIFF_KUNIT_TEST=y CONFIG_KFIFO_DIFF_KUNIT_TEST=y CONFIG_KUNIT=y 
 
 == build tree object ownership ==
@@ -139,15 +139,15 @@ PASS  __bitmap_subset is defined by lib/bitmap_rust.o
 PASS  linked __bitmap_subset has the size of the function in the Rust object
 PASS  export shim for __bitmap_subset only references it (no definition)
 PASS  __bitmap_weight is defined by lib/bitmap_rust.o
-      size __bitmap_weight: object=0x00000000000000e4 vmlinux=0x00000000000000e4 bytes
+      size __bitmap_weight: object=0x00000000000000ac vmlinux=0x00000000000000ac bytes
 PASS  linked __bitmap_weight has the size of the function in the Rust object
 PASS  export shim for __bitmap_weight only references it (no definition)
 PASS  __bitmap_weight_and is defined by lib/bitmap_rust.o
-      size __bitmap_weight_and: object=0x00000000000000f8 vmlinux=0x00000000000000f8 bytes
+      size __bitmap_weight_and: object=0x00000000000000cc vmlinux=0x00000000000000cc bytes
 PASS  linked __bitmap_weight_and has the size of the function in the Rust object
 PASS  export shim for __bitmap_weight_and only references it (no definition)
 PASS  __bitmap_weight_andnot is defined by lib/bitmap_rust.o
-      size __bitmap_weight_andnot: object=0x00000000000000f8 vmlinux=0x00000000000000f8 bytes
+      size __bitmap_weight_andnot: object=0x00000000000000cc vmlinux=0x00000000000000cc bytes
 PASS  linked __bitmap_weight_andnot has the size of the function in the Rust object
 PASS  export shim for __bitmap_weight_andnot only references it (no definition)
 PASS  __bitmap_xor is defined by lib/bitmap_rust.o
@@ -163,7 +163,7 @@ PASS  bitmap_alloc_node is defined by lib/bitmap_rust.o
 PASS  linked bitmap_alloc_node has the size of the function in the Rust object
 PASS  export shim for bitmap_alloc_node only references it (no definition)
 PASS  bitmap_bitremap is defined by lib/bitmap_rust.o
-      size bitmap_bitremap: object=0x00000000000001cc vmlinux=0x00000000000001cc bytes
+      size bitmap_bitremap: object=0x0000000000000168 vmlinux=0x0000000000000168 bytes
 PASS  linked bitmap_bitremap has the size of the function in the Rust object
 PASS  export shim for bitmap_bitremap only references it (no definition)
 PASS  bitmap_cut is defined by lib/bitmap_rust.o
@@ -183,7 +183,7 @@ PASS  bitmap_from_arr32 is defined by lib/bitmap_rust.o
 PASS  linked bitmap_from_arr32 has the size of the function in the Rust object
 PASS  export shim for bitmap_from_arr32 only references it (no definition)
 PASS  bitmap_remap is defined by lib/bitmap_rust.o
-      size bitmap_remap: object=0x0000000000000290 vmlinux=0x0000000000000290 bytes
+      size bitmap_remap: object=0x0000000000000210 vmlinux=0x0000000000000210 bytes
 PASS  linked bitmap_remap has the size of the function in the Rust object
 PASS  export shim for bitmap_remap only references it (no definition)
 PASS  bitmap_to_arr32 is defined by lib/bitmap_rust.o
@@ -300,7 +300,7 @@ PASS  linked __kfifo_dma_out_prepare_r has the size of the function in the Rust 
 PASS  export shim for __kfifo_dma_out_prepare_r only references it (no definition)
 
 == debug-info provenance ==
-      crc16 address: 0xffff80008063f0fc
+      crc16 address: 0xffff80008063f118
       origin:  crc16 /build/src/lib/crc/crc16_rust.rs:76 
 PASS  crc16 maps to Rust source (crc16_rust.rs)
 
@@ -472,49 +472,49 @@ PASS  __ksymtab_devm_bitmap_zalloc exists (module ABI preserved)
 PASS  devm_bitmap_zalloc exported as EXPORT_SYMBOL_GPL
 
 == disassembly fingerprint ==
-      ffff80008063f0fc <crc16>:
-      ffff80008063f0fc:      	bti	c
-      ffff80008063f100:      	cbz	x2, 0xffff80008063f140 <crc16+0x44>
-      ffff80008063f104:      	paciasp
-      ffff80008063f108:      	stp	x29, x30, [sp, #-0x10]!
-      ffff80008063f10c:      	mov	x29, sp
-      ffff80008063f110:      	adrp	x8, 0xffff8000812eb000 <kfifo_diff_records.__text.82>
-      ffff80008063f868 <crc_ccitt>:
-      ffff80008063f868:      	bti	c
-      ffff80008063f86c:      	cbz	x2, 0xffff80008063f8ac <crc_ccitt+0x44>
-      ffff80008063f870:      	paciasp
-      ffff80008063f874:      	stp	x29, x30, [sp, #-0x10]!
-      ffff80008063f878:      	mov	x29, sp
-      ffff80008063f87c:      	adrp	x8, 0xffff8000812ec000 <crc7_be_syndrome_table+0x3e0>
-      ffff800080630800 <__kfifo_in>:
-      ffff800080630800:      	paciasp
-      ffff800080630804:      	stp	x29, x30, [sp, #-0x50]!
-      ffff800080630808:      	str	x25, [sp, #0x10]
-      ffff80008063080c:      	stp	x24, x23, [sp, #0x20]
-      ffff800080630810:      	stp	x22, x21, [sp, #0x30]
-      ffff800080630814:      	stp	x20, x19, [sp, #0x40]
-      ffff800080630818:      	mov	x29, sp
-      ffff80008063081c:      	ldp	w25, w8, [x0]
-      ffff800080630820:      	ldp	w9, w10, [x0, #0x8]
-      ffff800080630824:      	ldr	x12, [x0, #0x10]
-      ffff800080630828:      	mov	x20, x0
-      ffff80008063082c:      	mov	x19, x1
-      ffff800080630830:      	sub	w8, w8, w25
-      ffff800080630834:      	add	w8, w8, w9
-      ffff800080630838:      	add	w11, w8, #0x1
-      ffff80008063083c:      	cmp	w2, w11
-      ffff800080630840:      	and	w11, w9, w25
-      ffff800080630844:      	umaddl	x9, w10, w9, x10
-      ffff800080630848:      	csinc	w21, w2, w8, lo
-      ffff80008063084c:      	cmp	x10, #0x0
-      ffff800080630850:      	umull	x8, w10, w11
-      ffff800080630854:      	ccmp	x12, #0x0, #0x4, ne
-      ffff800080630858:      	umull	x10, w10, w21
-      ffff80008063085c:      	csel	x9, xzr, x9, eq
-      ffff800080630860:      	csinc	x22, x12, xzr, ne
-      ffff800080630864:      	cmp	x9, x8
-      ffff800080630868:      	csel	x8, x9, x8, lo
-      ffff80008063086c:      	sub	x11, x9, x8
+      ffff80008063f118 <crc16>:
+      ffff80008063f118:      	bti	c
+      ffff80008063f11c:      	cbz	x2, 0xffff80008063f15c <crc16+0x44>
+      ffff80008063f120:      	paciasp
+      ffff80008063f124:      	stp	x29, x30, [sp, #-0x10]!
+      ffff80008063f128:      	mov	x29, sp
+      ffff80008063f12c:      	adrp	x8, 0xffff8000812eb000 <kfifo_diff_records.__text.82>
+      ffff80008063f884 <crc_ccitt>:
+      ffff80008063f884:      	bti	c
+      ffff80008063f888:      	cbz	x2, 0xffff80008063f8c8 <crc_ccitt+0x44>
+      ffff80008063f88c:      	paciasp
+      ffff80008063f890:      	stp	x29, x30, [sp, #-0x10]!
+      ffff80008063f894:      	mov	x29, sp
+      ffff80008063f898:      	adrp	x8, 0xffff8000812ec000 <crc7_be_syndrome_table+0x3e0>
+      ffff80008063081c <__kfifo_in>:
+      ffff80008063081c:      	paciasp
+      ffff800080630820:      	stp	x29, x30, [sp, #-0x50]!
+      ffff800080630824:      	str	x25, [sp, #0x10]
+      ffff800080630828:      	stp	x24, x23, [sp, #0x20]
+      ffff80008063082c:      	stp	x22, x21, [sp, #0x30]
+      ffff800080630830:      	stp	x20, x19, [sp, #0x40]
+      ffff800080630834:      	mov	x29, sp
+      ffff800080630838:      	ldp	w25, w8, [x0]
+      ffff80008063083c:      	ldp	w9, w10, [x0, #0x8]
+      ffff800080630840:      	ldr	x12, [x0, #0x10]
+      ffff800080630844:      	mov	x20, x0
+      ffff800080630848:      	mov	x19, x1
+      ffff80008063084c:      	sub	w8, w8, w25
+      ffff800080630850:      	add	w8, w8, w9
+      ffff800080630854:      	add	w11, w8, #0x1
+      ffff800080630858:      	cmp	w2, w11
+      ffff80008063085c:      	and	w11, w9, w25
+      ffff800080630860:      	umaddl	x9, w10, w9, x10
+      ffff800080630864:      	csinc	w21, w2, w8, lo
+      ffff800080630868:      	cmp	x10, #0x0
+      ffff80008063086c:      	umull	x8, w10, w11
+      ffff800080630870:      	ccmp	x12, #0x0, #0x4, ne
+      ffff800080630874:      	umull	x10, w10, w21
+      ffff800080630878:      	csel	x9, xzr, x9, eq
+      ffff80008063087c:      	csinc	x22, x12, xzr, ne
+      ffff800080630880:      	cmp	x9, x8
+      ffff800080630884:      	csel	x8, x9, x8, lo
+      ffff800080630888:      	sub	x11, x9, x8
 PASS  disassembly fingerprints captured above
 
 RESULT: PASS

@@ -2,7 +2,7 @@
 == kernel variant ==
 variant:  ref
 vmlinux:  /build/linux-ref/vmlinux
-git:      491a428865a5
+git:      48fed460f7cf
 config:   CONFIG_CRC16=y CONFIG_CRC_CCITT=y CONFIG_KUNIT=y 
 
 == build tree object ownership ==
@@ -358,49 +358,49 @@ PASS  __ksymtab_devm_bitmap_zalloc exists (module ABI preserved)
 PASS  devm_bitmap_zalloc exported as EXPORT_SYMBOL_GPL
 
 == disassembly fingerprint ==
-      ffffffff817f7170 <crc16>:
-      ffffffff817f7170:      	endbr64
-      ffffffff817f7174:      	movl	%edi, %eax
-      ffffffff817f7176:      	testq	%rdx, %rdx
-      ffffffff817f7179:      	je	0xffffffff817f71ef <crc16+0x7f>
-      ffffffff817f717b:      	testb	$0x1, %dl
-      ffffffff817f717e:      	jne	0xffffffff817f718b <crc16+0x1b>
-      ffffffff817f7210 <crc_ccitt>:
-      ffffffff817f7210:      	endbr64
-      ffffffff817f7214:      	movl	%edi, %eax
-      ffffffff817f7216:      	testq	%rdx, %rdx
-      ffffffff817f7219:      	je	0xffffffff817f7286 <crc_ccitt+0x76>
-      ffffffff817f721b:      	testb	$0x1, %dl
-      ffffffff817f721e:      	jne	0xffffffff817f722b <crc_ccitt+0x1b>
-      ffffffff817ec900 <__kfifo_in>:
-      ffffffff817ec900:      	endbr64
-      ffffffff817ec904:      	pushq	%rbp
-      ffffffff817ec905:      	pushq	%r15
-      ffffffff817ec907:      	pushq	%r14
-      ffffffff817ec909:      	pushq	%r12
-      ffffffff817ec90b:      	pushq	%rbx
-      ffffffff817ec90c:      	movq	%rsi, %r14
-      ffffffff817ec90f:      	movq	%rdi, %rbx
-      ffffffff817ec912:      	movl	(%rdi), %eax
-      ffffffff817ec914:      	movl	0x8(%rdi), %ecx
-      ffffffff817ec917:      	leal	0x1(%rcx), %r15d
-      ffffffff817ec91b:      	movl	%r15d, %ebp
-      ffffffff817ec91e:      	subl	%eax, %ebp
-      ffffffff817ec920:      	addl	0x4(%rdi), %ebp
-      ffffffff817ec923:      	cmpl	%edx, %ebp
-      ffffffff817ec925:      	cmovael	%edx, %ebp
-      ffffffff817ec928:      	movl	0xc(%rdi), %edx
-      ffffffff817ec92b:      	andl	%ecx, %eax
-      ffffffff817ec92d:      	movl	%ebp, %r12d
-      ffffffff817ec930:      	imull	%edx, %r12d
-      ffffffff817ec934:      	subl	%eax, %r15d
-      ffffffff817ec937:      	imull	%edx, %r15d
-      ffffffff817ec93b:      	movl	%edx, %edi
-      ffffffff817ec93d:      	imull	%eax, %edi
-      ffffffff817ec940:      	cmpl	%r15d, %r12d
-      ffffffff817ec943:      	cmovbl	%r12d, %r15d
-      ffffffff817ec947:      	addq	0x10(%rbx), %rdi
-      ffffffff817ec94b:      	movq	%r15, %rdx
+      ffffffff817f5ed0 <crc16>:
+      ffffffff817f5ed0:      	endbr64
+      ffffffff817f5ed4:      	movl	%edi, %eax
+      ffffffff817f5ed6:      	testq	%rdx, %rdx
+      ffffffff817f5ed9:      	je	0xffffffff817f5f4f <crc16+0x7f>
+      ffffffff817f5edb:      	testb	$0x1, %dl
+      ffffffff817f5ede:      	jne	0xffffffff817f5eeb <crc16+0x1b>
+      ffffffff817f5f70 <crc_ccitt>:
+      ffffffff817f5f70:      	endbr64
+      ffffffff817f5f74:      	movl	%edi, %eax
+      ffffffff817f5f76:      	testq	%rdx, %rdx
+      ffffffff817f5f79:      	je	0xffffffff817f5fe6 <crc_ccitt+0x76>
+      ffffffff817f5f7b:      	testb	$0x1, %dl
+      ffffffff817f5f7e:      	jne	0xffffffff817f5f8b <crc_ccitt+0x1b>
+      ffffffff817eb660 <__kfifo_in>:
+      ffffffff817eb660:      	endbr64
+      ffffffff817eb664:      	pushq	%rbp
+      ffffffff817eb665:      	pushq	%r15
+      ffffffff817eb667:      	pushq	%r14
+      ffffffff817eb669:      	pushq	%r12
+      ffffffff817eb66b:      	pushq	%rbx
+      ffffffff817eb66c:      	movq	%rsi, %r14
+      ffffffff817eb66f:      	movq	%rdi, %rbx
+      ffffffff817eb672:      	movl	(%rdi), %eax
+      ffffffff817eb674:      	movl	0x8(%rdi), %ecx
+      ffffffff817eb677:      	leal	0x1(%rcx), %r15d
+      ffffffff817eb67b:      	movl	%r15d, %ebp
+      ffffffff817eb67e:      	subl	%eax, %ebp
+      ffffffff817eb680:      	addl	0x4(%rdi), %ebp
+      ffffffff817eb683:      	cmpl	%edx, %ebp
+      ffffffff817eb685:      	cmovael	%edx, %ebp
+      ffffffff817eb688:      	movl	0xc(%rdi), %edx
+      ffffffff817eb68b:      	andl	%ecx, %eax
+      ffffffff817eb68d:      	movl	%ebp, %r12d
+      ffffffff817eb690:      	imull	%edx, %r12d
+      ffffffff817eb694:      	subl	%eax, %r15d
+      ffffffff817eb697:      	imull	%edx, %r15d
+      ffffffff817eb69b:      	movl	%edx, %edi
+      ffffffff817eb69d:      	imull	%eax, %edi
+      ffffffff817eb6a0:      	cmpl	%r15d, %r12d
+      ffffffff817eb6a3:      	cmovbl	%r12d, %r15d
+      ffffffff817eb6a7:      	addq	0x10(%rbx), %rdi
+      ffffffff817eb6ab:      	movq	%r15, %rdx
 PASS  disassembly fingerprints captured above
 
 RESULT: PASS

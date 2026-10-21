@@ -49,10 +49,10 @@ What the port covers:
 
 ### The kernel bitmap
 
-**State: verified incrementally.** The build, the boot (with the upstream
-kselftest and the differential suite) and the linkage checks pass, but the
-*clean* cycle that covers the bitmap has not been run yet, so the checkpoint
-as a whole is still signed off by the clean cycle of the kernel FIFO above.
+**State: VERIFIED.** The clean cycle (`CLEAN=1 tools/ferret/test.sh`) passed
+all 16 steps with exit status 0 with the Rust bitmap in the kernel, on x86_64
+and arm64, including the upstream kselftest, the differential suite, the three
+linkage checks and the four Ubuntu boots.
 
 | Item | State | Result |
 | --- | --- | --- |
@@ -64,7 +64,7 @@ as a whole is still signed off by the clean cycle of the kernel FIFO above.
 | Linkage evidence | PASS | one definition per symbol, size match, ksymtab, export class |
 | Text size | measured | 5 807 B (Rust) vs 3 712 B (C), +56 % (2 095 B in a 57 MB kernel) |
 | 32-bit variants | **NOT TESTED** | `bitmap_from_arr64()`/`bitmap_to_arr64()` are implemented but only compiled on a 32-bit target, which Ferret does not build or test |
-| Throughput | measured | 1 327 per mille of the C reference with the weight helpers, 884 per mille without them (in-kernel benchmark, QEMU TCG) |
+| Throughput | measured | 1 168 per mille of the C reference with the weight helpers, 964 per mille without them (in-kernel benchmark, QEMU TCG, clean cycle) |
 | Audit | done | [`design/COMPONENT_004_AUDIT.md`](design/COMPONENT_004_AUDIT.md) |
 
 Two prerequisites were added to the in-tree kernel crate, both exposing

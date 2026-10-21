@@ -117,7 +117,8 @@ Full analysis: `docs/ferret/design/COMPONENT_003_INVESTIGATION.md`.
   unchecked fast path in the C original; the absolute cost is 0.004 % of the
   kernel.
 * Throughput (in-kernel benchmark, Rust against the C reference in the same
-  run): 1 327 per mille with the weight helpers, 884 per mille without them.
+  run, clean cycle): 1 168 per mille with the weight helpers, 964 per mille
+  without them.
   The gap is entirely in the population count: the kernel's alternatives
   mechanism patches the C `hweight64()` to the `popcnt` instruction at boot,
   and that patch cannot be applied to Rust code.
