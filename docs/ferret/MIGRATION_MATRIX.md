@@ -116,6 +116,14 @@ Full analysis: `docs/ferret/design/COMPONENT_003_INVESTIGATION.md`.
   57 MB kernel). The difference is in the per-bit helpers, which have no
   unchecked fast path in the C original; the absolute cost is 0.004 % of the
   kernel.
+* Throughput (in-kernel benchmark, Rust against the C reference in the same
+  run): 1 327 per mille with the weight helpers, 884 per mille without them.
+  The gap is entirely in the population count: the kernel's alternatives
+  mechanism patches the C `hweight64()` to the `popcnt` instruction at boot,
+  and that patch cannot be applied to Rust code.
+* Audit: [`design/COMPONENT_004_AUDIT.md`](design/COMPONENT_004_AUDIT.md) — the
+  `Words` invariant, every unchecked access, the three places where the C code
+  is undefined, and the 32-bit status (**NOT TESTED**).
 
 ### The generic kernel FIFO (checkpoint 003)
 

@@ -63,7 +63,9 @@ as a whole is still signed off by the clean cycle of the kernel FIFO above.
 | Differential KUnit | PASS | `bitmap_diff`, 8 cases over the whole API against the unmodified C |
 | Linkage evidence | PASS | one definition per symbol, size match, ksymtab, export class |
 | Text size | measured | 5 807 B (Rust) vs 3 712 B (C), +56 % (2 095 B in a 57 MB kernel) |
-| 32-bit variants | not built | `bitmap_from_arr64()`/`bitmap_to_arr64()` are implemented but only compiled on a 32-bit target, which Ferret does not build yet |
+| 32-bit variants | **NOT TESTED** | `bitmap_from_arr64()`/`bitmap_to_arr64()` are implemented but only compiled on a 32-bit target, which Ferret does not build or test |
+| Throughput | measured | 1 327 per mille of the C reference with the weight helpers, 884 per mille without them (in-kernel benchmark, QEMU TCG) |
+| Audit | done | [`design/COMPONENT_004_AUDIT.md`](design/COMPONENT_004_AUDIT.md) |
 
 Two prerequisites were added to the in-tree kernel crate, both exposing
 primitives that already existed in C: `Flags::from_gfp()`/`as_gfp()` (a

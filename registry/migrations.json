@@ -880,7 +880,9 @@
       "risks": [
         "The C bitmap API is used by 1191 files, so a behavioural divergence would be widely visible; the upstream kselftest suite (390447 cases) and the differential suite are the mitigation.",
         "The bit numbering, the word size and the tail bits (the bits above the valid range in the last word) are the areas where a divergence would hide; the differential suite compares them explicitly.",
-        "The Rust text is 56 % larger than the C text (+2095 bytes in a 57 MB kernel), mostly in the per-bit helpers, which have no unchecked fast path in the C original."
+        "The Rust text is 56 % larger than the C text (+2095 bytes in a 57 MB kernel), mostly in the per-bit helpers, which have no unchecked fast path in the C original.",
+        "The weight helpers are slower than the C ones (1327 vs 1000 per mille in the in-kernel benchmark): the kernel's alternatives mechanism patches the C hweight64() to the popcount instruction at boot, and that patch cannot be applied to Rust code. The rest of the API is at parity (884 per mille).",
+        "The 32-bit word conversions are implemented but only compiled on a 32-bit target, which Ferret does not build or test: NOT TESTED."
       ],
       "unsafe_boundaries": [
         "The exported functions take a raw word pointer; the word count is derived from the bit count and every access is inside it.",
@@ -896,7 +898,8 @@
       ],
       "investigation": {
         "document": "docs/ferret/design/COMPONENT_004_INVESTIGATION.md",
-        "verdict": "implemented in checkpoint 003",
+        "audit": "docs/ferret/design/COMPONENT_004_AUDIT.md",
+        "verdict": "implemented in checkpoint 003, audited in checkpoint 004",
         "prerequisites": "the run-time allocation mask and the node-aware allocation in the kernel crate, both added in this checkpoint"
       }
     }
