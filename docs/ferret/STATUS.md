@@ -25,8 +25,8 @@ Last updated: checkpoint 003 (2026-10-21).
 | Clean cycle | PASS | 16/16 steps, exit status 0 (x86_64 and arm64 builds, three linkage checks, four Ubuntu boots) |
 | arm64 build/boot | PASS | arm64 Ferret kernel built and booted, Ubuntu shell and systemd on arm64 |
 | Ubuntu userspace boots | PASS | shell probe and systemd-as-PID-1 on amd64 and arm64 |
-| Throughput | measured | Rust 41.3 ms vs C 37.4 ms for 20 000 in(64)+out(64) iterations (QEMU TCG; ratio only) |
-| Text size | measured | 3 162 B (Rust) vs 2 347 B (C), +34.7 %; arm64 Rust 3 524 B |
+| Throughput | measured | 1 014–1 256 per mille of the C implementation over five runs of 20 000 in(64)+out(64) iterations (QEMU TCG; the ratio only) |
+| Text size | measured | 3 215 B (Rust) vs 2 347 B (C), +37.0 %; arm64 Rust 3 456 B |
 | Native performance | NOT TESTED | the host has no KVM; all measurements are QEMU TCG |
 
 What the port covers:

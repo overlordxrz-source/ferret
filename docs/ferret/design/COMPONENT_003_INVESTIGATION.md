@@ -225,16 +225,26 @@ measurable difference (1 097 per mille against 1 104 for the release fence).
 iterations of `in(64) + out(64)` on both implementations, in the same kernel
 and the same run, keeping the fastest of three rounds:
 
-| Implementation | time |
-| --- | --- |
-| Rust | 20.4 ms |
-| C | 18.6 ms |
-| ratio | 1 097 per mille (Rust is 10 % slower) |
+| Implementation | time (clean cycle) | ratio |
+| --- | --- | --- |
+| Rust | 30.1 ms | 1 256 per mille |
+| C | 24.0 ms | |
 
-The absolute times move by tens of percent between runs (the same code
-measured 41.3 ms against 37.4 ms in an earlier clean cycle, and 26.9 ms
-against 23.8 ms in an incremental run); the ratio is the stable figure, and
-it moved between 1 014 and 1 129 per mille across runs.
+The emulation is noisy, so the honest figure is the **range over five runs**
+of the same benchmark, best of three rounds each:
+
+| Run | Rust | C | ratio |
+| --- | --- | --- | --- |
+| clean cycle (barrier review) | 30.1 ms | 24.0 ms | 1 256 |
+| incremental (barrier review) | 20.4 ms | 18.6 ms | 1 097 |
+| clean cycle (before the barrier change) | 41.3 ms | 37.4 ms | 1 104 |
+| incremental (before the barrier change) | 27.5 ms | 26.0 ms | 1 059 |
+| incremental (first version, release fence) | 24.8 ms | 23.7 ms | 1 046 |
+
+So the Rust implementation measured between **1 014 and 1 256 per mille** of
+the C one — between 1 % and 26 % slower — with the spread coming from the
+emulation and the host load, not from the code. Quoting a single number would
+be misleading; the range is the result.
 
 **Caveat, and it is a large one:** the test kernel runs under QEMU TCG, an
 instruction-level emulator, which inflates the cost of every extra
@@ -248,7 +258,9 @@ KVM.
 The first version of the implementation was 17–20 % slower than the C one in
 the same benchmark (1 204 and 1 169 per mille); the `copy_nonoverlapping()`
 change closed most of that gap. The remaining difference is the bounds
-checking and the wider arithmetic described above.
+checking and the wider arithmetic described above. The `smp_wmb()` change did
+not move the ratio (1 097 against 1 104 per mille), so the external call for
+the barrier costs nothing measurable.
 
 On arm64 the same 23 functions occupy 3 524 bytes in the Rust object. No
 arm64 C reference was built in this cycle, so no size delta is claimed for

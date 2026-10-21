@@ -1,6 +1,6 @@
 Ferret verification evidence
-Source commit: 725b0c3fcf7a
-Extracted: 2026-10-21T08:08:15Z (UTC)
+Source commit: 9b6e30aa6b86
+Extracted: 2026-10-21T15:10:13Z (UTC)
 Raw logs: artifacts/ (not published; reproduced by tools/ferret/test.sh)
 ----------------------------------------------------------------------
 Variant: rust (x86_64)
@@ -10,7 +10,7 @@ Result: PASS (see the checks below)
 == kernel variant ==
 variant:  rust
 vmlinux:  /build/linux-rust/vmlinux
-git:      725b0c3fcf7a
+git:      9b6e30aa6b865
 config:   CONFIG_RUST=y CONFIG_CRC16=y CONFIG_CRC16_RUST=y CONFIG_CRC16_DIFF_KUNIT_TEST=y CONFIG_CRC_CCITT=y CONFIG_CRC_CCITT_RUST=y CONFIG_CRC_CCITT_DIFF_KUNIT_TEST=y CONFIG_KFIFO_RUST=y CONFIG_KFIFO_DIFF_KUNIT_TEST=y CONFIG_KUNIT=y 
 
 == build tree object ownership ==
@@ -79,15 +79,15 @@ PASS  __kfifo_init is defined by lib/kfifo_rust.o
 PASS  linked __kfifo_init has the size of the function in the Rust object
 PASS  export shim for __kfifo_init only references it (no definition)
 PASS  __kfifo_in is defined by lib/kfifo_rust.o
-      size __kfifo_in: object=0x00000000000000c2 vmlinux=0x00000000000000c2 bytes
+      size __kfifo_in: object=0x00000000000000d1 vmlinux=0x00000000000000d1 bytes
 PASS  linked __kfifo_in has the size of the function in the Rust object
 PASS  export shim for __kfifo_in only references it (no definition)
 PASS  __kfifo_out is defined by lib/kfifo_rust.o
-      size __kfifo_out: object=0x00000000000000b5 vmlinux=0x00000000000000b5 bytes
+      size __kfifo_out: object=0x00000000000000c0 vmlinux=0x00000000000000c0 bytes
 PASS  linked __kfifo_out has the size of the function in the Rust object
 PASS  export shim for __kfifo_out only references it (no definition)
 PASS  __kfifo_out_peek is defined by lib/kfifo_rust.o
-      size __kfifo_out_peek: object=0x00000000000000ac vmlinux=0x00000000000000ac bytes
+      size __kfifo_out_peek: object=0x00000000000000af vmlinux=0x00000000000000af bytes
 PASS  linked __kfifo_out_peek has the size of the function in the Rust object
 PASS  export shim for __kfifo_out_peek only references it (no definition)
 PASS  __kfifo_out_linear is defined by lib/kfifo_rust.o
@@ -119,15 +119,15 @@ PASS  __kfifo_len_r is defined by lib/kfifo_rust.o
 PASS  linked __kfifo_len_r has the size of the function in the Rust object
 PASS  export shim for __kfifo_len_r only references it (no definition)
 PASS  __kfifo_in_r is defined by lib/kfifo_rust.o
-      size __kfifo_in_r: object=0x000000000000011e vmlinux=0x000000000000011e bytes
+      size __kfifo_in_r: object=0x000000000000012a vmlinux=0x000000000000012a bytes
 PASS  linked __kfifo_in_r has the size of the function in the Rust object
 PASS  export shim for __kfifo_in_r only references it (no definition)
 PASS  __kfifo_out_r is defined by lib/kfifo_rust.o
-      size __kfifo_out_r: object=0x0000000000000100 vmlinux=0x0000000000000100 bytes
+      size __kfifo_out_r: object=0x0000000000000107 vmlinux=0x0000000000000107 bytes
 PASS  linked __kfifo_out_r has the size of the function in the Rust object
 PASS  export shim for __kfifo_out_r only references it (no definition)
 PASS  __kfifo_out_peek_r is defined by lib/kfifo_rust.o
-      size __kfifo_out_peek_r: object=0x00000000000000e1 vmlinux=0x00000000000000e1 bytes
+      size __kfifo_out_peek_r: object=0x00000000000000e6 vmlinux=0x00000000000000e6 bytes
 PASS  linked __kfifo_out_peek_r has the size of the function in the Rust object
 PASS  export shim for __kfifo_out_peek_r only references it (no definition)
 PASS  __kfifo_out_linear_r is defined by lib/kfifo_rust.o
@@ -243,49 +243,49 @@ PASS  __ksymtab___kfifo_dma_out_prepare_r exists (module ABI preserved)
 PASS  __kfifo_dma_out_prepare_r exported as EXPORT_SYMBOL
 
 == disassembly fingerprint ==
-      ffffffff818317f0 <crc16>:
-      ffffffff818317f0:      	endbr64
-      ffffffff818317f4:      	movl	%edi, %eax
-      ffffffff818317f6:      	testq	%rdx, %rdx
-      ffffffff818317f9:      	je	0xffffffff8183187e <crc16+0x8e>
-      ffffffff818317ff:      	testb	$0x1, %dl
-      ffffffff81831802:      	jne	0xffffffff8183180f <crc16+0x1f>
-      ffffffff81832130 <crc_ccitt>:
-      ffffffff81832130:      	endbr64
-      ffffffff81832134:      	movl	%edi, %eax
-      ffffffff81832136:      	testq	%rdx, %rdx
-      ffffffff81832139:      	je	0xffffffff818321b5 <crc_ccitt+0x85>
-      ffffffff8183213b:      	testb	$0x1, %dl
-      ffffffff8183213e:      	jne	0xffffffff8183214b <crc_ccitt+0x1b>
-      ffffffff81821eb0 <__kfifo_in>:
-      ffffffff81821eb0:      	endbr64
-      ffffffff81821eb4:      	pushq	%rbp
-      ffffffff81821eb5:      	pushq	%r15
-      ffffffff81821eb7:      	pushq	%r14
-      ffffffff81821eb9:      	pushq	%r13
-      ffffffff81821ebb:      	pushq	%r12
-      ffffffff81821ebd:      	pushq	%rbx
-      ffffffff81821ebe:      	pushq	%rax
-      ffffffff81821ebf:      	movq	%rdi, %rbx
-      ffffffff81821ec2:      	movl	(%rdi), %r14d
-      ffffffff81821ec5:      	movl	0x8(%rdi), %eax
-      ffffffff81821ec8:      	movl	0xc(%rdi), %r15d
-      ffffffff81821ecc:      	testq	%r15, %r15
-      ffffffff81821ecf:      	sete	%r9b
-      ffffffff81821ed3:      	movl	%eax, %edi
-      ffffffff81821ed5:      	andl	%r14d, %edi
-      ffffffff81821ed8:      	imulq	%r15, %rdi
-      ffffffff81821edc:      	movq	%rax, %r8
-      ffffffff81821edf:      	incq	%r8
-      ffffffff81821ee2:      	imulq	%r15, %r8
-      ffffffff81821ee6:      	movq	0x10(%rbx), %r12
-      ffffffff81821eea:      	testq	%r12, %r12
-      ffffffff81821eed:      	sete	%cl
-      ffffffff81821ef0:      	xorl	%r13d, %r13d
-      ffffffff81821ef3:      	orb	%r9b, %cl
-      ffffffff81821ef6:      	cmoveq	%r8, %r13
-      ffffffff81821efa:      	subq	%rdi, %r13
-      ffffffff81821efd:      	jb	0xffffffff81821f66 <__kfifo_in+0xb6>
+      ffffffff818318b0 <crc16>:
+      ffffffff818318b0:      	endbr64
+      ffffffff818318b4:      	movl	%edi, %eax
+      ffffffff818318b6:      	testq	%rdx, %rdx
+      ffffffff818318b9:      	je	0xffffffff8183193e <crc16+0x8e>
+      ffffffff818318bf:      	testb	$0x1, %dl
+      ffffffff818318c2:      	jne	0xffffffff818318cf <crc16+0x1f>
+      ffffffff818321f0 <crc_ccitt>:
+      ffffffff818321f0:      	endbr64
+      ffffffff818321f4:      	movl	%edi, %eax
+      ffffffff818321f6:      	testq	%rdx, %rdx
+      ffffffff818321f9:      	je	0xffffffff81832275 <crc_ccitt+0x85>
+      ffffffff818321fb:      	testb	$0x1, %dl
+      ffffffff818321fe:      	jne	0xffffffff8183220b <crc_ccitt+0x1b>
+      ffffffff81821ef0 <__kfifo_in>:
+      ffffffff81821ef0:      	endbr64
+      ffffffff81821ef4:      	pushq	%rbp
+      ffffffff81821ef5:      	pushq	%r15
+      ffffffff81821ef7:      	pushq	%r14
+      ffffffff81821ef9:      	pushq	%r13
+      ffffffff81821efb:      	pushq	%r12
+      ffffffff81821efd:      	pushq	%rbx
+      ffffffff81821efe:      	pushq	%rax
+      ffffffff81821eff:      	movq	%rsi, %r15
+      ffffffff81821f02:      	movq	%rdi, %rbx
+      ffffffff81821f05:      	movl	(%rdi), %r8d
+      ffffffff81821f08:      	movl	0x4(%rdi), %ecx
+      ffffffff81821f0b:      	movl	0x8(%rdi), %eax
+      ffffffff81821f0e:      	subl	%r8d, %ecx
+      ffffffff81821f11:      	movl	%r8d, 0x4(%rsp)
+      ffffffff81821f16:      	leal	(%rcx,%rax), %r14d
+      ffffffff81821f1a:      	incl	%r14d
+      ffffffff81821f1d:      	cmpl	%r14d, %edx
+      ffffffff81821f20:      	cmovbl	%edx, %r14d
+      ffffffff81821f24:      	movl	0xc(%rdi), %ecx
+      ffffffff81821f27:      	testq	%rcx, %rcx
+      ffffffff81821f2a:      	sete	%dl
+      ffffffff81821f2d:      	movq	%r14, %r12
+      ffffffff81821f30:      	imulq	%rcx, %r12
+      ffffffff81821f34:      	movl	%eax, %edi
+      ffffffff81821f36:      	andl	%r8d, %edi
+      ffffffff81821f39:      	imulq	%rcx, %rdi
+      ffffffff81821f3d:      	incq	%rax
 PASS  disassembly fingerprints captured above
 
 RESULT: PASS

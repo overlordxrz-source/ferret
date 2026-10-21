@@ -1,6 +1,6 @@
 Ferret verification evidence
-Source commit: 725b0c3fcf7a
-Extracted: 2026-10-21T08:08:15Z (UTC)
+Source commit: 9b6e30aa6b86
+Extracted: 2026-10-21T15:10:13Z (UTC)
 Raw logs: artifacts/ (not published; reproduced by tools/ferret/test.sh)
 ----------------------------------------------------------------------
 Variant: rust (arm64)
@@ -10,7 +10,7 @@ Result: PASS (see the checks below)
 == kernel variant ==
 variant:  rust
 vmlinux:  /build/linux-rust-arm64/vmlinux
-git:      725b0c3fcf7a
+git:      9b6e30aa6b865
 config:   CONFIG_RUST=y CONFIG_CRC16=y CONFIG_CRC16_RUST=y CONFIG_CRC16_DIFF_KUNIT_TEST=y CONFIG_CRC_CCITT=y CONFIG_CRC_CCITT_RUST=y CONFIG_CRC_CCITT_DIFF_KUNIT_TEST=y CONFIG_KFIFO_RUST=y CONFIG_KFIFO_DIFF_KUNIT_TEST=y CONFIG_KUNIT=y 
 
 == build tree object ownership ==
@@ -79,15 +79,15 @@ PASS  __kfifo_init is defined by lib/kfifo_rust.o
 PASS  linked __kfifo_init has the size of the function in the Rust object
 PASS  export shim for __kfifo_init only references it (no definition)
 PASS  __kfifo_in is defined by lib/kfifo_rust.o
-      size __kfifo_in: object=0x00000000000000d8 vmlinux=0x00000000000000d8 bytes
+      size __kfifo_in: object=0x00000000000000cc vmlinux=0x00000000000000cc bytes
 PASS  linked __kfifo_in has the size of the function in the Rust object
 PASS  export shim for __kfifo_in only references it (no definition)
 PASS  __kfifo_out is defined by lib/kfifo_rust.o
-      size __kfifo_out: object=0x00000000000000d0 vmlinux=0x00000000000000d0 bytes
+      size __kfifo_out: object=0x00000000000000c4 vmlinux=0x00000000000000c4 bytes
 PASS  linked __kfifo_out has the size of the function in the Rust object
 PASS  export shim for __kfifo_out only references it (no definition)
 PASS  __kfifo_out_peek is defined by lib/kfifo_rust.o
-      size __kfifo_out_peek: object=0x00000000000000c0 vmlinux=0x00000000000000c0 bytes
+      size __kfifo_out_peek: object=0x00000000000000b4 vmlinux=0x00000000000000b4 bytes
 PASS  linked __kfifo_out_peek has the size of the function in the Rust object
 PASS  export shim for __kfifo_out_peek only references it (no definition)
 PASS  __kfifo_out_linear is defined by lib/kfifo_rust.o
@@ -119,15 +119,15 @@ PASS  __kfifo_len_r is defined by lib/kfifo_rust.o
 PASS  linked __kfifo_len_r has the size of the function in the Rust object
 PASS  export shim for __kfifo_len_r only references it (no definition)
 PASS  __kfifo_in_r is defined by lib/kfifo_rust.o
-      size __kfifo_in_r: object=0x0000000000000134 vmlinux=0x0000000000000134 bytes
+      size __kfifo_in_r: object=0x000000000000012c vmlinux=0x000000000000012c bytes
 PASS  linked __kfifo_in_r has the size of the function in the Rust object
 PASS  export shim for __kfifo_in_r only references it (no definition)
 PASS  __kfifo_out_r is defined by lib/kfifo_rust.o
-      size __kfifo_out_r: object=0x000000000000010c vmlinux=0x000000000000010c bytes
+      size __kfifo_out_r: object=0x0000000000000100 vmlinux=0x0000000000000100 bytes
 PASS  linked __kfifo_out_r has the size of the function in the Rust object
 PASS  export shim for __kfifo_out_r only references it (no definition)
 PASS  __kfifo_out_peek_r is defined by lib/kfifo_rust.o
-      size __kfifo_out_peek_r: object=0x00000000000000f8 vmlinux=0x00000000000000f8 bytes
+      size __kfifo_out_peek_r: object=0x00000000000000ec vmlinux=0x00000000000000ec bytes
 PASS  linked __kfifo_out_peek_r has the size of the function in the Rust object
 PASS  export shim for __kfifo_out_peek_r only references it (no definition)
 PASS  __kfifo_out_linear_r is defined by lib/kfifo_rust.o
@@ -160,7 +160,7 @@ PASS  linked __kfifo_dma_out_prepare_r has the size of the function in the Rust 
 PASS  export shim for __kfifo_dma_out_prepare_r only references it (no definition)
 
 == debug-info provenance ==
-      crc16 address: 0xffff800080640378
+      crc16 address: 0xffff800080640364
       origin:  crc16 /build/src/lib/crc/crc16_rust.rs:76 
 PASS  crc16 maps to Rust source (crc16_rust.rs)
 
@@ -245,20 +245,20 @@ PASS  __ksymtab___kfifo_dma_out_prepare_r exists (module ABI preserved)
 PASS  __kfifo_dma_out_prepare_r exported as EXPORT_SYMBOL
 
 == disassembly fingerprint ==
-      ffff800080640378 <crc16>:
-      ffff800080640378:      	bti	c
-      ffff80008064037c:      	cbz	x2, 0xffff8000806403bc <crc16+0x44>
-      ffff800080640380:      	paciasp
-      ffff800080640384:      	stp	x29, x30, [sp, #-0x10]!
-      ffff800080640388:      	mov	x29, sp
-      ffff80008064038c:      	adrp	x8, 0xffff8000812eb000 <kfifo_diff_records.__loc.77+0x8>
-      ffff800080640ae4 <crc_ccitt>:
-      ffff800080640ae4:      	bti	c
-      ffff800080640ae8:      	cbz	x2, 0xffff800080640b28 <crc_ccitt+0x44>
-      ffff800080640aec:      	paciasp
-      ffff800080640af0:      	stp	x29, x30, [sp, #-0x10]!
-      ffff800080640af4:      	mov	x29, sp
-      ffff800080640af8:      	adrp	x8, 0xffff8000812ec000 <crc7_be_syndrome_table+0x3c8>
+      ffff800080640364 <crc16>:
+      ffff800080640364:      	bti	c
+      ffff800080640368:      	cbz	x2, 0xffff8000806403a8 <crc16+0x44>
+      ffff80008064036c:      	paciasp
+      ffff800080640370:      	stp	x29, x30, [sp, #-0x10]!
+      ffff800080640374:      	mov	x29, sp
+      ffff800080640378:      	adrp	x8, 0xffff8000812eb000 <kfifo_diff_records.__text.82>
+      ffff800080640ad0 <crc_ccitt>:
+      ffff800080640ad0:      	bti	c
+      ffff800080640ad4:      	cbz	x2, 0xffff800080640b14 <crc_ccitt+0x44>
+      ffff800080640ad8:      	paciasp
+      ffff800080640adc:      	stp	x29, x30, [sp, #-0x10]!
+      ffff800080640ae0:      	mov	x29, sp
+      ffff800080640ae4:      	adrp	x8, 0xffff8000812ec000 <crc7_be_syndrome_table+0x3f8>
       ffff800080631aa8 <__kfifo_in>:
       ffff800080631aa8:      	paciasp
       ffff800080631aac:      	stp	x29, x30, [sp, #-0x50]!
@@ -267,27 +267,27 @@ PASS  __kfifo_dma_out_prepare_r exported as EXPORT_SYMBOL
       ffff800080631ab8:      	stp	x22, x21, [sp, #0x30]
       ffff800080631abc:      	stp	x20, x19, [sp, #0x40]
       ffff800080631ac0:      	mov	x29, sp
-      ffff800080631ac4:      	ldp	w9, w8, [x0, #0x8]
-      ffff800080631ac8:      	ldr	w25, [x0]
-      ffff800080631acc:      	ldr	x11, [x0, #0x10]
-      ffff800080631ad0:      	and	w10, w9, w25
-      ffff800080631ad4:      	umaddl	x12, w8, w9, x8
-      ffff800080631ad8:      	cmp	x8, #0x0
-      ffff800080631adc:      	umull	x10, w8, w10
-      ffff800080631ae0:      	ccmp	x11, #0x0, #0x4, ne
-      ffff800080631ae4:      	cset	w13, eq
-      ffff800080631ae8:      	csel	x12, xzr, x12, eq
-      ffff800080631aec:      	subs	x12, x12, x10
-      ffff800080631af0:      	b.lo	0xffff800080631b74 <__kfifo_in+0xcc>
-      ffff800080631af4:      	ldr	w14, [x0, #0x4]
-      ffff800080631af8:      	mov	x19, x0
-      ffff800080631afc:      	mov	x20, x1
-      ffff800080631b00:      	sub	w14, w14, w25
-      ffff800080631b04:      	add	w9, w14, w9
-      ffff800080631b08:      	add	w14, w9, #0x1
-      ffff800080631b0c:      	cmp	w2, w14
-      ffff800080631b10:      	csinc	w21, w2, w9, lo
-      ffff800080631b14:      	cmp	w13, #0x0
+      ffff800080631ac4:      	ldp	w25, w8, [x0]
+      ffff800080631ac8:      	ldp	w9, w10, [x0, #0x8]
+      ffff800080631acc:      	ldr	x12, [x0, #0x10]
+      ffff800080631ad0:      	mov	x20, x0
+      ffff800080631ad4:      	mov	x19, x1
+      ffff800080631ad8:      	sub	w8, w8, w25
+      ffff800080631adc:      	add	w8, w8, w9
+      ffff800080631ae0:      	add	w11, w8, #0x1
+      ffff800080631ae4:      	cmp	w2, w11
+      ffff800080631ae8:      	and	w11, w9, w25
+      ffff800080631aec:      	umaddl	x9, w10, w9, x10
+      ffff800080631af0:      	csinc	w21, w2, w8, lo
+      ffff800080631af4:      	cmp	x10, #0x0
+      ffff800080631af8:      	umull	x8, w10, w11
+      ffff800080631afc:      	ccmp	x12, #0x0, #0x4, ne
+      ffff800080631b00:      	umull	x10, w10, w21
+      ffff800080631b04:      	csel	x9, xzr, x9, eq
+      ffff800080631b08:      	csinc	x22, x12, xzr, ne
+      ffff800080631b0c:      	cmp	x9, x8
+      ffff800080631b10:      	csel	x8, x9, x8, lo
+      ffff800080631b14:      	sub	x11, x9, x8
 PASS  disassembly fingerprints captured above
 
 RESULT: PASS
