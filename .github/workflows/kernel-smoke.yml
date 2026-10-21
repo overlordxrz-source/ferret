@@ -14,7 +14,7 @@ permissions:
 jobs:
   build-and-boot:
     runs-on: ubuntu-24.04
-    timeout-minutes: 180
+    timeout-minutes: 240
     steps:
       - uses: actions/checkout@v4
 
@@ -31,6 +31,9 @@ jobs:
           sudo ln -sf /usr/bin/llvm-nm-18 /usr/local/bin/llvm-nm
           sudo ln -sf /usr/bin/llvm-objcopy-18 /usr/local/bin/llvm-objcopy
           sudo ln -sf /usr/bin/llvm-objdump-18 /usr/local/bin/llvm-objdump
+          sudo ln -sf /usr/bin/llvm-readelf-18 /usr/local/bin/llvm-readelf
+          sudo ln -sf /usr/bin/llvm-strip-18 /usr/local/bin/llvm-strip
+          llvm-strip --version
 
       - name: Install pinned Rust toolchain
         run: |
