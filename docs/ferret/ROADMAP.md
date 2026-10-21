@@ -62,12 +62,14 @@ adds no new C dependency beyond the ksymtab shim.
 ### Phase 2 — Ownership and allocation: first substantial component
 
 The investigation in `docs/ferret/design/COMPONENT_003_INVESTIGATION.md`
-selects the next target explicitly rather than drifting through leaf code.
+selected the next target explicitly rather than drifting through leaf code.
 
 1. **`lib/kfifo.c` (checkpoint 003)** — 595 lines, 23 exports, upstream KUnit
    suite, allocation (`__kfifo_alloc`) and buffer-ownership semantics, no lock
    or per-CPU prerequisite. This is the first migration that is not a pure
-   function over a byte buffer.
+   function over a byte buffer. **Done and verified**: `lib/kfifo_rust.rs`,
+   with the differential suite `kfifo_diff`, the upstream `KFIFO_KUNIT_TEST`
+   unchanged (in both variants), and a clean cycle that passed all 16 steps.
 2. CRC-ITU-T / CRC-8 / CRC-7 as filler work while kfifo is reviewed.
 3. Move the ksymtab shim out of existence by contributing per-symbol
    `EXPORT_SYMBOL` support for Rust translation units upstream, or by adopting
@@ -75,6 +77,27 @@ selects the next target explicitly rather than drifting through leaf code.
 
 Exit criteria: kfifo replaced in the active build, upstream `KFIFO_KUNIT_TEST`
 plus a differential suite pass, Ubuntu boots unaffected.
+
+### Phase 2b — Allocation, reference counting and ownership (checkpoint 004)
+
+The investigation is in
+[`design/COMPONENT_004_INVESTIGATION.md`](design/COMPONENT_004_INVESTIGATION.md).
+
+The kfifo port exposed the first structural gap: the `kernel` crate cannot
+express a **run-time GFP mask**, so a Rust component cannot forward the
+caller's allocation flags. That gap blocks `lib/bitmap.c` and `mm/mempool.c`,
+and it is a small, reviewable change to the in-tree kernel crate.
+
+**Selected target: `lib/bitmap.c`** — 882 lines, 31 exports, ~1 191 files use
+it. It is a complete object boundary, it has an independent upstream KUnit
+suite, it exercises allocation, and it reaches memory management, filesystems,
+networking and drivers at once.
+
+Deferred, with the reason recorded: the per-CPU family (`percpu_counter`,
+`percpu-refcount`, `objagg`) is blocked on a `kernel::percpu` module;
+`mm/mempool.c` needs the same GFP prerequisite plus a waitqueue abstraction;
+`lib/idr.c` is a good candidate but competes with the bitmap for review
+attention; the memory manager itself is explicitly out of scope.
 
 ### Phase 3 — Synchronization and per-CPU state
 

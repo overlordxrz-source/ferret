@@ -1,6 +1,10 @@
 # Ferret: substantial-component investigation (checkpoint 002)
 
-Status: investigation only. Nothing in this document is claimed as migrated.
+Status: the investigation below is the record of the analysis that selected
+`lib/kfifo.c`. The component was **implemented in checkpoint 003**
+(`lib/kfifo_rust.rs`), and the section "4.1" now describes what was actually
+built. The other candidates are unchanged.
+
 The only component migrated in checkpoint 002 is CRC-CCITT; the target below
 is the proposed next step, with the evidence needed to plan it honestly.
 
@@ -111,6 +115,156 @@ Risk register:
 | `gfp` flags misused in Rust allocation | Keep the C signature and pass the flags straight through |
 | User-copy partial failure semantics | Test with `copy_from_user` fault injection via a bad user pointer |
 | Compiler reordering with caller-managed indices | Same non-atomic contract as C; document it, do not add atomics |
+
+### 4.1.1 What was actually built (checkpoint 003)
+
+The plan above was followed, with three adjustments that the implementation
+forced:
+
+1. **The allocation flags are a run-time value.** The `kernel` crate's `Flags`
+   type only exposes the fixed flag sets, so `__kfifo_alloc()` could not be
+   expressed with it. `kmalloc_array()` is reached through a three-line C
+   helper (`rust/helpers/slab.c`); the allocation is the kernel's, the FIFO
+   logic is Rust's.
+2. **`sg_set_buf()` is a static inline without a binding.** It is reached the
+   same way (`rust/helpers/scatterlist.c`). The DMA address and length are
+   written directly, because `sg_dma_len()` is a macro that selects between
+   two struct fields depending on `CONFIG_NEED_SG_DMA_LENGTH`.
+3. **The kernel's FFI maps `unsigned long` to `usize`**, not to
+   `core::ffi::c_ulong` (`rust/ffi.rs`), and `size_t` is `usize` as well. The
+   exported signatures use those types, so `#[export]`'s bindgen signature
+   check passes.
+
+What was verified: the upstream `KFIFO_KUNIT_TEST` suite, ten Rust unit tests
+and a differential suite (`kfifo_diff`) that compares the Rust implementation
+against the unmodified C implementation compiled under test-only names — over
+initialisation and allocation (including the error paths), 2 000 randomised
+operation sequences, wrap-around, the record API, and the scatterlist setup.
+The C object is not built in the Rust variant, all 23 symbols are defined
+exactly once by `lib/kfifo_rust.o`, and the non-GPL `EXPORT_SYMBOL` visibility
+is preserved through the ksymtab shim.
+
+### 4.1.2 Code size and throughput (checkpoint 003)
+
+**Text size.** The 23 exported functions occupy **3 162 bytes** of text in the
+Rust object against **2 347 bytes** in the C object: **+815 bytes, +34.7 %**.
+
+| Symbol | C | Rust | Δ | Symbol | C | Rust | Δ |
+| --- | --- | --- | --- | --- | --- | --- | --- |
+| `__kfifo_alloc` | 136 | 155 | +19 | `__kfifo_max_r` | 31 | 55 | +24 |
+| `__kfifo_free` | 47 | 46 | −1 | `__kfifo_len_r` | 47 | 67 | +20 |
+| `__kfifo_init` | 183 | 144 | **−39** | `__kfifo_in_r` | 177 | 286 | +109 |
+| `__kfifo_in` | 122 | 194 | +72 | `__kfifo_out_r` | 193 | 256 | +63 |
+| `__kfifo_out` | 122 | 181 | +59 | `__kfifo_out_peek_r` | 171 | 225 | +54 |
+| `__kfifo_out_peek` | 121 | 172 | +51 | `__kfifo_out_linear_r` | 82 | 102 | +20 |
+| `__kfifo_out_linear` | 52 | 57 | +5 | `__kfifo_skip_r` | 59 | 81 | +22 |
+| `__kfifo_from_user` | 112 | 156 | +44 | `__kfifo_from_user_r` | 152 | 237 | +85 |
+| `__kfifo_to_user` | 105 | 149 | +44 | `__kfifo_to_user_r` | 136 | 166 | +30 |
+| `__kfifo_dma_in_prepare` | 32 | 35 | +3 | `__kfifo_dma_in_prepare_r` | 91 | 133 | +42 |
+| `__kfifo_dma_out_prepare` | 26 | 26 | 0 | `__kfifo_dma_in_finish_r` | 70 | 115 | +45 |
+| | | | | `__kfifo_dma_out_prepare_r` | 80 | 124 | +44 |
+
+The difference is not "Rust is bigger". It is four concrete things:
+
+1. **Bounds checks and panic paths.** The Rust core works on slices, so every
+   index is checked and every length has a cold panic path. The C code indexes
+   raw pointers and checks nothing. The record-mode helpers show this most
+   clearly: `__kfifo_len_r()` is 47 bytes in C and 67 in Rust, and the Rust
+   version is mostly the two checked accesses plus the panic blocks.
+2. **Redundant clamping.** The Rust code clamps offsets and lengths again
+   inside the copy helpers, even though the callers have already established
+   the invariants; the C code computes the same values once.
+3. **Wider arithmetic.** The kernel's FFI maps `unsigned long` to `usize`,
+   so the Rust code computes byte offsets in 64-bit arithmetic where the C code
+   uses 32-bit `unsigned int`.
+4. **Abstraction cost in the record and user-copy paths.** The Rust
+   `__kfifo_in_r()` is the largest single delta (+109 bytes) because it
+   combines the record framing, the copy and the two-phase user copy.
+
+Two effects go the other way: `__kfifo_init()` is 39 bytes *smaller* in Rust
+than in C, and the plain DMA preparation functions are the same size.
+
+For scale: the delta is 815 bytes of text in a 57 MB kernel — 0.0014 %. The
+CRC migrations were closer to the C size (+10 %) because a CRC is a table
+lookup and a loop, with no pointer arithmetic and no length handling.
+
+**Two experiments worth recording, because the second one is a trap:**
+
+* Marking the internal helpers `#[inline]` **increased** the total by 29 %
+  (3 332 bytes): LLVM duplicated the helpers into every caller. The
+  attributes were removed again — the size follows LLVM's inlining decisions,
+  not the number of `#[inline]` attributes.
+* Replacing the slice copies with `copy_nonoverlapping()` on pointers derived
+  from the *validated* slices removed the redundant bounds checks and closed
+  most of a 17–20 % throughput gap, at no cost in safety: the slices still
+  carry the validity invariant, and the SAFETY comments state the
+  preconditions the helpers rely on (`off < buf.len()`, `len <= buf.len()`).
+
+`BUG_ON(!nents)` is mapped to the kernel's `BUG()` rather than to a Rust
+`assert!`: it is closer to the C original (it aborts the kernel in the same
+way) and much smaller, because a Rust panic has to build its payload on the
+stack.
+
+**Memory ordering.** The port calls the kernel's own `smp_wmb()` primitive
+(`kernel::sync::barrier::smp_wmb()`), not a Rust release fence. The two are
+not the same thing: a release fence is a compiler barrier on x86_64 (like the
+kernel's `smp_wmb()` there) but compiles to `dmb ish` on arm64, while the
+kernel's `smp_wmb()` is `dmb ishst`. The disassembly settles it:
+
+| Architecture | `rust_helper_smp_wmb` | kernel `smp_wmb()` | match |
+| --- | --- | --- | --- |
+| x86_64 | tail call to an empty function (no instruction) | `barrier()` — a compiler barrier | yes |
+| arm64 | `dmb ishst` | `dmb ishst` | yes |
+
+So the port emits the *same* barrier instruction as the C original on every
+architecture, with the same LKMM semantics. The price is one external call per
+copy instead of an inline instruction; the micro-benchmark shows no
+measurable difference (1 097 per mille against 1 104 for the release fence).
+
+**Throughput.** A KUnit micro-benchmark (`kfifo_diff_benchmark`) runs 20 000
+iterations of `in(64) + out(64)` on both implementations, in the same kernel
+and the same run, keeping the fastest of three rounds:
+
+| Implementation | time (clean cycle) | ratio |
+| --- | --- | --- |
+| Rust | 30.1 ms | 1 256 per mille |
+| C | 24.0 ms | |
+
+The emulation is noisy, so the honest figure is the **range over five runs**
+of the same benchmark, best of three rounds each:
+
+| Run | Rust | C | ratio |
+| --- | --- | --- | --- |
+| clean cycle (barrier review) | 30.1 ms | 24.0 ms | 1 256 |
+| incremental (barrier review) | 20.4 ms | 18.6 ms | 1 097 |
+| clean cycle (before the barrier change) | 41.3 ms | 37.4 ms | 1 104 |
+| incremental (before the barrier change) | 27.5 ms | 26.0 ms | 1 059 |
+| incremental (first version, release fence) | 24.8 ms | 23.7 ms | 1 046 |
+
+So the Rust implementation measured between **1 014 and 1 256 per mille** of
+the C one — between 1 % and 26 % slower — with the spread coming from the
+emulation and the host load, not from the code. Quoting a single number would
+be misleading; the range is the result.
+
+**Caveat, and it is a large one:** the test kernel runs under QEMU TCG, an
+instruction-level emulator, which inflates the cost of every extra
+instruction by roughly an order of magnitude. The numbers above compare the
+two implementations *on the same machine in the same run*; they are not a
+native measurement and must not be quoted as one. No native measurement
+exists: the development host is an Apple Silicon Mac, and the kernel is only
+ever executed under emulation. A native figure needs a Linux machine with
+KVM.
+
+The first version of the implementation was 17–20 % slower than the C one in
+the same benchmark (1 204 and 1 169 per mille); the `copy_nonoverlapping()`
+change closed most of that gap. The remaining difference is the bounds
+checking and the wider arithmetic described above. The `smp_wmb()` change did
+not move the ratio (1 097 against 1 104 per mille), so the external call for
+the barrier costs nothing measurable.
+
+On arm64 the same 23 functions occupy 3 524 bytes in the Rust object. No
+arm64 C reference was built in this cycle, so no size delta is claimed for
+that lane.
 
 ### 4.2 `lib/percpu_counter.c` — deferred, needs a per-CPU abstraction
 

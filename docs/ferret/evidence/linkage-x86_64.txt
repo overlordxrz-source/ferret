@@ -1,6 +1,6 @@
 Ferret verification evidence
-Source commit: 84808e28b814
-Extracted: 2026-10-21T04:09:08Z (UTC)
+Source commit: 9b6e30aa6b86
+Extracted: 2026-10-21T15:10:13Z (UTC)
 Raw logs: artifacts/ (not published; reproduced by tools/ferret/test.sh)
 ----------------------------------------------------------------------
 Variant: rust (x86_64)
@@ -10,16 +10,19 @@ Result: PASS (see the checks below)
 == kernel variant ==
 variant:  rust
 vmlinux:  /build/linux-rust/vmlinux
-git:      84808e28b814
-config:   CONFIG_RUST=y CONFIG_CRC16=y CONFIG_CRC16_RUST=y CONFIG_CRC16_DIFF_KUNIT_TEST=y CONFIG_CRC_CCITT=y CONFIG_CRC_CCITT_RUST=y CONFIG_CRC_CCITT_DIFF_KUNIT_TEST=y CONFIG_KUNIT=y 
+git:      9b6e30aa6b865
+config:   CONFIG_RUST=y CONFIG_CRC16=y CONFIG_CRC16_RUST=y CONFIG_CRC16_DIFF_KUNIT_TEST=y CONFIG_CRC_CCITT=y CONFIG_CRC_CCITT_RUST=y CONFIG_CRC_CCITT_DIFF_KUNIT_TEST=y CONFIG_KFIFO_RUST=y CONFIG_KFIFO_DIFF_KUNIT_TEST=y CONFIG_KUNIT=y 
 
 == build tree object ownership ==
 PASS  C object lib/crc/crc16.o is absent from the build
 PASS  C object lib/crc/crc-ccitt.o is absent from the build
+PASS  C object lib/kfifo.o is absent from the build
 PASS  Rust object lib/crc/crc16_rust.o is present
 PASS  Rust object lib/crc/crc_ccitt_rust.o is present
 PASS  Rust object lib/crc/crc16_export.o is present
 PASS  Rust object lib/crc/crc_ccitt_export.o is present
+PASS  Rust object lib/kfifo_rust.o is present
+PASS  Rust object lib/kfifo_export.o is present
 
 == symbol definitions ==
       definitions of crc16 in vmlinux: 1
@@ -28,6 +31,29 @@ PASS  crc16 is defined exactly once
 PASS  crc_ccitt is defined exactly once
       definitions of crc_ccitt_table in vmlinux: 1
 PASS  crc_ccitt_table is defined exactly once
+PASS  __kfifo_alloc is defined exactly once
+PASS  __kfifo_free is defined exactly once
+PASS  __kfifo_init is defined exactly once
+PASS  __kfifo_in is defined exactly once
+PASS  __kfifo_out is defined exactly once
+PASS  __kfifo_out_peek is defined exactly once
+PASS  __kfifo_out_linear is defined exactly once
+PASS  __kfifo_from_user is defined exactly once
+PASS  __kfifo_to_user is defined exactly once
+PASS  __kfifo_dma_in_prepare is defined exactly once
+PASS  __kfifo_dma_out_prepare is defined exactly once
+PASS  __kfifo_max_r is defined exactly once
+PASS  __kfifo_len_r is defined exactly once
+PASS  __kfifo_in_r is defined exactly once
+PASS  __kfifo_out_r is defined exactly once
+PASS  __kfifo_out_peek_r is defined exactly once
+PASS  __kfifo_out_linear_r is defined exactly once
+PASS  __kfifo_skip_r is defined exactly once
+PASS  __kfifo_from_user_r is defined exactly once
+PASS  __kfifo_to_user_r is defined exactly once
+PASS  __kfifo_dma_in_prepare_r is defined exactly once
+PASS  __kfifo_dma_in_finish_r is defined exactly once
+PASS  __kfifo_dma_out_prepare_r is defined exactly once
 PASS  crc16 is defined by lib/crc/crc16_rust.o
       size crc16: object=0x0000000000000093 vmlinux=0x0000000000000093 bytes
 PASS  linked crc16 has the size of the function in the Rust object
@@ -40,6 +66,98 @@ PASS  linked crc_ccitt_table has the size of the function in the Rust object
 PASS  export shim for crc16 only references it (no definition)
 PASS  export shim for crc_ccitt only references it (no definition)
 PASS  export shim for crc_ccitt_table only references it (no definition)
+PASS  __kfifo_alloc is defined by lib/kfifo_rust.o
+      size __kfifo_alloc: object=0x000000000000009b vmlinux=0x000000000000009b bytes
+PASS  linked __kfifo_alloc has the size of the function in the Rust object
+PASS  export shim for __kfifo_alloc only references it (no definition)
+PASS  __kfifo_free is defined by lib/kfifo_rust.o
+      size __kfifo_free: object=0x000000000000002e vmlinux=0x000000000000002e bytes
+PASS  linked __kfifo_free has the size of the function in the Rust object
+PASS  export shim for __kfifo_free only references it (no definition)
+PASS  __kfifo_init is defined by lib/kfifo_rust.o
+      size __kfifo_init: object=0x0000000000000090 vmlinux=0x0000000000000090 bytes
+PASS  linked __kfifo_init has the size of the function in the Rust object
+PASS  export shim for __kfifo_init only references it (no definition)
+PASS  __kfifo_in is defined by lib/kfifo_rust.o
+      size __kfifo_in: object=0x00000000000000d1 vmlinux=0x00000000000000d1 bytes
+PASS  linked __kfifo_in has the size of the function in the Rust object
+PASS  export shim for __kfifo_in only references it (no definition)
+PASS  __kfifo_out is defined by lib/kfifo_rust.o
+      size __kfifo_out: object=0x00000000000000c0 vmlinux=0x00000000000000c0 bytes
+PASS  linked __kfifo_out has the size of the function in the Rust object
+PASS  export shim for __kfifo_out only references it (no definition)
+PASS  __kfifo_out_peek is defined by lib/kfifo_rust.o
+      size __kfifo_out_peek: object=0x00000000000000af vmlinux=0x00000000000000af bytes
+PASS  linked __kfifo_out_peek has the size of the function in the Rust object
+PASS  export shim for __kfifo_out_peek only references it (no definition)
+PASS  __kfifo_out_linear is defined by lib/kfifo_rust.o
+      size __kfifo_out_linear: object=0x0000000000000039 vmlinux=0x0000000000000039 bytes
+PASS  linked __kfifo_out_linear has the size of the function in the Rust object
+PASS  export shim for __kfifo_out_linear only references it (no definition)
+PASS  __kfifo_from_user is defined by lib/kfifo_rust.o
+      size __kfifo_from_user: object=0x000000000000009c vmlinux=0x000000000000009c bytes
+PASS  linked __kfifo_from_user has the size of the function in the Rust object
+PASS  export shim for __kfifo_from_user only references it (no definition)
+PASS  __kfifo_to_user is defined by lib/kfifo_rust.o
+      size __kfifo_to_user: object=0x0000000000000095 vmlinux=0x0000000000000095 bytes
+PASS  linked __kfifo_to_user has the size of the function in the Rust object
+PASS  export shim for __kfifo_to_user only references it (no definition)
+PASS  __kfifo_dma_in_prepare is defined by lib/kfifo_rust.o
+      size __kfifo_dma_in_prepare: object=0x0000000000000023 vmlinux=0x0000000000000023 bytes
+PASS  linked __kfifo_dma_in_prepare has the size of the function in the Rust object
+PASS  export shim for __kfifo_dma_in_prepare only references it (no definition)
+PASS  __kfifo_dma_out_prepare is defined by lib/kfifo_rust.o
+      size __kfifo_dma_out_prepare: object=0x000000000000001a vmlinux=0x000000000000001a bytes
+PASS  linked __kfifo_dma_out_prepare has the size of the function in the Rust object
+PASS  export shim for __kfifo_dma_out_prepare only references it (no definition)
+PASS  __kfifo_max_r is defined by lib/kfifo_rust.o
+      size __kfifo_max_r: object=0x0000000000000037 vmlinux=0x0000000000000037 bytes
+PASS  linked __kfifo_max_r has the size of the function in the Rust object
+PASS  export shim for __kfifo_max_r only references it (no definition)
+PASS  __kfifo_len_r is defined by lib/kfifo_rust.o
+      size __kfifo_len_r: object=0x0000000000000043 vmlinux=0x0000000000000043 bytes
+PASS  linked __kfifo_len_r has the size of the function in the Rust object
+PASS  export shim for __kfifo_len_r only references it (no definition)
+PASS  __kfifo_in_r is defined by lib/kfifo_rust.o
+      size __kfifo_in_r: object=0x000000000000012a vmlinux=0x000000000000012a bytes
+PASS  linked __kfifo_in_r has the size of the function in the Rust object
+PASS  export shim for __kfifo_in_r only references it (no definition)
+PASS  __kfifo_out_r is defined by lib/kfifo_rust.o
+      size __kfifo_out_r: object=0x0000000000000107 vmlinux=0x0000000000000107 bytes
+PASS  linked __kfifo_out_r has the size of the function in the Rust object
+PASS  export shim for __kfifo_out_r only references it (no definition)
+PASS  __kfifo_out_peek_r is defined by lib/kfifo_rust.o
+      size __kfifo_out_peek_r: object=0x00000000000000e6 vmlinux=0x00000000000000e6 bytes
+PASS  linked __kfifo_out_peek_r has the size of the function in the Rust object
+PASS  export shim for __kfifo_out_peek_r only references it (no definition)
+PASS  __kfifo_out_linear_r is defined by lib/kfifo_rust.o
+      size __kfifo_out_linear_r: object=0x0000000000000066 vmlinux=0x0000000000000066 bytes
+PASS  linked __kfifo_out_linear_r has the size of the function in the Rust object
+PASS  export shim for __kfifo_out_linear_r only references it (no definition)
+PASS  __kfifo_skip_r is defined by lib/kfifo_rust.o
+      size __kfifo_skip_r: object=0x0000000000000051 vmlinux=0x0000000000000051 bytes
+PASS  linked __kfifo_skip_r has the size of the function in the Rust object
+PASS  export shim for __kfifo_skip_r only references it (no definition)
+PASS  __kfifo_from_user_r is defined by lib/kfifo_rust.o
+      size __kfifo_from_user_r: object=0x00000000000000ed vmlinux=0x00000000000000ed bytes
+PASS  linked __kfifo_from_user_r has the size of the function in the Rust object
+PASS  export shim for __kfifo_from_user_r only references it (no definition)
+PASS  __kfifo_to_user_r is defined by lib/kfifo_rust.o
+      size __kfifo_to_user_r: object=0x00000000000000a6 vmlinux=0x00000000000000a6 bytes
+PASS  linked __kfifo_to_user_r has the size of the function in the Rust object
+PASS  export shim for __kfifo_to_user_r only references it (no definition)
+PASS  __kfifo_dma_in_prepare_r is defined by lib/kfifo_rust.o
+      size __kfifo_dma_in_prepare_r: object=0x0000000000000085 vmlinux=0x0000000000000085 bytes
+PASS  linked __kfifo_dma_in_prepare_r has the size of the function in the Rust object
+PASS  export shim for __kfifo_dma_in_prepare_r only references it (no definition)
+PASS  __kfifo_dma_in_finish_r is defined by lib/kfifo_rust.o
+      size __kfifo_dma_in_finish_r: object=0x0000000000000073 vmlinux=0x0000000000000073 bytes
+PASS  linked __kfifo_dma_in_finish_r has the size of the function in the Rust object
+PASS  export shim for __kfifo_dma_in_finish_r only references it (no definition)
+PASS  __kfifo_dma_out_prepare_r is defined by lib/kfifo_rust.o
+      size __kfifo_dma_out_prepare_r: object=0x000000000000007c vmlinux=0x000000000000007c bytes
+PASS  linked __kfifo_dma_out_prepare_r has the size of the function in the Rust object
+PASS  export shim for __kfifo_dma_out_prepare_r only references it (no definition)
 
 == debug-info provenance ==
 SKIP  no DWARF in this configuration (CONFIG_DEBUG_INFO_NONE); provenance is established by object ownership and symbol sizes above
@@ -54,22 +172,120 @@ PASS  crc16 exported as EXPORT_SYMBOL
 PASS  crc_ccitt exported as EXPORT_SYMBOL
       vmlinux.symvers: 0x00000000	crc_ccitt_table	vmlinux	EXPORT_SYMBOL	
 PASS  crc_ccitt_table exported as EXPORT_SYMBOL
+PASS  __ksymtab___kfifo_alloc exists (module ABI preserved)
+      vmlinux.symvers: 0x00000000	__kfifo_alloc	vmlinux	EXPORT_SYMBOL	
+PASS  __kfifo_alloc exported as EXPORT_SYMBOL
+PASS  __ksymtab___kfifo_free exists (module ABI preserved)
+      vmlinux.symvers: 0x00000000	__kfifo_free	vmlinux	EXPORT_SYMBOL	
+PASS  __kfifo_free exported as EXPORT_SYMBOL
+PASS  __ksymtab___kfifo_init exists (module ABI preserved)
+      vmlinux.symvers: 0x00000000	__kfifo_init	vmlinux	EXPORT_SYMBOL	
+PASS  __kfifo_init exported as EXPORT_SYMBOL
+PASS  __ksymtab___kfifo_in exists (module ABI preserved)
+      vmlinux.symvers: 0x00000000	__kfifo_in	vmlinux	EXPORT_SYMBOL	
+PASS  __kfifo_in exported as EXPORT_SYMBOL
+PASS  __ksymtab___kfifo_out exists (module ABI preserved)
+      vmlinux.symvers: 0x00000000	__kfifo_out	vmlinux	EXPORT_SYMBOL	
+PASS  __kfifo_out exported as EXPORT_SYMBOL
+PASS  __ksymtab___kfifo_out_peek exists (module ABI preserved)
+      vmlinux.symvers: 0x00000000	__kfifo_out_peek	vmlinux	EXPORT_SYMBOL	
+PASS  __kfifo_out_peek exported as EXPORT_SYMBOL
+PASS  __ksymtab___kfifo_out_linear exists (module ABI preserved)
+      vmlinux.symvers: 0x00000000	__kfifo_out_linear	vmlinux	EXPORT_SYMBOL	
+PASS  __kfifo_out_linear exported as EXPORT_SYMBOL
+PASS  __ksymtab___kfifo_from_user exists (module ABI preserved)
+      vmlinux.symvers: 0x00000000	__kfifo_from_user	vmlinux	EXPORT_SYMBOL	
+PASS  __kfifo_from_user exported as EXPORT_SYMBOL
+PASS  __ksymtab___kfifo_to_user exists (module ABI preserved)
+      vmlinux.symvers: 0x00000000	__kfifo_to_user	vmlinux	EXPORT_SYMBOL	
+PASS  __kfifo_to_user exported as EXPORT_SYMBOL
+PASS  __ksymtab___kfifo_dma_in_prepare exists (module ABI preserved)
+      vmlinux.symvers: 0x00000000	__kfifo_dma_in_prepare	vmlinux	EXPORT_SYMBOL	
+PASS  __kfifo_dma_in_prepare exported as EXPORT_SYMBOL
+PASS  __ksymtab___kfifo_dma_out_prepare exists (module ABI preserved)
+      vmlinux.symvers: 0x00000000	__kfifo_dma_out_prepare	vmlinux	EXPORT_SYMBOL	
+PASS  __kfifo_dma_out_prepare exported as EXPORT_SYMBOL
+PASS  __ksymtab___kfifo_max_r exists (module ABI preserved)
+      vmlinux.symvers: 0x00000000	__kfifo_max_r	vmlinux	EXPORT_SYMBOL	
+PASS  __kfifo_max_r exported as EXPORT_SYMBOL
+PASS  __ksymtab___kfifo_len_r exists (module ABI preserved)
+      vmlinux.symvers: 0x00000000	__kfifo_len_r	vmlinux	EXPORT_SYMBOL	
+PASS  __kfifo_len_r exported as EXPORT_SYMBOL
+PASS  __ksymtab___kfifo_in_r exists (module ABI preserved)
+      vmlinux.symvers: 0x00000000	__kfifo_in_r	vmlinux	EXPORT_SYMBOL	
+PASS  __kfifo_in_r exported as EXPORT_SYMBOL
+PASS  __ksymtab___kfifo_out_r exists (module ABI preserved)
+      vmlinux.symvers: 0x00000000	__kfifo_out_r	vmlinux	EXPORT_SYMBOL	
+PASS  __kfifo_out_r exported as EXPORT_SYMBOL
+PASS  __ksymtab___kfifo_out_peek_r exists (module ABI preserved)
+      vmlinux.symvers: 0x00000000	__kfifo_out_peek_r	vmlinux	EXPORT_SYMBOL	
+PASS  __kfifo_out_peek_r exported as EXPORT_SYMBOL
+PASS  __ksymtab___kfifo_out_linear_r exists (module ABI preserved)
+      vmlinux.symvers: 0x00000000	__kfifo_out_linear_r	vmlinux	EXPORT_SYMBOL	
+PASS  __kfifo_out_linear_r exported as EXPORT_SYMBOL
+PASS  __ksymtab___kfifo_skip_r exists (module ABI preserved)
+      vmlinux.symvers: 0x00000000	__kfifo_skip_r	vmlinux	EXPORT_SYMBOL	
+PASS  __kfifo_skip_r exported as EXPORT_SYMBOL
+PASS  __ksymtab___kfifo_from_user_r exists (module ABI preserved)
+      vmlinux.symvers: 0x00000000	__kfifo_from_user_r	vmlinux	EXPORT_SYMBOL	
+PASS  __kfifo_from_user_r exported as EXPORT_SYMBOL
+PASS  __ksymtab___kfifo_to_user_r exists (module ABI preserved)
+      vmlinux.symvers: 0x00000000	__kfifo_to_user_r	vmlinux	EXPORT_SYMBOL	
+PASS  __kfifo_to_user_r exported as EXPORT_SYMBOL
+PASS  __ksymtab___kfifo_dma_in_prepare_r exists (module ABI preserved)
+      vmlinux.symvers: 0x00000000	__kfifo_dma_in_prepare_r	vmlinux	EXPORT_SYMBOL	
+PASS  __kfifo_dma_in_prepare_r exported as EXPORT_SYMBOL
+PASS  __ksymtab___kfifo_dma_in_finish_r exists (module ABI preserved)
+      vmlinux.symvers: 0x00000000	__kfifo_dma_in_finish_r	vmlinux	EXPORT_SYMBOL	
+PASS  __kfifo_dma_in_finish_r exported as EXPORT_SYMBOL
+PASS  __ksymtab___kfifo_dma_out_prepare_r exists (module ABI preserved)
+      vmlinux.symvers: 0x00000000	__kfifo_dma_out_prepare_r	vmlinux	EXPORT_SYMBOL	
+PASS  __kfifo_dma_out_prepare_r exported as EXPORT_SYMBOL
 
 == disassembly fingerprint ==
-      ffffffff8182c320 <crc16>:
-      ffffffff8182c320:      	endbr64
-      ffffffff8182c324:      	movl	%edi, %eax
-      ffffffff8182c326:      	testq	%rdx, %rdx
-      ffffffff8182c329:      	je	0xffffffff8182c3ae <crc16+0x8e>
-      ffffffff8182c32f:      	testb	$0x1, %dl
-      ffffffff8182c332:      	jne	0xffffffff8182c33f <crc16+0x1f>
-      ffffffff8182cc60 <crc_ccitt>:
-      ffffffff8182cc60:      	endbr64
-      ffffffff8182cc64:      	movl	%edi, %eax
-      ffffffff8182cc66:      	testq	%rdx, %rdx
-      ffffffff8182cc69:      	je	0xffffffff8182cce5 <crc_ccitt+0x85>
-      ffffffff8182cc6b:      	testb	$0x1, %dl
-      ffffffff8182cc6e:      	jne	0xffffffff8182cc7b <crc_ccitt+0x1b>
+      ffffffff818318b0 <crc16>:
+      ffffffff818318b0:      	endbr64
+      ffffffff818318b4:      	movl	%edi, %eax
+      ffffffff818318b6:      	testq	%rdx, %rdx
+      ffffffff818318b9:      	je	0xffffffff8183193e <crc16+0x8e>
+      ffffffff818318bf:      	testb	$0x1, %dl
+      ffffffff818318c2:      	jne	0xffffffff818318cf <crc16+0x1f>
+      ffffffff818321f0 <crc_ccitt>:
+      ffffffff818321f0:      	endbr64
+      ffffffff818321f4:      	movl	%edi, %eax
+      ffffffff818321f6:      	testq	%rdx, %rdx
+      ffffffff818321f9:      	je	0xffffffff81832275 <crc_ccitt+0x85>
+      ffffffff818321fb:      	testb	$0x1, %dl
+      ffffffff818321fe:      	jne	0xffffffff8183220b <crc_ccitt+0x1b>
+      ffffffff81821ef0 <__kfifo_in>:
+      ffffffff81821ef0:      	endbr64
+      ffffffff81821ef4:      	pushq	%rbp
+      ffffffff81821ef5:      	pushq	%r15
+      ffffffff81821ef7:      	pushq	%r14
+      ffffffff81821ef9:      	pushq	%r13
+      ffffffff81821efb:      	pushq	%r12
+      ffffffff81821efd:      	pushq	%rbx
+      ffffffff81821efe:      	pushq	%rax
+      ffffffff81821eff:      	movq	%rsi, %r15
+      ffffffff81821f02:      	movq	%rdi, %rbx
+      ffffffff81821f05:      	movl	(%rdi), %r8d
+      ffffffff81821f08:      	movl	0x4(%rdi), %ecx
+      ffffffff81821f0b:      	movl	0x8(%rdi), %eax
+      ffffffff81821f0e:      	subl	%r8d, %ecx
+      ffffffff81821f11:      	movl	%r8d, 0x4(%rsp)
+      ffffffff81821f16:      	leal	(%rcx,%rax), %r14d
+      ffffffff81821f1a:      	incl	%r14d
+      ffffffff81821f1d:      	cmpl	%r14d, %edx
+      ffffffff81821f20:      	cmovbl	%edx, %r14d
+      ffffffff81821f24:      	movl	0xc(%rdi), %ecx
+      ffffffff81821f27:      	testq	%rcx, %rcx
+      ffffffff81821f2a:      	sete	%dl
+      ffffffff81821f2d:      	movq	%r14, %r12
+      ffffffff81821f30:      	imulq	%rcx, %r12
+      ffffffff81821f34:      	movl	%eax, %edi
+      ffffffff81821f36:      	andl	%r8d, %edi
+      ffffffff81821f39:      	imulq	%rcx, %rdi
+      ffffffff81821f3d:      	incq	%rax
 PASS  disassembly fingerprints captured above
 
 RESULT: PASS
