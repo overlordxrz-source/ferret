@@ -21,9 +21,16 @@ rm -rf "$ROOT"
 mkdir -p "$ROOT"/{dev,proc,sys,tmp}
 install -m 0755 "$OUTROOT/init-target/x86_64-unknown-none/release/init" "$ROOT/init"
 # The kernel opens /dev/console before exec'ing init; it must already exist.
+# Creating a device node needs privileges: inside the build container we are
+# root, but on a shared CI runner the job user is not, so fall back to sudo.
+mknod_dev() {
+	mknod -m "$1" "$2" "$3" "$4" "$5" 2>/dev/null && return 0
+	command -v sudo >/dev/null 2>&1 || return 1
+	sudo -n mknod -m "$1" "$2" "$3" "$4" "$5"
+}
 if [ ! -e "$ROOT/dev/console" ]; then
-	mknod -m 0600 "$ROOT/dev/console" c 5 1
-	mknod -m 0666 "$ROOT/dev/null" c 1 3
+	mknod_dev 0600 "$ROOT/dev/console" c 5 1
+	mknod_dev 0666 "$ROOT/dev/null" c 1 3
 fi
 
 echo "==> packing initramfs"
