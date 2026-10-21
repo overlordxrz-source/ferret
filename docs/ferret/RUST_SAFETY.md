@@ -55,6 +55,16 @@ either component, which is why they are suitable as the first migrations.
 by a `const fn` at compile time. `static` mutability is absent; C's type is
 `const u16 *`, which the build checks.
 
+## 2.1 Memory ordering
+
+Components that publish state to another CPU use the kernel's own barrier
+primitives (`kernel::sync::barrier::{smp_wmb, smp_rmb, smp_mb}`), not Rust
+release fences. The difference is measurable in the generated code: on arm64 a
+release fence is `dmb ish`, while the kernel's `smp_wmb()` is `dmb ishst` — the
+fence is *stronger* than the C original, not equivalent. Using the kernel
+primitive makes the port emit the same instruction as the C code, with the
+same LKMM semantics, on every architecture.
+
 ## 3. Soundness argument for the FFI boundary
 
 For `crc16(crc, p, len)`:

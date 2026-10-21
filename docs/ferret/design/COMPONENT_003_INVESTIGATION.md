@@ -205,20 +205,36 @@ lookup and a loop, with no pointer arithmetic and no length handling.
 way) and much smaller, because a Rust panic has to build its payload on the
 stack.
 
+**Memory ordering.** The port calls the kernel's own `smp_wmb()` primitive
+(`kernel::sync::barrier::smp_wmb()`), not a Rust release fence. The two are
+not the same thing: a release fence is a compiler barrier on x86_64 (like the
+kernel's `smp_wmb()` there) but compiles to `dmb ish` on arm64, while the
+kernel's `smp_wmb()` is `dmb ishst`. The disassembly settles it:
+
+| Architecture | `rust_helper_smp_wmb` | kernel `smp_wmb()` | match |
+| --- | --- | --- | --- |
+| x86_64 | tail call to an empty function (no instruction) | `barrier()` — a compiler barrier | yes |
+| arm64 | `dmb ishst` | `dmb ishst` | yes |
+
+So the port emits the *same* barrier instruction as the C original on every
+architecture, with the same LKMM semantics. The price is one external call per
+copy instead of an inline instruction; the micro-benchmark shows no
+measurable difference (1 097 per mille against 1 104 for the release fence).
+
 **Throughput.** A KUnit micro-benchmark (`kfifo_diff_benchmark`) runs 20 000
 iterations of `in(64) + out(64)` on both implementations, in the same kernel
 and the same run, keeping the fastest of three rounds:
 
-| Implementation | time (checkpoint 003 clean cycle) |
+| Implementation | time |
 | --- | --- |
-| Rust | 41.3 ms |
-| C | 37.4 ms |
-| ratio | 1 104 per mille (Rust is 10 % slower) |
+| Rust | 20.4 ms |
+| C | 18.6 ms |
+| ratio | 1 097 per mille (Rust is 10 % slower) |
 
-The absolute times move by tens of percent between runs (the same binary
-measured 26.9 ms against 23.8 ms in an earlier incremental run); the ratio is
-the stable figure, and it moved between 1 014 and 1 129 per mille across
-runs.
+The absolute times move by tens of percent between runs (the same code
+measured 41.3 ms against 37.4 ms in an earlier clean cycle, and 26.9 ms
+against 23.8 ms in an incremental run); the ratio is the stable figure, and
+it moved between 1 014 and 1 129 per mille across runs.
 
 **Caveat, and it is a large one:** the test kernel runs under QEMU TCG, an
 instruction-level emulator, which inflates the cost of every extra

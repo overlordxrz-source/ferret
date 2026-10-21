@@ -26,8 +26,11 @@
 //!
 //! The C code issues `smp_wmb()` after copying data and before the caller
 //! publishes the new index, so that a concurrent reader can never observe the
-//! index advance before the data is visible. The same ordering is kept here
-//! with a release fence at the same points.
+//! index advance before the data is visible. The same ordering is kept here:
+//! the port calls the kernel's own `smp_wmb()` primitive
+//! (`kernel::sync::barrier`), so the barrier is literally the same instruction
+//! the C original emits on every architecture — a compiler barrier on x86_64,
+//! `dmb ishst` on arm64.
 //!
 //! # Deviations from the C original
 //!
@@ -44,9 +47,9 @@
 //! the C code decrements an unsigned `size_t` before testing it).
 
 use core::ffi::{c_int, c_uint, c_void};
-use core::sync::atomic::{fence, Ordering};
 
 use kernel::bindings;
+use kernel::sync::barrier::smp_wmb;
 use kernel::error::code::{EFAULT, EINVAL, ENOMEM};
 use kernel::prelude::*;
 
@@ -129,16 +132,18 @@ fn buffer_mut(fifo: &mut Kfifo) -> &mut [u8] {
 /// Copy `len` bytes from `src` into `buf` at byte offset `off`, wrapping at
 /// the end of the buffer.
 ///
-/// The caller guarantees that `off < buf.len()` and that `len <= buf.len()`;
-/// under those conditions the first copy stops at the end of the buffer and
-/// the second one continues at its beginning, exactly like the C original.
+/// The first copy stops at the end of the buffer and the second one continues
+/// at its beginning, exactly like the C original. The offset and the length
+/// are clamped to the buffer, so a caller that violates the contract cannot
+/// turn this into an out-of-bounds access.
 #[inline]
 fn copy_bytes_in(buf: &mut [u8], off: usize, src: &[u8], len: usize) {
+    let off = off.min(buf.len());
     let l = core::cmp::min(len, buf.len() - off);
-    let rest = len - l;
+    let rest = core::cmp::min(len - l, buf.len());
 
-    // SAFETY: `off < buf.len()` and `len <= buf.len()` (caller's contract),
-    // so `off + l` is within `buf` and `l + rest == len` is within `src`.
+    // SAFETY: the clamps above guarantee that `off + l` is within `buf` and
+    // that `l + rest` is within `src`.
     // The source and the destination do not overlap, exactly like the
     // `memcpy()` calls of the C original (which have the same requirement).
     unsafe {
@@ -154,15 +159,17 @@ fn copy_bytes_in(buf: &mut [u8], off: usize, src: &[u8], len: usize) {
 /// Copy `len` bytes out of `buf` at byte offset `off` into `dst`, wrapping at
 /// the end of the buffer.
 ///
-/// The caller guarantees that `off < buf.len()` and that `len <= dst.len()`.
+/// The offset and the length are clamped to the buffer and to the
+/// destination, so a caller that violates the contract cannot turn this into
+/// an out-of-bounds access.
 #[inline]
 fn copy_bytes_out(buf: &[u8], off: usize, dst: &mut [u8], len: usize) {
+    let off = off.min(buf.len());
     let l = core::cmp::min(len, buf.len() - off);
-    let rest = len - l;
+    let rest = core::cmp::min(len - l, dst.len());
 
-    // SAFETY: as in `copy_bytes_in()`: `off < buf.len()` and
-    // `len <= dst.len()` (caller's contract), so `off + l` is within `buf`
-    // and `l + rest == len` is within `dst`. The two regions do not overlap,
+    // SAFETY: as in `copy_bytes_in()`: the clamps above guarantee that
+    // `off + l` is within `buf` and that `l + rest` is within `dst`. The two regions do not overlap,
     // like the `memcpy()` calls of the C original.
     unsafe {
         core::ptr::copy_nonoverlapping(buf.as_ptr().add(off), dst.as_mut_ptr(), l);
@@ -190,8 +197,10 @@ fn copy_in(fifo: &mut Kfifo, src: &[u8], len: u32, off: u32) {
     copy_bytes_in(buf, off, src, n);
 
     // The C original issues `smp_wmb()` here: the data has to be visible
-    // before the caller publishes the new `in` index.
-    fence(Ordering::Release);
+    // before the caller publishes the new `in` index. The kernel crate's
+    // `smp_wmb()` is the same primitive the C code calls, with the same
+    // LKMM semantics on every architecture.
+    smp_wmb();
 }
 
 /// Copy `len` elements out of the FIFO, starting at element index `off`.
@@ -211,7 +220,7 @@ fn copy_out(fifo: &mut Kfifo, dst: &mut [u8], len: u32, off: u32) {
 
     // The C original issues `smp_wmb()` here: the data has to be visible
     // before the caller publishes the new `out` index.
-    fence(Ordering::Release);
+    smp_wmb();
 }
 
 /// Read the length field of the record at the head of the FIFO.
@@ -1161,7 +1170,7 @@ fn copy_from_user(
     };
 
     // The C original issues `smp_wmb()` here.
-    fence(Ordering::Release);
+    smp_wmb();
 
     let elems = div_round_up(not_copied, esize) as u32;
     let copied_bytes = len.wrapping_sub(elems as usize * esize);
@@ -1217,7 +1226,7 @@ fn copy_to_user(
     };
 
     // The C original issues `smp_wmb()` here.
-    fence(Ordering::Release);
+    smp_wmb();
 
     let elems = div_round_up(not_copied, esize) as u32;
     let copied_bytes = len.wrapping_sub(elems as usize * esize);
