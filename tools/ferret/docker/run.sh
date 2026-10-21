@@ -32,4 +32,4 @@ elif [ "$(docker inspect -f '{{.State.Running}}' "$NAME")" != "true" ]; then
 	docker start "$NAME" >/dev/null
 fi
 
-exec docker exec -i -e CLEAN -e JOBS -e ARCH -e OUTROOT -e SRC_MOUNT "$NAME" "$@"
+exec docker exec -i -e CLEAN -e JOBS -e ARCH -e OUTROOT -e SRC_MOUNT -e EXTRA_CONFIG "$NAME" "$@"

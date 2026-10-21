@@ -321,6 +321,46 @@ if [ "$VARIANT" = rust ]; then
 		fi
 	done
 
+	# The differential suite must compare two *different* implementations:
+	# the C reference is a separate object, its symbols live at different
+	# addresses than the Rust ones, and they are not exported.
+	objnm "$OUT/lib/refcount_ref.o" refrefcount.nm
+
+	for sym in $REFCOUNT_SYMBOLS; do
+		if grep -qE "^[0-9a-f]+ [0-9a-f]+ T ${sym}_c_ref\$" "$TMP/refrefcount.nm"; then
+			pass "the C reference ${sym}_c_ref is defined by lib/refcount_ref.o"
+		else
+			bad "the C reference ${sym}_c_ref is not defined by lib/refcount_ref.o"
+		fi
+
+		rust_addr=$(awk -v s="$sym" '$3==s && $2 ~ /[Tt]/ {print $1; exit}' "$TMP/vmlinux.nm")
+		cref_addr=$(awk -v s="${sym}_c_ref" '$3==s && $2 ~ /[Tt]/ {print $1; exit}' "$TMP/vmlinux.nm")
+		if [ -n "$rust_addr" ] && [ -n "$cref_addr" ] && [ "$rust_addr" != "$cref_addr" ]; then
+			pass "$sym: the Rust and the C reference are distinct objects (0x$rust_addr vs 0x$cref_addr)"
+		else
+			bad "$sym: the Rust and the C reference are not distinct (rust=0x${rust_addr:-none} c_ref=0x${cref_addr:-none})"
+		fi
+
+		# The C reference keeps the EXPORT_SYMBOL() calls of the
+		# unmodified C file, so the renamed symbols are exported under
+		# their test-only names in the differential build. They must not
+		# collide with the real names, and they must not exist at all
+		# when the differential test is off.
+		if grep -qE '^CONFIG_REFCOUNT_DIFF_KUNIT_TEST=y$' "$OUT/.config"; then
+			if grep -qE "__ksymtab_${sym}_c_ref\$" "$TMP/vmlinux.nm"; then
+				pass "the C reference ${sym}_c_ref is exported under its test-only name (differential build)"
+			else
+				bad "the C reference ${sym}_c_ref is missing from the differential build"
+			fi
+		else
+			if grep -qE "__ksymtab_${sym}_c_ref\$" "$TMP/vmlinux.nm"; then
+				bad "the C reference ${sym}_c_ref exists without the differential test"
+			else
+				pass "the C reference ${sym}_c_ref does not exist without the differential test"
+			fi
+		fi
+	done
+
 	# The kernel FIFO: the Rust object defines every exported symbol, and the
 	# shim only references them.
 	objnm "$OUT/lib/kfifo_rust.o" rustkfifo.nmsize

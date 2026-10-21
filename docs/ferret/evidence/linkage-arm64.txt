@@ -1,6 +1,6 @@
 Ferret verification evidence
-Source commit: e117700908ce
-Extracted: 2026-10-21T20:25:51Z (UTC)
+Source commit: 01ab4372971c
+Extracted: 2026-10-21T22:15:06Z (UTC)
 Raw logs: artifacts/ (not published; reproduced by tools/ferret/test.sh)
 ----------------------------------------------------------------------
 Variant: rust (arm64)
@@ -10,7 +10,7 @@ Result: PASS (see the checks below)
 == kernel variant ==
 variant:  rust
 vmlinux:  /build/linux-rust-arm64/vmlinux
-git:      a03e061d091e
+git:      01ab4372971c
 config:   CONFIG_RUST=y CONFIG_CRC16=y CONFIG_CRC16_RUST=y CONFIG_CRC16_DIFF_KUNIT_TEST=y CONFIG_CRC_CCITT=y CONFIG_CRC_CCITT_RUST=y CONFIG_CRC_CCITT_DIFF_KUNIT_TEST=y CONFIG_KFIFO_RUST=y CONFIG_BITMAP_RUST=y CONFIG_BITMAP_DIFF_KUNIT_TEST=y CONFIG_KFIFO_DIFF_KUNIT_TEST=y CONFIG_REFCOUNT_RUST=y CONFIG_REFCOUNT_DIFF_KUNIT_TEST=y CONFIG_KUNIT=y 
 
 == build tree object ownership ==
@@ -247,6 +247,24 @@ PASS  refcount_dec_and_lock_irqsave is defined by lib/refcount_rust.o
       size refcount_dec_and_lock_irqsave: object=0x000000000000006c vmlinux=0x000000000000006c bytes
 PASS  linked refcount_dec_and_lock_irqsave has the size of the function in the Rust object
 PASS  export shim for refcount_dec_and_lock_irqsave only references it (no definition)
+PASS  the C reference refcount_warn_saturate_c_ref is defined by lib/refcount_ref.o
+PASS  refcount_warn_saturate: the Rust and the C reference are distinct objects (0xffff80008067f660 vs 0xffff8000806805e4)
+PASS  the C reference refcount_warn_saturate_c_ref is exported under its test-only name (differential build)
+PASS  the C reference refcount_dec_if_one_c_ref is defined by lib/refcount_ref.o
+PASS  refcount_dec_if_one: the Rust and the C reference are distinct objects (0xffff80008067f678 vs 0xffff800080680720)
+PASS  the C reference refcount_dec_if_one_c_ref is exported under its test-only name (differential build)
+PASS  the C reference refcount_dec_not_one_c_ref is defined by lib/refcount_ref.o
+PASS  refcount_dec_not_one: the Rust and the C reference are distinct objects (0xffff80008067f6ac vs 0xffff800080680764)
+PASS  the C reference refcount_dec_not_one_c_ref is exported under its test-only name (differential build)
+PASS  the C reference refcount_dec_and_mutex_lock_c_ref is defined by lib/refcount_ref.o
+PASS  refcount_dec_and_mutex_lock: the Rust and the C reference are distinct objects (0xffff80008067f6c4 vs 0xffff800080680814)
+PASS  the C reference refcount_dec_and_mutex_lock_c_ref is exported under its test-only name (differential build)
+PASS  the C reference refcount_dec_and_lock_c_ref is defined by lib/refcount_ref.o
+PASS  refcount_dec_and_lock: the Rust and the C reference are distinct objects (0xffff80008067f71c vs 0xffff800080680954)
+PASS  the C reference refcount_dec_and_lock_c_ref is exported under its test-only name (differential build)
+PASS  the C reference refcount_dec_and_lock_irqsave_c_ref is defined by lib/refcount_ref.o
+PASS  refcount_dec_and_lock_irqsave: the Rust and the C reference are distinct objects (0xffff80008067f774 vs 0xffff800080680a94)
+PASS  the C reference refcount_dec_and_lock_irqsave_c_ref is exported under its test-only name (differential build)
 PASS  __kfifo_alloc is defined by lib/kfifo_rust.o
       size __kfifo_alloc: object=0x00000000000000e4 vmlinux=0x00000000000000e4 bytes
 PASS  linked __kfifo_alloc has the size of the function in the Rust object

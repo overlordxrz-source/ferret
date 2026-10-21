@@ -17,7 +17,7 @@ this document is the narrative view.
 | CRC-7 | `lib/crc/crc7.c` | — | `crc7_be` | candidate | — |
 | CRC-32 / CRC-32c | `lib/crc/crc32-main.c` | — | `crc32_le`, `crc32_be`, `crc32c` | candidate-later | hot path + arch SIMD |
 | CRC-64 | `lib/crc/crc64-main.c` | — | `crc64_be`, `crc64_nvme` | candidate-later | generated table + arch SIMD |
-| Reference counting | `lib/refcount.c` | `lib/refcount_rust.rs` | `refcount_warn_saturate`, `refcount_dec_if_one`, `refcount_dec_not_one`, `refcount_dec_and_mutex_lock`, `refcount_dec_and_lock`, `refcount_dec_and_lock_irqsave` | partial (checkpoint 005) | [`evidence/`](evidence/) — boot markers and linkage; the clean cycle is pending |
+| Reference counting | `lib/refcount.c` | `lib/refcount_rust.rs` | `refcount_warn_saturate`, `refcount_dec_if_one`, `refcount_dec_not_one`, `refcount_dec_and_mutex_lock`, `refcount_dec_and_lock`, `refcount_dec_and_lock_irqsave` | migrated | [`evidence/`](evidence/) — boot markers, linkage and the clean cycle |
 
 CRC-16 migration details:
 
@@ -98,9 +98,15 @@ Reference counting migration details (checkpoint 005):
   through a wrapper instead of inlining them, which costs one call per
   operation.
 * Remaining C dependency: `lib/refcount_export.c` (ksymtab only).
-* State: **partial** — the incremental build, the boot and the linkage
-  evidence are green, but the clean 16-step cycle has not been run for this
-  checkpoint yet.
+* Independent verification: the component went through the gate in
+  [`AUDIT_PROTOCOL.md`](../../AUDIT_PROTOCOL.md) — the clean 16-step cycle
+  (16/16), the mutation testing (five mutations detected, three declared not
+  detectable), the KASAN+UBSAN build (the audited suites pass, no report
+  points at the component), the property and model tests, and the Rust
+  soundness review. The report is
+  [`design/COMPONENT_005_AUDIT.md`](design/COMPONENT_005_AUDIT.md).
+* State: **migrated** — the clean cycle and the verification gate both
+  passed.
 
 ### Remaining C dependencies for CRC-16
 

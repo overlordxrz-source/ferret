@@ -301,6 +301,107 @@ mod tests {
         assert_eq!(unsafe { bindings::atomic_read(&obj.kref.refcount.refs) }, 1);
     }
 
+    /// A model of the `refcount_t` semantics, written from the header.
+    ///
+    /// It is deliberately a third implementation: it is the specification of
+    /// the two decrement helpers, not a copy of the C code and not a copy of
+    /// the Rust code. A port that misread the C would have to misread the
+    /// specification in exactly the same way to go unnoticed.
+    struct RefcountModel {
+        count: i32,
+    }
+
+    impl RefcountModel {
+        fn new(count: i32) -> Self {
+            RefcountModel { count }
+        }
+
+        /// The C `refcount_dec_if_one()`: the one-to-zero transition.
+        fn dec_if_one(&mut self) -> bool {
+            if self.count == 1 {
+                self.count = 0;
+                true
+            } else {
+                false
+            }
+        }
+
+        /// The C `refcount_dec_not_one()`.
+        ///
+        /// A saturated count is left alone, a count of one is refused, and
+        /// an underflow warns and returns true without decrementing.
+        fn dec_not_one(&mut self) -> bool {
+            let val = self.count as u32;
+
+            if val == kernel::sync::REFCOUNT_SATURATED as u32 {
+                return true;
+            }
+
+            if val == 1 {
+                return false;
+            }
+
+            let new = val.wrapping_sub(1);
+            if new > val {
+                // The underflow: the C warns and does not decrement.
+                return true;
+            }
+
+            self.count = new as i32;
+            true
+        }
+    }
+
+    /// A deterministic pseudo-random generator, so that a failure is
+    /// reproducible.
+    struct Rng(u64);
+
+    impl Rng {
+        fn next(&mut self) -> u32 {
+            // xorshift64*
+            self.0 ^= self.0 >> 12;
+            self.0 ^= self.0 << 25;
+            self.0 ^= self.0 >> 27;
+            (self.0.wrapping_mul(0x2545_f491_4f6c_dd1d) >> 32) as u32
+        }
+    }
+
+    /// The Rust implementation has to agree with the model on a long
+    /// pseudo-random sequence of operations.
+    #[test]
+    fn dec_helpers_match_the_model() {
+        let mut rng = Rng(0x6665_7272_6574_0001);
+        let mut count = bindings::refcount_t {
+            refs: bindings::atomic_t { counter: 1 },
+        };
+        let mut model = RefcountModel::new(1);
+
+        // SAFETY: the count is a valid, initialised `refcount_t`.
+        let r = unsafe { Refcount::from_ptr(&mut count) };
+
+        for _ in 0..20000 {
+            match rng.next() % 10 {
+                // The one-to-zero transition.
+                0..=3 => {
+                    assert_eq!(r.try_dec_if_one(), model.dec_if_one());
+                }
+                // The decrement that refuses a count of one.
+                4..=7 => {
+                    assert_eq!(r.try_dec_not_one(), model.dec_not_one());
+                }
+                // An arbitrary count, including the saturated and the
+                // negative ones.
+                _ => {
+                    let value = rng.next() as i32;
+                    r.set(value);
+                    model.count = value;
+                }
+            }
+
+            assert_eq!(r.read(), model.count);
+        }
+    }
+
     #[test]
     fn dec_if_one_ignores_a_saturated_count() {
         let mut count = bindings::refcount_t {

@@ -20,6 +20,7 @@
 #include <linux/kthread.h>
 #include <linux/limits.h>
 #include <linux/mutex.h>
+#include <linux/prandom.h>
 #include <linux/refcount.h>
 #include <linux/spinlock.h>
 
@@ -289,6 +290,97 @@ static void refcount_diff_sequence(struct kunit *test)
 }
 
 /*
+ * A randomised property test. The same pseudo-random sequence of operations
+ * is applied to both implementations, and the return value and the resulting
+ * count have to match at every step. The seed is fixed, so a failure is
+ * reproducible.
+ */
+#define DIFF_PROPERTY_ITERATIONS	2000
+
+static void refcount_diff_property(struct kunit *test)
+{
+	struct rnd_state rng;
+	refcount_t rust, cref;
+	unsigned int i;
+
+	prandom_seed_state(&rng, 0x666572726574); /* "ferret" */
+
+	refcount_set(&rust, 1);
+	refcount_set(&cref, 1);
+
+	for (i = 0; i < DIFF_PROPERTY_ITERATIONS; i++) {
+		unsigned int op = prandom_u32_state(&rng) % 5;
+		bool rust_ret, cref_ret;
+
+		switch (op) {
+		case 0:
+			/* The one-to-zero transition. */
+			rust_ret = refcount_dec_if_one(&rust);
+			cref_ret = refcount_dec_if_one_c_ref(&cref);
+			break;
+		case 1:
+			/* The decrement that refuses a count of one. */
+			rust_ret = refcount_dec_not_one(&rust);
+			cref_ret = refcount_dec_not_one_c_ref(&cref);
+			break;
+		case 2:
+			/* An arbitrary count, including the bad ones. */
+			{
+				int value = (int)prandom_u32_state(&rng);
+
+				refcount_set(&rust, value);
+				refcount_set(&cref, value);
+				rust_ret = true;
+				cref_ret = true;
+			}
+			break;
+		case 3: {
+			/* The spinlock helper: the lock is held on success. */
+			spinlock_t rust_lock, cref_lock;
+
+			spin_lock_init(&rust_lock);
+			spin_lock_init(&cref_lock);
+
+			rust_ret = refcount_dec_and_lock(&rust, &rust_lock);
+			cref_ret = refcount_dec_and_lock_c_ref(&cref, &cref_lock);
+
+			if (spin_is_locked(&rust_lock))
+				spin_unlock(&rust_lock);
+			if (spin_is_locked(&cref_lock))
+				spin_unlock(&cref_lock);
+			break;
+		}
+		default: {
+			/*
+			 * The interrupt-safe helper: the lock is held with the
+			 * interrupts disabled on success, and the interrupt
+			 * state is restored on the failure path.
+			 */
+			spinlock_t rust_lock, cref_lock;
+			unsigned long rust_flags = 0, cref_flags = 0;
+
+			spin_lock_init(&rust_lock);
+			spin_lock_init(&cref_lock);
+
+			rust_ret = refcount_dec_and_lock_irqsave(&rust, &rust_lock,
+								&rust_flags);
+			cref_ret = refcount_dec_and_lock_irqsave_c_ref(&cref, &cref_lock,
+									&cref_flags);
+
+			if (spin_is_locked(&rust_lock))
+				spin_unlock_irqrestore(&rust_lock, rust_flags);
+			if (spin_is_locked(&cref_lock))
+				spin_unlock_irqrestore(&cref_lock, cref_flags);
+			break;
+		}
+		}
+
+		KUNIT_EXPECT_EQ(test, rust_ret, cref_ret);
+		KUNIT_EXPECT_EQ(test, refcount_read(&rust), refcount_read(&cref));
+	}
+}
+
+/*
  * The concurrency test. The reference counts are shared by several tasks, so
  * the outcome of a single operation depends on the interleaving. What is
  * checked here are the invariants that must hold whatever the interleaving
@@ -473,6 +565,7 @@ static struct kunit_case refcount_diff_test_cases[] = {
 	KUNIT_CASE(refcount_diff_dec_and_lock_irqsave),
 	KUNIT_CASE(refcount_diff_sequence),
 	KUNIT_CASE(refcount_diff_concurrent),
+	KUNIT_CASE(refcount_diff_property),
 	{},
 };
 

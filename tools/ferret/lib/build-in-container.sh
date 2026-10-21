@@ -91,6 +91,15 @@ else
 	cfg --disable REFCOUNT_DIFF_KUNIT_TEST 2>/dev/null || true
 fi
 
+# Extra configuration switches, used by the sanitizer builds of the
+# independent-verification gate (tools/ferret/audit/sanitizer.sh).
+# They are applied after the switches above, so that they win.
+if [ -n "${EXTRA_CONFIG:-}" ]; then
+	for sw in $EXTRA_CONFIG; do
+		cfg --enable "$sw"
+	done
+fi
+
 # Keep the build reproducible and reasonably fast.
 cfg --set-str LOCALVERSION "-ferret-$VARIANT"
 

@@ -116,6 +116,16 @@ waits for the XArray; `mm/mempool.c` needs a slab and a waitqueue;
 `lib/llist.c` is feasible but its ordering risk cannot be verified by a test
 and its consumers are outside the target areas.
 
+**Implemented (checkpoint 005)**: `lib/refcount_rust.rs` replaces
+`lib/refcount.c`; the `refcount_t` primitive stays in C (it is a header type
+that the C code embeds in its own structures), and the exported layer moves to
+Rust. The kernel crate gained the smallest sound extensions
+(`Refcount::from_ptr()`, the saturation-aware operations, and the new
+`kernel::sync::KRef` for C-owned objects). The audit of the component is
+[`design/COMPONENT_005_AUDIT.md`](design/COMPONENT_005_AUDIT.md), and it is
+the first component to go through the independent-verification gate
+([`AUDIT_PROTOCOL.md`](../../AUDIT_PROTOCOL.md)).
+
 ### Phase 3 — Synchronization and per-CPU state
 
 Ordered by prerequisite, not by appeal:

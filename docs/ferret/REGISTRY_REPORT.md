@@ -19,7 +19,7 @@ Baseline: `v6.18.57` (`2ff600d29ee478d0a8d46ef8a58afb5e038fe692`)
 | `percpu-counter` | lib | candidate-blocked | no | no |
 | `eventfd` | fs | candidate-blocked | no | no |
 | `bitmap` | lib | migrated | yes | yes |
-| `refcount` | lib | partial | yes | yes |
+| `refcount` | lib | migrated | yes | yes |
 
 ## 2. Components genuinely migrated
 
@@ -27,6 +27,7 @@ Baseline: `v6.18.57` (`2ff600d29ee478d0a8d46ef8a58afb5e038fe692`)
 * `crc-ccitt` — CRC-CCITT (poly 0x1021): lib/crc/crc-ccitt.c → lib/crc/crc_ccitt_rust.rs
 * `kfifo` — Generic kernel FIFO (kfifo): lib/kfifo.c → lib/kfifo_rust.rs
 * `bitmap` — Kernel bitmap (lib/bitmap.c): lib/bitmap.c → lib/bitmap_rust.rs
+* `refcount` — Out-of-line reference counting helpers (lib/refcount.c): lib/refcount.c → lib/refcount_rust.rs
 
 ## 3. Components tested
 
@@ -56,8 +57,12 @@ Baseline: `v6.18.57` (`2ff600d29ee478d0a8d46ef8a58afb5e038fe692`)
 | `refcount` | kunit-refcount-rust | rust-unit-kunit | PASS | `docs/ferret/evidence/boot-x86_64-rust.txt` |
 | `refcount` | kunit-refcount-differential | differential-kunit | PASS | `docs/ferret/evidence/boot-x86_64-rust.txt` |
 | `refcount` | kunit-refcount-concurrency | differential-kunit | PASS | `docs/ferret/evidence/boot-x86_64-rust.txt` |
+| `refcount` | kunit-refcount-property-and-model | property-test | PASS | `docs/ferret/evidence/boot-x86_64-rust.txt` |
+| `refcount` | kunit-refcount-under-kasan-ubsan | sanitizer-kunit | PASS | `artifacts/audit/sanitizer-kasan-ubsan.txt` |
+| `refcount` | mutation-testing | mutation-testing | PASS | `artifacts/audit/mutation-test.txt` |
 | `refcount` | linkage-ownership | static-analysis | PASS | `docs/ferret/evidence/linkage-x86_64.txt` |
 | `refcount` | linkage-ownership-arm64 | static-analysis | PASS | `docs/ferret/evidence/linkage-arm64.txt` |
+| `refcount` | clean-cycle | clean-cycle | PASS | `docs/ferret/evidence/results-clean-cycle.txt` |
 
 ## 4. Components with remaining C dependencies
 

@@ -41,6 +41,7 @@ Measured, not estimated. `VERIFIED` means the evidence is in the repository.
 | Kernel linkage proof (C object absent, symbol ownership, export type) | **VERIFIED** |
 | arm64 kernel build and QEMU boot | **VERIFIED** |
 | Ubuntu 24.04 userspace: shell and systemd | **VERIFIED** — amd64 and arm64 |
+| Independent-verification gate (mutation testing, sanitizers, model tests, soundness review) | **VERIFIED** — [`AUDIT_PROTOCOL.md`](AUDIT_PROTOCOL.md); the first component through it is the reference counting port |
 | Container / Docker userspace | **NOT TESTED** |
 | Physical hardware boot | **NOT TESTED** |
 | Runtime performance comparison | **NOT TESTED** (QEMU TCG only) |

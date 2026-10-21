@@ -965,7 +965,7 @@
         "spin_lock_irqsave() and spin_unlock_irqrestore() are macros, so two C helpers were added to the Rust-for-Linux helper set (rust/helpers/spinlock.c)"
       ],
       "call_sites": "the exported helpers are called from the inline operations of the refcount_t primitive, which the whole kernel uses (include/linux/refcount.h); the primitive itself is embedded in struct kref, struct rcu_head, struct device and others",
-      "status": "partial",
+      "status": "migrated",
       "rust_compiled": true,
       "c_implementation_replaced": true,
       "c_object_built_in_rust_variant": false,
@@ -992,6 +992,26 @@
           "evidence": "docs/ferret/evidence/boot-x86_64-rust.txt"
         },
         {
+          "name": "kunit-refcount-property-and-model",
+          "kind": "property-test",
+          "config": "CONFIG_KUNIT",
+          "result": "PASS",
+          "evidence": "docs/ferret/evidence/boot-x86_64-rust.txt"
+        },
+        {
+          "name": "kunit-refcount-under-kasan-ubsan",
+          "kind": "sanitizer-kunit",
+          "config": "CONFIG_KASAN",
+          "result": "PASS",
+          "evidence": "artifacts/audit/sanitizer-kasan-ubsan.txt"
+        },
+        {
+          "name": "mutation-testing",
+          "kind": "mutation-testing",
+          "result": "PASS",
+          "evidence": "artifacts/audit/mutation-test.txt"
+        },
+        {
           "name": "linkage-ownership",
           "kind": "static-analysis",
           "result": "PASS",
@@ -1002,13 +1022,21 @@
           "kind": "static-analysis",
           "result": "PASS",
           "evidence": "docs/ferret/evidence/linkage-arm64.txt"
+        },
+        {
+          "name": "clean-cycle",
+          "kind": "clean-cycle",
+          "result": "PASS",
+          "evidence": "docs/ferret/evidence/results-clean-cycle.txt"
         }
       ],
       "risks": [
         "The exported helpers are on the reference-counting hot path of the whole kernel: the C inline operations of the primitive call refcount_warn_saturate() for every saturation event, so the Rust code is now on that path.",
         "The Rust code calls the C atomic primitives through the kernel crate's Atomic wrapper, which is a real function call, where the C inlined them. The semantics are identical (the same atomic_try_cmpxchg_release() primitive), the cost is one call per operation. This is deliberate: re-implementing the ordering in Rust's own atomics would have been a semantic substitution.",
         "The C WARN_ONCE() uses a racy flag and may print the same warning twice; the Rust version uses an atomic compare-and-exchange and prints it exactly once. The message text is unchanged.",
-        "The clean 16-step cycle has not been run for this checkpoint yet, so the component is recorded as partial and not migrated."
+        "The memory ordering is not verified by a test: a relaxed compare-and-exchange produces the same results and passes the whole suite. The mitigation is the disassembly review and the code review; the mutation testing measures the hole instead of hiding it.",
+        "The failure path of the lock helpers, after the lock has been taken, is not covered by a test: it is only reachable when another task decrements the count concurrently. The mutation testing measures that hole as well.",
+        "kernel::sync::KRef cannot make the lifetime of a C-owned object safe: the object must be alive for the lifetime of the handle, and the accesses through the raw pointer are the caller's responsibility. The soundness review is in docs/ferret/design/COMPONENT_005_AUDIT.md."
       ],
       "unsafe_boundaries": [
         "The exported functions take the caller's refcount_t pointer; the Rust code borrows it and never frees or reallocates it.",
@@ -1025,8 +1053,8 @@
       ],
       "investigation": {
         "document": "docs/ferret/design/COMPONENT_005_INVESTIGATION.md",
-        "audit": "not written yet: the audit is part of the remaining checkpoint work",
-        "verdict": "implemented in checkpoint 005, the clean cycle and the audit are pending",
+        "audit": "docs/ferret/design/COMPONENT_005_AUDIT.md",
+        "verdict": "implemented in checkpoint 005, audited against AUDIT_PROTOCOL.md; the clean cycle passed 16/16",
         "prerequisites": "the borrowed refcount view, the saturation-aware operations and the KRef handle in the kernel crate, all added in this checkpoint"
       }
     }

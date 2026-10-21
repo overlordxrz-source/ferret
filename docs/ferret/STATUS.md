@@ -7,23 +7,35 @@ Last updated: checkpoint 005 (2026-10-21).
 
 ## 0. Checkpoint 005 — the out-of-line reference counting helpers in Rust
 
-**State: PARTIAL.** The implementation is complete and the *incremental* build
-passes, the boot is green and the linkage evidence is produced, but the
-*clean* cycle (`CLEAN=1 tools/ferret/test.sh`) has **not** been run for this
-checkpoint yet, so the component is not VERIFIED in the sense of the contract
-in `AGENTS.md`.
+**State: VERIFIED.** The implementation is complete, the *clean* cycle
+(`CLEAN=1 tools/ferret/test.sh`) passed all 16 steps with exit status 0, and
+the component went through the independent-verification gate
+([`AUDIT_PROTOCOL.md`](../../AUDIT_PROTOCOL.md)), whose report is
+[`design/COMPONENT_005_AUDIT.md`](design/COMPONENT_005_AUDIT.md).
+
+The gate is what a component has to pass before it is called verified: an
+independent build, the linkage and ABI proof, the integrity of the
+differential suite, mutation testing, the kernel sanitizers, the property and
+model tests, the Rust soundness review and an honest coverage report. The
+pull request stays open until the gate passes; the component was audited
+against the gate, and the two defects the audit found (the `KRef` aliasing
+promise and a race in the concurrency test) are fixed.
 
 | Item | State | Result |
 | --- | --- | --- |
 | Rust implementation | done | `lib/refcount_rust.rs`, all 6 exported symbols |
 | C object in the Rust build | absent | `lib/refcount.o` is not built; `lib/refcount_rust.o` defines every symbol |
 | Exports | preserved | all 6 symbols keep `EXPORT_SYMBOL` (non-GPL) via `lib/refcount_export.c` |
-| Rust unit tests (`refcount_rust`) | PASS | 6 cases: the `KRef` lifetime, the saturated count, the count of one |
-| Differential KUnit (`refcount_diff`) | PASS | 8 cases against the unmodified C, including a concurrency phase |
+| Rust unit tests (`refcount_rust`) | PASS | 7 cases: the `KRef` lifetime, the saturated count, the count of one, and a model test over 20 000 pseudo-random operations |
+| Differential KUnit (`refcount_diff`) | PASS | 9 cases against the unmodified C, including a randomised property test and a concurrency phase |
 | Concurrency | PASS | 4 tasks × 250 decrements: 1 000 successful decrements, the count ends at exactly 1; the race for the last reference has exactly one winner, in both implementations |
 | Linkage evidence | PASS | one definition per symbol, size match, ksymtab, export class, in both variants |
 | arm64 build | PASS | the arm64 Ferret kernel builds and the arm64 linkage report is green |
-| Clean cycle | **NOT RUN** | the clean 16-step cycle is the remaining step of this checkpoint |
+| Clean cycle | PASS | 16/16 steps, exit status 0 (x86_64 and arm64 builds, the linkage checks, the KUnit suites, the four Ubuntu boots) |
+| Independent-verification gate | PASS | the gate is defined in [`AUDIT_PROTOCOL.md`](../../AUDIT_PROTOCOL.md); the report is [`design/COMPONENT_005_AUDIT.md`](design/COMPONENT_005_AUDIT.md) |
+| Mutation testing | PASS | five mutations detected, three declared not detectable (the memory ordering, and two paths that are only reachable under a race) |
+| KASAN + UBSAN | PASS | the audited suites pass inside a sanitized kernel, with no report pointing at the audited component |
+| KCSAN | **NOT RUN** | the build and the boot of a KCSAN kernel do not fit in the checkpoint's time budget |
 | Native performance | NOT TESTED | the host has no KVM; all measurements would be QEMU TCG |
 
 What the port covers:
@@ -76,6 +88,22 @@ already had:
   The semantics are identical, the cost is a call per operation. This is the
   price of not re-implementing the ordering, and it is the reason the port
   does not use Rust's own atomics.
+
+### The `KRef` soundness review
+
+The audit found a real defect in the new `KRef` abstraction: it carried
+`PhantomData<&'a mut T>`, which promises *exclusive* access to the object.
+That promise cannot be kept: the object is owned by C, the C code may hold
+other references to it, and other `KRef`s for the same object may exist at
+the same time. The promise was not even enforced, because the object is
+reached through a raw pointer.
+
+The marker is now a plain lifetime marker that says nothing about the
+aliasing, and `Send`/`Sync` are stated explicitly with the argument instead
+of being derived from the object type. The details, the full checklist
+(aliasing, ownership, `Drop`, `into_raw`, lifetimes, `Send`/`Sync`) and the
+remaining boundary are in
+[`design/COMPONENT_005_AUDIT.md`](design/COMPONENT_005_AUDIT.md) §2.
 
 ### A defect in the test harness, not in the port
 
