@@ -209,11 +209,16 @@ stack.
 iterations of `in(64) + out(64)` on both implementations, in the same kernel
 and the same run, keeping the fastest of three rounds:
 
-| Implementation | time |
+| Implementation | time (checkpoint 003 clean cycle) |
 | --- | --- |
-| Rust | 26.9 ms |
-| C | 23.8 ms |
-| ratio | 1 129 per mille (Rust is 13 % slower) |
+| Rust | 41.3 ms |
+| C | 37.4 ms |
+| ratio | 1 104 per mille (Rust is 10 % slower) |
+
+The absolute times move by tens of percent between runs (the same binary
+measured 26.9 ms against 23.8 ms in an earlier incremental run); the ratio is
+the stable figure, and it moved between 1 014 and 1 129 per mille across
+runs.
 
 **Caveat, and it is a large one:** the test kernel runs under QEMU TCG, an
 instruction-level emulator, which inflates the cost of every extra
@@ -228,6 +233,10 @@ The first version of the implementation was 17–20 % slower than the C one in
 the same benchmark (1 204 and 1 169 per mille); the `copy_nonoverlapping()`
 change closed most of that gap. The remaining difference is the bounds
 checking and the wider arithmetic described above.
+
+On arm64 the same 23 functions occupy 3 524 bytes in the Rust object. No
+arm64 C reference was built in this cycle, so no size delta is claimed for
+that lane.
 
 ### 4.2 `lib/percpu_counter.c` — deferred, needs a per-CPU abstraction
 

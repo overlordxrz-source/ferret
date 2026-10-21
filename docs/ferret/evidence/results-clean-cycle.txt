@@ -1,6 +1,6 @@
 Ferret verification evidence
-Source commit: 78d2f33d4cbe
-Extracted: 2026-10-21T06:21:37Z (UTC)
+Source commit: 725b0c3fcf7a
+Extracted: 2026-10-21T08:08:15Z (UTC)
 Raw logs: artifacts/ (not published; reproduced by tools/ferret/test.sh)
 ----------------------------------------------------------------------
 Clean cycle: CLEAN=1 tools/ferret/test.sh

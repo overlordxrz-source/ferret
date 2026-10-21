@@ -1,4 +1,4 @@
-# Status — Checkpoint 003 (in progress)
+# Status — Checkpoint 003
 
 State vocabulary: **VERIFIED** (evidence produced by a clean cycle and
 committed), **PARTIAL**, **FAILED**, **NOT TESTED**.
@@ -7,29 +7,27 @@ Last updated: checkpoint 003 (2026-10-21).
 
 ## 0. Checkpoint 003 — the generic kernel FIFO in Rust
 
-**State: PARTIAL.** The implementation is complete and the incremental build,
-boot and linkage checks pass, but the *clean* cycle that qualifies a checkpoint
-under DECISIONS D-011 has not been run yet, so the component is not yet
-recorded as VERIFIED.
+**State: VERIFIED.** The implementation is complete and the *clean* cycle
+(`CLEAN=1 tools/ferret/test.sh`) passed all 16 steps with exit status 0.
 
 | Item | State | Result |
 | --- | --- | --- |
 | Rust implementation | done | `lib/kfifo_rust.rs`, all 23 exported symbols |
 | C object in the Rust build | absent | `lib/kfifo.o` is not built; `lib/kfifo_rust.o` defines every symbol |
 | Exports | preserved | all 23 symbols keep `EXPORT_SYMBOL` (non-GPL) via `lib/kfifo_export.c` |
-| Upstream KUnit (`KFIFO_KUNIT_TEST`) | PASS | 10 upstream cases, unchanged |
-| Rust unit tests (`kfifo_rust`) | PASS | 10 cases |
-| Differential KUnit (`kfifo_diff`) | PASS | 7 cases, 2 000 randomised operation sequences against the unmodified C |
+| Upstream KUnit (`KFIFO_KUNIT_TEST`) | PASS | 10 cases, in **both** variants (the reference kernel has to satisfy it too) |
+| Rust unit tests (`kfifo_rust`) | PASS | 13 cases |
+| Differential KUnit (`kfifo_diff`) | PASS | 10 cases, 2 000 randomised operation sequences against the unmodified C |
+| User-copy fault path | PASS | a pointer that is not a userspace address gives `-EFAULT`, copies nothing and leaves the FIFO untouched, in both implementations |
+| DMA / scatterlist | PASS | identical entries, including the split at the wrap point (two entries) |
 | Linkage evidence | PASS | 166 checks, 0 failures: one definition per symbol, size match, ksymtab, export class |
-| Boot | PASS | kernel boots, every KUnit suite green, userspace ABI markers reached |
-| Clean cycle (`CLEAN=1 tools/ferret/test.sh`) | **NOT RUN** | required before the checkpoint can be called VERIFIED |
-| arm64 build/boot | **NOT RUN** | the arm64 lane is part of the clean cycle |
-| Ubuntu userspace boots | **NOT RUN** | ditto |
-
-The build behind these results was incremental (the previous build tree was
-reused), and the stale `lib/kfifo.o` left in that tree by the earlier C build
-was removed by hand before the linkage check. The authoritative evidence will
-come from a clean cycle, where the C object is absent by construction.
+| Boot | PASS | every KUnit suite green, userspace ABI markers reached |
+| Clean cycle | PASS | 16/16 steps, exit status 0 (x86_64 and arm64 builds, three linkage checks, four Ubuntu boots) |
+| arm64 build/boot | PASS | arm64 Ferret kernel built and booted, Ubuntu shell and systemd on arm64 |
+| Ubuntu userspace boots | PASS | shell probe and systemd-as-PID-1 on amd64 and arm64 |
+| Throughput | measured | Rust 41.3 ms vs C 37.4 ms for 20 000 in(64)+out(64) iterations (QEMU TCG; ratio only) |
+| Text size | measured | 3 162 B (Rust) vs 2 347 B (C), +34.7 %; arm64 Rust 3 524 B |
+| Native performance | NOT TESTED | the host has no KVM; all measurements are QEMU TCG |
 
 What the port covers:
 
@@ -39,16 +37,20 @@ What the port covers:
 * The locking contract is unchanged: the FIFO is lock-free, the caller
   provides the lock, and the Rust code adds none.
 * The memory ordering of the C `smp_wmb()` is preserved with a release fence
-  at the same points.
+  at the same points; the linkage report carries the disassembly fingerprint
+  of `__kfifo_in` so the copy and the index update can be inspected.
 * Two documented deviations, both where the C code is undefined:
   `__kfifo_init()` with `esize == 0` returns `-EINVAL` instead of dividing by
-  zero, and `__kfifo_max_r()` with `recsize >= 4` returns `u32::MAX`.
+  zero, and `__kfifo_max_r()` with `recsize >= 4` leaves the length alone
+  instead of relying on an undefined shift.
 * Two small C helpers were added to the Rust-for-Linux helper set
   (`rust/helpers/slab.c`, `rust/helpers/scatterlist.c`): they expose
   `kmalloc_array()` and `sg_set_buf()` to Rust. They contain no FIFO logic.
 
-Details: `docs/ferret/MIGRATION_MATRIX.md` §2 and
-`docs/ferret/design/COMPONENT_003_INVESTIGATION.md` §4.1.1.
+The size and throughput review (including the two inlining experiments and
+the TCG caveat) is in
+[`design/COMPONENT_003_INVESTIGATION.md`](design/COMPONENT_003_INVESTIGATION.md)
+§4.1.2.
 
 ---
 
