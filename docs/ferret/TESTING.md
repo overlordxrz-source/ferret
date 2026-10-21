@@ -113,7 +113,8 @@ off under TCG.
 
 `.github/workflows/docs.yml` runs on every push and pull request: registry
 validation, generated-report freshness, required documents, issue-template
-YAML, relative-link checking and a committed-build-product/secret scan.
+YAML, relative-link checking and a committed-build-product/secret scan. It is
+fast (seconds) and is the check that must be green for every change.
 
 `.github/workflows/kernel-smoke.yml` is manual plus weekly. It installs the
 pinned toolchain on an `ubuntu-24.04` runner, builds the reference and Ferret
@@ -121,8 +122,16 @@ kernels, builds the initramfs, boots both, and collects linkage evidence. It is
 not run on pull requests because two kernel builds plus boots exceed a
 reasonable PR budget.
 
-**Status: the workflows are configured but have not yet completed a run on
-GitHub.** Until a run is green, treat CI as unverified.
+**Status.** The `docs` workflow runs green on every push to `main`. The
+`kernel-smoke` workflow has been executed on GitHub runners: the reference and
+Ferret kernel builds succeed there. Its first two runs exposed two
+environment-only defects in the harness — `llvm-strip` was not linked into the
+toolchain, and the initramfs script could not create `/dev/console` without
+privileges — both fixed in
+`tools/ferret/lib/initramfs-in-container.sh` and the workflow. A full green
+`kernel-smoke` run is the remaining item; until it is green, the authoritative
+verification evidence remains the local clean cycle documented in
+[`docs/ferret/evidence/`](evidence/).
 
 ## 5. Resources
 
