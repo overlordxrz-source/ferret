@@ -99,6 +99,23 @@ Deferred, with the reason recorded: the per-CPU family (`percpu_counter`,
 `lib/idr.c` is a good candidate but competes with the bitmap for review
 attention; the memory manager itself is explicitly out of scope.
 
+### Phase 2c — Ownership primitives (checkpoint 005)
+
+The investigation is in
+[`design/COMPONENT_005_INVESTIGATION.md`](design/COMPONENT_005_INVESTIGATION.md).
+
+**Selected target: `lib/refcount.c`** — the portable part of the kernel's
+reference-counting machinery (186 lines, 6 exports), together with the two
+kernel-crate abstractions it needs: a saturation-aware increment on
+`kernel::sync::Refcount`, and `kernel::sync::KRef`, the handle for a
+**C-owned** object that the VFS, networking and driver migrations are blocked
+on.
+
+Evaluated and deferred: `lib/idr.c` is a thin layer over the XArray, so it
+waits for the XArray; `mm/mempool.c` needs a slab and a waitqueue;
+`lib/llist.c` is feasible but its ordering risk cannot be verified by a test
+and its consumers are outside the target areas.
+
 ### Phase 3 — Synchronization and per-CPU state
 
 Ordered by prerequisite, not by appeal:
