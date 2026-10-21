@@ -74,11 +74,37 @@ Full analysis: `docs/ferret/design/COMPONENT_003_INVESTIGATION.md`.
 
 | Component | Mechanism | Status | Prerequisite / decision |
 | --- | --- | --- | --- |
-| `lib/kfifo.c` | allocation + buffer ownership, 23 exports, upstream KUnit | **candidate — next target** | none; recommended for checkpoint 003 |
+| `lib/kfifo.c` | allocation + buffer ownership, 23 exports, upstream KUnit | **migrated (checkpoint 003)** | none; implemented in `lib/kfifo_rust.rs` |
 | `lib/percpu_counter.c` | per-CPU allocation + irqsave spinlock + atomics | blocked | `kernel::percpu` abstraction does not exist yet |
 | `lib/ratelimit.c` | irqsave trylock + atomics + jiffies | blocked | no `_raw_spin_trylock_irqsave` binding or symbol |
 | `lib/sbitmap.c` | kvmalloc + irqsave spinlock + waitqueue | deferred | waitqueue API and larger blast radius |
 | `fs/eventfd.c` | kref lifetime + waitqueue + anon-inode fops + poll | blocked | Rust `FileOps`/anon-inode layer with `poll` |
+
+### The generic kernel FIFO (checkpoint 003)
+
+* C sources: `lib/kfifo.c` (595 lines, 23 `EXPORT_SYMBOL` exports).
+* Rust source: `lib/kfifo_rust.rs`; the C object is **not built** in the Rust
+  variant (`lib/kfifo.o` is absent, `lib/kfifo_rust.o` defines all 23
+  symbols).
+* Interface: `include/linux/kfifo.h` is unchanged. `struct __kfifo` keeps its
+  layout, and the Rust code operates on the caller's object in place through
+  the bindgen-generated type.
+* Export: all 23 symbols keep their non-GPL `EXPORT_SYMBOL` visibility through
+  the ksymtab-only shim `lib/kfifo_export.c` (no algorithm).
+* Concurrency: the FIFO is lock-free by contract, exactly as in C; the Rust
+  code adds no locks and no atomics, and the memory ordering of the C
+  `smp_wmb()` is kept with a release fence.
+* Tests: the upstream `KFIFO_KUNIT_TEST` suite, ten Rust unit tests
+  (`kfifo_rust`), and a differential suite (`kfifo_diff`) that compiles the
+  unmodified `lib/kfifo.c` a second time under test-only symbol names and
+  compares the two implementations over initialisation, allocation, 2 000
+  randomised operation sequences, wrap-around, the record ("_r") API, the
+  length clamp and the scatterlist setup.
+* Documented deviations, both in cases where the C code is undefined:
+  `__kfifo_init()` with `esize == 0` returns `-EINVAL` instead of dividing by
+  zero, and `__kfifo_max_r()` with `recsize >= 4` returns `u32::MAX` instead of
+  shifting a 32-bit integer by 32 or more.
+* Remaining C dependency: `lib/kfifo_export.c` (ksymtab only).
 
 ## 3. Platform matrix
 

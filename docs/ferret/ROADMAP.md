@@ -62,12 +62,15 @@ adds no new C dependency beyond the ksymtab shim.
 ### Phase 2 — Ownership and allocation: first substantial component
 
 The investigation in `docs/ferret/design/COMPONENT_003_INVESTIGATION.md`
-selects the next target explicitly rather than drifting through leaf code.
+selected the next target explicitly rather than drifting through leaf code.
 
 1. **`lib/kfifo.c` (checkpoint 003)** — 595 lines, 23 exports, upstream KUnit
    suite, allocation (`__kfifo_alloc`) and buffer-ownership semantics, no lock
    or per-CPU prerequisite. This is the first migration that is not a pure
-   function over a byte buffer.
+   function over a byte buffer. **Implemented**: `lib/kfifo_rust.rs`, with the
+   differential suite `kfifo_diff` and the upstream `KFIFO_KUNIT_TEST`
+   unchanged. The checkpoint still needs a clean cycle before it counts as
+   verified.
 2. CRC-ITU-T / CRC-8 / CRC-7 as filler work while kfifo is reviewed.
 3. Move the ksymtab shim out of existence by contributing per-symbol
    `EXPORT_SYMBOL` support for Rust translation units upstream, or by adopting

@@ -162,6 +162,31 @@ config RANDOM32_SELFTEST
 	  This option enables the 32 bit PRNG library functions to perform a
 	  self test on initialization.
 
+config KFIFO_RUST
+	bool "Rust implementation of the generic kernel FIFO (Ferret)"
+	depends on RUST
+	help
+	  Build the generic kernel FIFO from the Rust implementation in
+	  lib/kfifo_rust.rs instead of the C implementation in lib/kfifo.c.
+
+	  This is a Ferret migration experiment. The C implementation is kept
+	  in the tree as the reference used by the differential KUnit test, and
+	  the exported symbols keep their original (non-GPL) visibility.
+
+	  If unsure, say N.
+
+config KFIFO_DIFF_KUNIT_TEST
+	bool "Differential KUnit test: kernel FIFO C reference vs Rust"
+	depends on KFIFO_RUST
+	depends on KUNIT
+	help
+	  Compile the original C implementation of the generic kernel FIFO
+	  under test-only symbol names and compare it against the Rust
+	  implementation over edge cases, randomised operation sequences and
+	  the scatterlist setup.
+
+	  This is test-only code; it is never part of a production kernel.
+
 #
 # compression support is select'ed if needed
 #

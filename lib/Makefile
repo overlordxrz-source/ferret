@@ -53,10 +53,57 @@ obj-y	+= lockref.o
 obj-y += bcd.o sort.o parser.o debug_locks.o random32.o \
 	 bust_spinlocks.o kasprintf.o bitmap.o scatterlist.o \
 	 list_sort.o uuid.o iov_iter.o clz_ctz.o \
-	 bsearch.o find_bit.o llist.o lwq.o memweight.o kfifo.o \
+	 bsearch.o find_bit.o llist.o lwq.o memweight.o \
 	 percpu-refcount.o rhashtable.o base64.o \
 	 once.o refcount.o rcuref.o usercopy.o errseq.o bucket_locks.o \
 	 generic-radix-tree.o bitmap-str.o
+
+#
+# Ferret: the generic kernel FIFO has a Rust implementation. The C object is
+# not built at all when the Rust variant is selected, so every exported symbol
+# has exactly one definition.
+#
+ifeq ($(CONFIG_KFIFO_RUST),y)
+obj-y += kfifo_rust.o
+# ksymtab entries only; preserves the EXPORT_SYMBOL() visibility. No algorithm.
+obj-y += kfifo_export.o
+else
+obj-y += kfifo.o
+endif
+
+#
+# Ferret: differential test. Compiles the unmodified C reference a second time
+# under test-only symbol names (see docs/ferret/DECISIONS.md D-005).
+#
+ifeq ($(CONFIG_KFIFO_DIFF_KUNIT_TEST),y)
+CFLAGS_kfifo_ref.o := -D__kfifo_alloc=kfifo_c_ref_alloc \
+		      -D__kfifo_free=kfifo_c_ref_free \
+		      -D__kfifo_init=kfifo_c_ref_init \
+		      -D__kfifo_in=kfifo_c_ref_in \
+		      -D__kfifo_out=kfifo_c_ref_out \
+		      -D__kfifo_out_peek=kfifo_c_ref_out_peek \
+		      -D__kfifo_out_linear=kfifo_c_ref_out_linear \
+		      -D__kfifo_from_user=kfifo_c_ref_from_user \
+		      -D__kfifo_to_user=kfifo_c_ref_to_user \
+		      -D__kfifo_dma_in_prepare=kfifo_c_ref_dma_in_prepare \
+		      -D__kfifo_dma_out_prepare=kfifo_c_ref_dma_out_prepare \
+		      -D__kfifo_max_r=kfifo_c_ref_max_r \
+		      -D__kfifo_len_r=kfifo_c_ref_len_r \
+		      -D__kfifo_in_r=kfifo_c_ref_in_r \
+		      -D__kfifo_out_r=kfifo_c_ref_out_r \
+		      -D__kfifo_out_peek_r=kfifo_c_ref_out_peek_r \
+		      -D__kfifo_out_linear_r=kfifo_c_ref_out_linear_r \
+		      -D__kfifo_skip_r=kfifo_c_ref_skip_r \
+		      -D__kfifo_from_user_r=kfifo_c_ref_from_user_r \
+		      -D__kfifo_to_user_r=kfifo_c_ref_to_user_r \
+		      -D__kfifo_dma_in_prepare_r=kfifo_c_ref_dma_in_prepare_r \
+		      -D__kfifo_dma_in_finish_r=kfifo_c_ref_dma_in_finish_r \
+		      -D__kfifo_dma_out_prepare_r=kfifo_c_ref_dma_out_prepare_r
+obj-y += kfifo_ref.o kfifo_diff_kunit.o
+
+$(obj)/kfifo_ref.o: $(src)/kfifo.c FORCE
+	$(call if_changed_rule,cc_o_c)
+endif
 obj-y += string_helpers.o
 obj-y += hexdump.o
 obj-$(CONFIG_TEST_HEXDUMP) += test_hexdump.o
