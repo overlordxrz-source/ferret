@@ -102,9 +102,20 @@ audited_suites() { # <boot log> <output file>
 }
 
 write_boot() { # <artifact-dir> <boot-log> <variant> <arch> <output>
-	local dir=$1 log=$2 variant=$3 arch=$4 out=$5 suites
+	local dir=$1 log=$2 variant=$3 arch=$4 out=$5 suites built booted
 	require "$ART/$dir/boot-provenance.txt"
 	need "$ART/$log"
+	# When the build stamp is in the same directory, the boot has to be the
+	# image that build produced; otherwise the "boot" evidence and the
+	# "build" evidence describe different kernels.
+	if [ -f "$ART/$dir/provenance.txt" ]; then
+		built=$(prov_field "$(grep -a '^provenance: ' "$ART/$dir/provenance.txt" | tail -1)" image)
+		booted=$(prov_field "$(grep -a '^booted-image: ' "$ART/$dir/boot-provenance.txt" | tail -1)" booted-image)
+		if [ -z "$built" ] || [ "$built" != "$booted" ]; then
+			echo "the boot in $dir is not the image its build produced" >&2
+			exit 1
+		fi
+	fi
 	suites=$(mktemp)
 	if ! audited_suites "$ART/$log" "$suites"; then
 		rm -f "$suites"
