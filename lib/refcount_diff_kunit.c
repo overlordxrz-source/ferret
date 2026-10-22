@@ -39,7 +39,8 @@ extern bool refcount_dec_and_lock_irqsave_c_ref(refcount_t *r, spinlock_t *lock,
  * tolerates.
  */
 static const int diff_counts[] = {
-	0, 1, 2, 3, 4, 17, 1000, INT_MAX, REFCOUNT_SATURATED, -1, INT_MIN,
+	0, 1, 2, 3, 4, 17, 1000, INT_MAX, INT_MAX - 1, REFCOUNT_SATURATED,
+	REFCOUNT_SATURATED + 1, REFCOUNT_SATURATED - 1, -1, INT_MIN,
 };
 
 /* The saturation events, as the enum of the C header. */
@@ -290,51 +291,100 @@ static void refcount_diff_sequence(struct kunit *test)
 }
 
 /*
- * A randomised property test. The same pseudo-random sequence of operations
- * is applied to both implementations, and the return value and the resulting
- * count have to match at every step. The seed is fixed, so a failure is
- * reproducible.
+ * A randomised property test.
+ *
+ * The count is taken from the boundary table half of the time, so that the
+ * interesting states (zero, one, two, the saturated count, INT_MAX) are
+ * actually visited; the other half of the time it is a random value. Every
+ * iteration performs an operation, and the return value and the resulting
+ * count are compared at every step.
+ *
+ * The test asserts at the end that every branch it is supposed to cover was
+ * actually taken, so that the coverage claim is a measurement and not an
+ * assumption. (An earlier version of this test drew its state from a
+ * distribution that never reached the boundaries, and 21 % of its iterations
+ * asserted a tautology; the independent audit FVS-AUDIT-001 measured that and
+ * this is the fix.)
  */
 #define DIFF_PROPERTY_ITERATIONS	2000
 
 static void refcount_diff_property(struct kunit *test)
 {
 	struct rnd_state rng;
-	refcount_t rust, cref;
 	unsigned int i;
+	unsigned int hits_zero = 0, hits_one = 0, hits_two = 0;
+	unsigned int hits_saturated = 0, hits_int_max = 0;
+	unsigned int hits_if_one_success = 0;
+	unsigned int hits_not_one_refused = 0, hits_not_one_saturated = 0;
+	unsigned int hits_not_one_underflow = 0;
+	unsigned int hits_lock_taken = 0;
+
+	KUNIT_ASSERT_NE(test, (unsigned long)refcount_dec_if_one,
+			(unsigned long)refcount_dec_if_one_c_ref);
+	KUNIT_ASSERT_NE(test, (unsigned long)refcount_dec_not_one,
+			(unsigned long)refcount_dec_not_one_c_ref);
 
 	prandom_seed_state(&rng, 0x666572726574); /* "ferret" */
 
-	refcount_set(&rust, 1);
-	refcount_set(&cref, 1);
-
 	for (i = 0; i < DIFF_PROPERTY_ITERATIONS; i++) {
-		unsigned int op = prandom_u32_state(&rng) % 5;
+		refcount_t rust, cref;
 		bool rust_ret, cref_ret;
+		unsigned int op;
+		int value;
 
+		/*
+		 * Half of the time the count comes from the boundary table,
+		 * so that the interesting states are visited; the other half
+		 * of the time it is a random value.
+		 */
+		if (prandom_u32_state(&rng) & 1)
+			value = diff_counts[prandom_u32_state(&rng) %
+					   ARRAY_SIZE(diff_counts)];
+		else
+			value = (int)prandom_u32_state(&rng);
+
+		refcount_set(&rust, value);
+		refcount_set(&cref, value);
+
+		switch (value) {
+		case 0:
+			hits_zero++;
+			break;
+		case 1:
+			hits_one++;
+			break;
+		case 2:
+			hits_two++;
+			break;
+		case INT_MAX:
+			hits_int_max++;
+			break;
+		case REFCOUNT_SATURATED:
+			hits_saturated++;
+			break;
+		}
+
+		op = prandom_u32_state(&rng) % 4;
 		switch (op) {
 		case 0:
 			/* The one-to-zero transition. */
 			rust_ret = refcount_dec_if_one(&rust);
 			cref_ret = refcount_dec_if_one_c_ref(&cref);
+			if (value == 1)
+				hits_if_one_success++;
 			break;
 		case 1:
 			/* The decrement that refuses a count of one. */
 			rust_ret = refcount_dec_not_one(&rust);
 			cref_ret = refcount_dec_not_one_c_ref(&cref);
+			if (value == 1)
+				hits_not_one_refused++;
+			else if (value == 0)
+				hits_not_one_underflow++;
+			else if (value == REFCOUNT_SATURATED)
+				hits_not_one_saturated++;
 			break;
-		case 2:
-			/* An arbitrary count, including the bad ones. */
-			{
-				int value = (int)prandom_u32_state(&rng);
-
-				refcount_set(&rust, value);
-				refcount_set(&cref, value);
-				rust_ret = true;
-				cref_ret = true;
-			}
-			break;
-		case 3: {
+		case 2: {
 			/* The spinlock helper: the lock is held on success. */
 			spinlock_t rust_lock, cref_lock;
 
@@ -344,6 +394,9 @@ static void refcount_diff_property(struct kunit *test)
 			rust_ret = refcount_dec_and_lock(&rust, &rust_lock);
 			cref_ret = refcount_dec_and_lock_c_ref(&cref, &cref_lock);
 
+			if (value == 1)
+				hits_lock_taken++;
+
 			if (spin_is_locked(&rust_lock))
 				spin_unlock(&rust_lock);
 			if (spin_is_locked(&cref_lock))
@@ -352,9 +405,9 @@ static void refcount_diff_property(struct kunit *test)
 		}
 		default: {
 			/*
-			 * The interrupt-safe helper: the lock is held with the
-			 * interrupts disabled on success, and the interrupt
-			 * state is restored on the failure path.
+			 * The interrupt-safe helper: the lock is held with
+			 * the interrupts disabled on success, and the
+			 * interrupt state is restored on the failure path.
 			 */
 			spinlock_t rust_lock, cref_lock;
 			unsigned long rust_flags = 0, cref_flags = 0;
@@ -364,8 +417,12 @@ static void refcount_diff_property(struct kunit *test)
 
 			rust_ret = refcount_dec_and_lock_irqsave(&rust, &rust_lock,
 								&rust_flags);
-			cref_ret = refcount_dec_and_lock_irqsave_c_ref(&cref, &cref_lock,
+			cref_ret = refcount_dec_and_lock_irqsave_c_ref(&cref,
+									&cref_lock,
 									&cref_flags);
+
+			if (value == 1)
+				hits_lock_taken++;
 
 			if (spin_is_locked(&rust_lock))
 				spin_unlock_irqrestore(&rust_lock, rust_flags);
@@ -378,6 +435,26 @@ static void refcount_diff_property(struct kunit *test)
 		KUNIT_EXPECT_EQ(test, rust_ret, cref_ret);
 		KUNIT_EXPECT_EQ(test, refcount_read(&rust), refcount_read(&cref));
 	}
+
+	/*
+	 * The coverage claim, as a measurement: every branch this test is
+	 * supposed to cover has to have been taken.
+	 */
+	pr_info("ferret refcount: property coverage: zero=%u one=%u two=%u saturated=%u int_max=%u if_one_success=%u not_one_refused=%u not_one_saturated=%u not_one_underflow=%u lock_taken=%u\n",
+		hits_zero, hits_one, hits_two, hits_saturated, hits_int_max,
+		hits_if_one_success, hits_not_one_refused, hits_not_one_saturated,
+		hits_not_one_underflow, hits_lock_taken);
+
+	KUNIT_ASSERT_GT(test, hits_zero, 0u);
+	KUNIT_ASSERT_GT(test, hits_one, 0u);
+	KUNIT_ASSERT_GT(test, hits_two, 0u);
+	KUNIT_ASSERT_GT(test, hits_saturated, 0u);
+	KUNIT_ASSERT_GT(test, hits_int_max, 0u);
+	KUNIT_ASSERT_GT(test, hits_if_one_success, 0u);
+	KUNIT_ASSERT_GT(test, hits_not_one_refused, 0u);
+	KUNIT_ASSERT_GT(test, hits_not_one_saturated, 0u);
+	KUNIT_ASSERT_GT(test, hits_not_one_underflow, 0u);
+	KUNIT_ASSERT_GT(test, hits_lock_taken, 0u);
 }
 
 /*
@@ -386,11 +463,20 @@ static void refcount_diff_property(struct kunit *test)
  * checked here are the invariants that must hold whatever the interleaving
  * is:
  *
- * * the count never drops below one, because `refcount_dec_not_one()` refuses
- *   to decrement a count of one, so a run of a known number of decrements
- *   always ends at exactly one;
+ * * every call does exactly one thing: it either decrements the count or it
+ *   refuses, because the count was one;
+ * * the count and the number of decrements agree: the count is the initial
+ *   count minus the number of decrements. A lost update — or a broken
+ *   compare-and-exchange retry loop — breaks this;
  * * exactly one task can perform the one-to-zero transition of
  *   `refcount_dec_if_one()`, because it is a single compare-and-exchange.
+ *
+ * The tasks are released together, through a start barrier, so that they
+ * really contend: without it, the first task runs its whole loop before the
+ * next one is created, the compare-and-exchange never fails, and the retry
+ * path of `refcount_dec_not_one()` is never executed. The independent audit
+ * FVS-AUDIT-001 measured that (its mutation M11, a broken retry loop, passed
+ * the whole suite).
  *
  * Every task has its own argument structure, so that the tasks share nothing
  * but the count itself. The tasks also have to *start* before the test stops
@@ -406,12 +492,26 @@ enum diff_phase {
 	DIFF_PHASE_DROP,
 };
 
+/*
+ * The state the tasks share.
+ *
+ * It is allocated on the heap, and not on the stack of the test: the tasks
+ * read it through a pointer, and a stable allocation is one thing less to
+ * reason about.
+ */
+struct diff_shared {
+	/* The number of tasks that are ready to run. */
+	atomic_t started;
+	/* The barrier: the tasks wait for it, so that they contend. */
+	atomic_t go;
+	/* The count the tasks decrement. */
+	refcount_t count;
+};
+
 struct diff_thread_args {
-	refcount_t *count;
+	struct diff_shared *shared;
 	unsigned int iterations;
 	enum diff_phase phase;
-	/* The number of tasks that have started. */
-	atomic_t *started;
 	/* The number of successful "dec if one" transitions. */
 	atomic_t dropped;
 	/* The number of successful decrements. */
@@ -427,16 +527,35 @@ static int diff_worker(void *arg)
 	struct diff_thread_args *args = arg;
 	unsigned int i;
 
-	/* The task is running now. */
-	atomic_inc(args->started);
+	/*
+	 * The task is ready; it waits for the others before it starts, so
+	 * that they really contend. The wait is bounded: a task must never
+	 * be left waiting, not even if the release is lost.
+	 */
+	atomic_inc(&args->shared->started);
+	{
+		unsigned int waited = 0;
+
+		/*
+		 * The wait is bounded, and generous: the tasks are created one
+		 * after the other, and creating a task is not instant on a
+		 * loaded machine, so a task must not give up before the
+		 * others are ready.
+		 */
+		while (!atomic_read(&args->shared->go) && waited++ < 30000)
+			msleep(1);
+
+		if (waited >= 30000)
+			pr_info("ferret refcount: the start barrier timed out\n");
+	}
 
 	if (args->phase == DIFF_PHASE_DROP) {
 		bool dropped;
 
 		if (args->use_c_ref)
-			dropped = refcount_dec_if_one_c_ref(args->count);
+			dropped = refcount_dec_if_one_c_ref(&args->shared->count);
 		else
-			dropped = refcount_dec_if_one(args->count);
+			dropped = refcount_dec_if_one(&args->shared->count);
 
 		if (dropped)
 			atomic_inc(&args->dropped);
@@ -448,9 +567,9 @@ static int diff_worker(void *arg)
 		bool decremented;
 
 		if (args->use_c_ref)
-			decremented = refcount_dec_not_one_c_ref(args->count);
+			decremented = refcount_dec_not_one_c_ref(&args->shared->count);
 		else
-			decremented = refcount_dec_not_one(args->count);
+			decremented = refcount_dec_not_one(&args->shared->count);
 
 		if (decremented)
 			atomic_inc(&args->decrements);
@@ -467,11 +586,11 @@ static void diff_run_phase(struct kunit *test, enum diff_phase phase,
 {
 	struct diff_thread_args args[DIFF_THREADS];
 	struct task_struct *threads[DIFF_THREADS];
-	atomic_t started = ATOMIC_INIT(0);
-	refcount_t shared;
+	struct diff_shared *shared;
 	unsigned int i;
 	unsigned int decrements = 0, refused = 0, dropped = 0;
 	unsigned int spins = 0;
+	unsigned int initial;
 	int count;
 
 	/*
@@ -485,14 +604,18 @@ static void diff_run_phase(struct kunit *test, enum diff_phase phase,
 	else
 		count = 1;
 
-	refcount_set(&shared, count);
+	initial = count;
+
+	shared = kzalloc(sizeof(*shared), GFP_KERNEL);
+	KUNIT_ASSERT_NOT_ERR_OR_NULL(test, shared);
+
+	refcount_set(&shared->count, count);
 
 	for (i = 0; i < DIFF_THREADS; i++) {
 		args[i] = (struct diff_thread_args) {
-			.count = &shared,
+			.shared = shared,
 			.iterations = iterations,
 			.phase = phase,
-			.started = &started,
 			.dropped = ATOMIC_INIT(0),
 			.decrements = ATOMIC_INIT(0),
 			.refused = ATOMIC_INIT(0),
@@ -507,13 +630,26 @@ static void diff_run_phase(struct kunit *test, enum diff_phase phase,
 		KUNIT_ASSERT_NOT_ERR_OR_NULL(test, threads[i]);
 	}
 
-	/* Wait for the tasks to be running before stopping them. */
-	while (atomic_read(&started) < DIFF_THREADS && spins++ < 10000)
+	/* Wait for the tasks to be ready. */
+	while (atomic_read(&shared->started) < DIFF_THREADS && spins++ < 60000)
 		udelay(100);
-	KUNIT_ASSERT_EQ(test, atomic_read(&started), DIFF_THREADS);
+
+	/*
+	 * Release the tasks together, so that they really contend. Without
+	 * this, the first task runs its whole loop before the next one is
+	 * even created, the compare-and-exchange never fails, and the retry
+	 * path of the decrement loop is never executed.
+	 *
+	 * The barrier is released *before* the tasks are stopped and before
+	 * the assertion below: a task that waits for the barrier must never
+	 * be left waiting, not even when the wait above timed out.
+	 */
+	atomic_set(&shared->go, 1);
 
 	for (i = 0; i < DIFF_THREADS; i++)
 		kthread_stop(threads[i]);
+
+	KUNIT_ASSERT_EQ(test, atomic_read(&shared->started), DIFF_THREADS);
 
 	for (i = 0; i < DIFF_THREADS; i++) {
 		decrements += atomic_read(&args[i].decrements);
@@ -522,25 +658,31 @@ static void diff_run_phase(struct kunit *test, enum diff_phase phase,
 	}
 
 	pr_info("ferret refcount: %s phase %d: count %u decrements %u refused %u dropped %u\n",
-		use_c_ref ? "c_ref" : "rust", phase, refcount_read(&shared),
-		decrements, refused, dropped);
+		use_c_ref ? "c_ref" : "rust", phase,
+		refcount_read(&shared->count), decrements, refused, dropped);
 
 	switch (phase) {
 	case DIFF_PHASE_DEC:
 		/*
-		 * The decrements never go below one, so the count is exactly
-		 * the one that was left, and every decrement was successful.
+		 * Every call did exactly one thing, and the count agrees with
+		 * the number of decrements. A lost update — or a broken
+		 * compare-and-exchange retry loop — breaks the second one.
 		 */
-		KUNIT_EXPECT_EQ(test, refcount_read(&shared), 1u);
-		KUNIT_EXPECT_EQ(test, decrements, DIFF_THREADS * iterations);
-		KUNIT_EXPECT_EQ(test, refused, 0u);
+		KUNIT_EXPECT_EQ(test, decrements + refused,
+				DIFF_THREADS * iterations);
+		KUNIT_EXPECT_EQ(test, refcount_read(&shared->count),
+				initial - decrements);
+		/* The count never drops below one. */
+		KUNIT_EXPECT_GE(test, refcount_read(&shared->count), 1u);
 		break;
 	case DIFF_PHASE_DROP:
 		/* Exactly one task dropped the last reference. */
 		KUNIT_EXPECT_EQ(test, dropped, 1u);
-		KUNIT_EXPECT_EQ(test, refcount_read(&shared), 0u);
+		KUNIT_EXPECT_EQ(test, refcount_read(&shared->count), 0u);
 		break;
 	}
+
+	kfree(shared);
 }
 
 static void refcount_diff_concurrent(struct kunit *test)

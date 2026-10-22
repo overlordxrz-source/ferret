@@ -40,11 +40,18 @@ static WARN_UNKNOWN: Atomic<u32> = Atomic::new(0);
 /// The message is printed as a `KERN_WARNING` message, and the warning
 /// machinery of the kernel (`warn_on!()`) reports the location and dumps the
 /// stack, like the C `WARN_ONCE()` does.
-fn warn_once(flag: &Atomic<u32>, message: &str) {
-    if flag.cmpxchg(0, 1, Relaxed).is_ok() {
-        crate::pr_warn!("{}", message);
-        crate::warn_on!(true);
-    }
+///
+/// This is a macro and not a function, so that every call site gets its own
+/// reported location: the C original reports the line of the `REFCOUNT_WARN()`
+/// call site, so the event that caused the warning can be read off the
+/// warning in the log.
+macro_rules! warn_once {
+    ($flag:expr, $message:expr) => {
+        if $flag.cmpxchg(0, 1, Relaxed).is_ok() {
+            crate::pr_warn!("{}", $message);
+            crate::warn_on!(true);
+        }
+    };
 }
 
 /// Atomic reference counter.
@@ -143,10 +150,12 @@ impl Refcount {
 
     /// Read the refcount's value.
     ///
-    /// The read is relaxed, like the C `refcount_read()`.
+    /// The read is relaxed, like the C `refcount_read()`, and the type is the
+    /// C one: `unsigned int`. A saturated count therefore reads back as
+    /// `0xc000_0000`, not as a negative number.
     #[inline]
-    pub fn read(&self) -> i32 {
-        self.as_atomic().load(Relaxed)
+    pub fn read(&self) -> u32 {
+        self.as_atomic().load(Relaxed) as u32
     }
 
     /// Set the refcount to the saturated value.
@@ -170,27 +179,24 @@ impl Refcount {
 
         match t {
             bindings::refcount_saturation_type_REFCOUNT_ADD_NOT_ZERO_OVF => {
-                warn_once(
+                warn_once!(
                     &WARN_ADD_NOT_ZERO_OVF,
-                    "refcount_t: saturated; leaking memory.\n",
+                    "refcount_t: saturated; leaking memory.\n"
                 )
             }
             bindings::refcount_saturation_type_REFCOUNT_ADD_OVF => {
-                warn_once(&WARN_ADD_OVF, "refcount_t: saturated; leaking memory.\n")
+                warn_once!(&WARN_ADD_OVF, "refcount_t: saturated; leaking memory.\n")
             }
-            bindings::refcount_saturation_type_REFCOUNT_ADD_UAF => warn_once(
-                &WARN_ADD_UAF,
-                "refcount_t: addition on 0; use-after-free.\n",
-            ),
-            bindings::refcount_saturation_type_REFCOUNT_SUB_UAF => warn_once(
-                &WARN_SUB_UAF,
-                "refcount_t: underflow; use-after-free.\n",
-            ),
-            bindings::refcount_saturation_type_REFCOUNT_DEC_LEAK => warn_once(
-                &WARN_DEC_LEAK,
-                "refcount_t: decrement hit 0; leaking memory.\n",
-            ),
-            _ => warn_once(&WARN_UNKNOWN, "refcount_t: unknown saturation event!?.\n"),
+            bindings::refcount_saturation_type_REFCOUNT_ADD_UAF => {
+                warn_once!(&WARN_ADD_UAF, "refcount_t: addition on 0; use-after-free.\n")
+            }
+            bindings::refcount_saturation_type_REFCOUNT_SUB_UAF => {
+                warn_once!(&WARN_SUB_UAF, "refcount_t: underflow; use-after-free.\n")
+            }
+            bindings::refcount_saturation_type_REFCOUNT_DEC_LEAK => {
+                warn_once!(&WARN_DEC_LEAK, "refcount_t: decrement hit 0; leaking memory.\n")
+            }
+            _ => warn_once!(&WARN_UNKNOWN, "refcount_t: unknown saturation event!?.\n"),
         }
     }
 
@@ -231,9 +237,9 @@ impl Refcount {
             if new > val {
                 // The count was zero: this is an underflow. The C warns once
                 // and returns true without decrementing.
-                warn_once(
+                warn_once!(
                     &UNDERFLOW_WARNED,
-                    "refcount_t: underflow; use-after-free.\n",
+                    "refcount_t: underflow; use-after-free.\n"
                 );
 
                 return true;

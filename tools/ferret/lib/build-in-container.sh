@@ -10,7 +10,10 @@
 set -euo pipefail
 
 SRC_MOUNT=${SRC_MOUNT:-/mnt/projects/ferret}
-OUTROOT=${OUTROOT:-/build}
+# The project's own trees live under /build/ferret, not directly under
+# /build: the container is shared, and another run (an independent audit,
+# say) must not be able to overwrite these objects and logs.
+OUTROOT=${OUTROOT:-/build/ferret}
 ARCH=${ARCH:-x86_64}
 JOBS=${JOBS:-$(nproc)}
 VARIANT=${1:?usage: build.sh <ref|rust>}
@@ -79,6 +82,7 @@ if [ "$VARIANT" = rust ]; then
 	cfg --enable BITMAP_DIFF_KUNIT_TEST
 	cfg --enable REFCOUNT_RUST
 	cfg --enable REFCOUNT_DIFF_KUNIT_TEST
+	cfg --enable FVS_REFCOUNT_ADVERSARIAL_KUNIT_TEST
 	# Rust KUnit tests (the migrated modules ship their own vectors tests).
 	# KUNIT_ALL_TESTS is deliberately not enabled: unrelated suites must not
 	# be able to obscure the result of the Ferret migrations.
@@ -94,6 +98,7 @@ else
 	cfg --disable BITMAP_DIFF_KUNIT_TEST 2>/dev/null || true
 	cfg --disable REFCOUNT_RUST 2>/dev/null || true
 	cfg --disable REFCOUNT_DIFF_KUNIT_TEST 2>/dev/null || true
+	cfg --disable FVS_REFCOUNT_ADVERSARIAL_KUNIT_TEST 2>/dev/null || true
 fi
 
 # Extra configuration switches, used by the sanitizer builds of the

@@ -14,6 +14,10 @@ MODE=${1:?usage: boot-ubuntu-in-container.sh <shell|systemd> [amd64|arm64]}
 GUEST_ARCH=${2:-amd64}
 KERNEL_VARIANT=${KERNEL_VARIANT:-rust}
 TIMEOUT=${TIMEOUT:-600}
+# The build tree is the isolated one of the run (see build-in-container.sh):
+# booting a stale tree that another run left in /build would test the wrong
+# kernel, which is exactly what happened before this was parameterised.
+OUTROOT=${OUTROOT:-/build/ferret}
 case "$GUEST_ARCH" in
 amd64) KV=$KERNEL_VARIANT ;;
 *) KV=$KERNEL_VARIANT-$GUEST_ARCH ;;
@@ -23,14 +27,14 @@ case "$GUEST_ARCH" in
 amd64)
 	QEMU=qemu-system-x86_64
 	KARCH=x86
-	KIMAGE=/build/linux-$KV/arch/x86/boot/bzImage
+	KIMAGE=$OUTROOT/linux-$KV/arch/x86/boot/bzImage
 	MACHINE=pc
 	CONSOLE=ttyS0
 	;;
 arm64)
 	QEMU=qemu-system-aarch64
 	KARCH=arm64
-	KIMAGE=/build/linux-$KV/arch/arm64/boot/Image
+	KIMAGE=$OUTROOT/linux-$KV/arch/arm64/boot/Image
 	MACHINE=virt
 	CONSOLE=ttyAMA0
 	;;
@@ -40,6 +44,8 @@ arm64)
 	;;
 esac
 
+# The Ubuntu root filesystem is a fixture, not a build product of this
+# component: it is built once and read here. The kernel image above is not.
 IMG=/build/images/ubuntu-$GUEST_ARCH.img
 ART=/mnt/projects/ferret/artifacts/ubuntu-$MODE-$GUEST_ARCH
 LOG=$ART/boot.log

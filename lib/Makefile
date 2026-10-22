@@ -428,6 +428,17 @@ obj-y += refcount.o
 endif
 
 #
+# Ferret: the adversarial tests written by the independent audit FVS-AUDIT-001.
+# They are the reference for the coverage claims of the reference counting
+# port: the boundary sweep, the deterministic test of the failure path of the
+# three lock helpers, and the randomised differential test whose distribution
+# reaches the boundary states.
+#
+ifeq ($(CONFIG_FVS_REFCOUNT_ADVERSARIAL_KUNIT_TEST),y)
+obj-y += fvs_refcount_adversarial_kunit.o fvs_refcount_adversarial.o
+endif
+
+#
 # Ferret: differential test. Compiles the unmodified C reference a second time
 # under test-only symbol names (see docs/ferret/DECISIONS.md D-005).
 #

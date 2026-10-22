@@ -12,7 +12,10 @@ set -euo pipefail
 VARIANT=${1:?usage: boot.sh <ref|rust> [timeout]}
 TIMEOUT=${2:-900}
 ARCH=${ARCH:-x86_64}
-OUTROOT=${OUTROOT:-/build}
+# The project's own trees live under /build/ferret, not directly under
+# /build: the container is shared, and another run (an independent audit,
+# say) must not be able to overwrite these objects and logs.
+OUTROOT=${OUTROOT:-/build/ferret}
 OUT=$OUTROOT/linux-$VARIANT
 # The artefact directory can be overridden so that two runs (a developer
 # and an independent auditor, say) do not write into the same tree.
@@ -99,7 +102,7 @@ fi
 
 if [ "$VARIANT" = rust ]; then
 	for suite in crc16_rust crc16_diff crc_ccitt_rust crc_ccitt_diff \
-		     kfifo_rust kfifo_diff kfifo bitmap_diff refcount_rust refcount_diff; do
+		     kfifo_rust kfifo_diff kfifo bitmap_diff refcount_rust refcount_diff fvs_refcount fvs_refcount_adv; do
 		if grep -qE "ok [0-9]+ $suite" "$LOG"; then
 			echo "PASS  KUnit $suite"
 		else

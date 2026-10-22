@@ -11,7 +11,10 @@ set -uo pipefail
 
 VARIANT=${1:?usage: linkage-in-container.sh <ref|rust>}
 ARCH=${ARCH:-x86_64}
-OUTROOT=${OUTROOT:-/build}
+# The project's own trees live under /build/ferret, not directly under
+# /build: the container is shared, and another run (an independent audit,
+# say) must not be able to overwrite these objects and logs.
+OUTROOT=${OUTROOT:-/build/ferret}
 case "$ARCH" in
 x86_64) ARCH_SUFFIX= ;;
 *) ARCH_SUFFIX="-$ARCH" ;;

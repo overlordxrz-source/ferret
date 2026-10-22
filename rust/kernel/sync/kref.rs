@@ -41,9 +41,16 @@ pub type KRefRelease = unsafe extern "C" fn(*mut bindings::kref);
 
 /// A reference to an object owned by C, counted by a `struct kref`.
 ///
-/// The type holds *one* reference: it is released when the `KRef` is dropped,
-/// and the release callback runs when it was the last one. Moving a `KRef`
-/// transfers the reference, exactly like moving a C pointer does.
+/// The type *adopts* one reference: it is released when the `KRef` is
+/// dropped, and the release callback runs when it was the last one. Moving a
+/// `KRef` transfers the reference, exactly like moving a C pointer does.
+///
+/// **The handle does not take a reference.** [`KRef::new()`] adopts a
+/// reference that the caller already holds: the C equivalent is a
+/// `kref_get()` followed by handing the reference over to the handle. A
+/// caller that does not hold a reference gets a handle that releases one it
+/// never took, and the object is released one reference too early. The
+/// precondition is stated in the safety contract of [`KRef::new()`].
 ///
 /// The object itself is *not* owned by the handle. See the [module
 /// documentation](self) for what that means for the aliasing of the object.
@@ -74,10 +81,24 @@ pub struct KRef<'a, T: ?Sized> {
 }
 
 impl<'a, T: ?Sized> KRef<'a, T> {
-    /// Take a reference to a C object with an embedded `struct kref`.
+    /// Adopt a reference to a C object with an embedded `struct kref`.
+    ///
+    /// **This does not take a reference.** The handle adopts one that the
+    /// caller already holds — the C equivalent is a `kref_get()` followed by
+    /// handing the reference over — and it releases it when the handle is
+    /// dropped.
     ///
     /// # Safety
     ///
+    /// * **The caller must already hold a reference to the object on this
+    ///   handle's behalf** — for example because it called `kref_get()` (or
+    ///   the equivalent) — and it must not release that reference itself.
+    ///   The handle releases exactly one reference when it is dropped; a
+    ///   caller that does not hold one gets a handle that releases a
+    ///   reference it never took, and the object is released one reference
+    ///   too early. Two handles over one reference share it: the first one to
+    ///   be dropped takes the count to zero and runs the release callback
+    ///   while the second one is still alive.
     /// * `kref` must point to the `struct kref` embedded in the object at
     ///   `data`, and the object must be alive for the lifetime `'a`.
     /// * The count must not be accessed through the C API in a way that
@@ -91,6 +112,9 @@ impl<'a, T: ?Sized> KRef<'a, T> {
     /// * The caller must not create a data race through the pointer returned
     ///   by [`KRef::as_ptr()`]: the object belongs to C, which may access it
     ///   concurrently.
+    /// * The lifetime `'a` is chosen by the caller and is **not** inferred
+    ///   from the arguments: the type system does not enforce that the object
+    ///   outlives the handle.
     pub unsafe fn new(
         kref: *mut bindings::kref,
         data: *mut T,
@@ -108,6 +132,11 @@ impl<'a, T: ?Sized> KRef<'a, T> {
     ///
     /// This is the C `kref_get()`: the count is incremented, with the
     /// saturation rules of the C primitive.
+    ///
+    /// The C primitive does not increment a saturated count (it warns and
+    /// leaves it saturated) and it does not increment a count of zero (it
+    /// warns and saturates the count). In both cases **no reference is
+    /// taken**, so the handle owns a reference that does not exist.
     pub fn get(&self) {
         // SAFETY: the count is valid for as long as the object is alive,
         // which the lifetime of the handle guarantees.
@@ -123,8 +152,9 @@ impl<'a, T: ?Sized> KRef<'a, T> {
 
     /// The current value of the reference count.
     ///
-    /// The read is relaxed, like the C `refcount_read()`.
-    pub fn read(&self) -> i32 {
+    /// The read is relaxed, like the C `refcount_read()`, and the type is the
+    /// C one: `unsigned int`.
+    pub fn read(&self) -> u32 {
         // SAFETY: the count is valid for as long as the object is alive,
         // which the lifetime of the handle guarantees.
         let r = unsafe { Refcount::from_ptr(self.count()) };

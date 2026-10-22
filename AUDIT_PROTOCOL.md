@@ -191,8 +191,12 @@ tools/ferret/audit/mutation-test.sh
 ```
 
 The script prints, per mutation, whether the defect was **detected**. A
-mutation that is not detected is a *coverage hole* and is reported as a
-failure of the gate, not as a pass.
+mutation that is declared detectable and is not detected is a *coverage hole*
+and is reported as a failure of the gate. A mutation that is declared not
+detectable and is not detected is a *known limitation*: it is listed with its
+reason and it does not fail the gate. A mutated kernel that does not boot far
+enough to run the audited suites is `INVALID` — neither detected nor cleared —
+and it fails the run, because an infrastructure failure is not evidence.
 
 The mutation set must cover, at least:
 
@@ -215,15 +219,17 @@ The mutations that are known to be not detectable, and why:
 
 * a **memory-ordering** defect is not observable by a functional test: a
   relaxed compare-and-exchange produces the same results. The mitigation is
-  the disassembly review (phase 7) and the code review, not the tests.
-* a defect on a path that is only reachable **under a race** is not
-  observable by a deterministic test. The path of the lock helpers where the
-  lock has been taken and the decrement to zero then fails is only reachable
-  when another task decrements the count between the two steps of the
-  helper. A test that drives it has to win a race, which is not something a
-  test suite should depend on. The mitigation is the code review of the
-  failure path, and the fact that the *other* failure path (the lock is
-  taken when it must not be) is covered.
+  the disassembly review (phase 7) and the code review, not the tests. This
+  is the only mutation that is declared not detectable.
+
+A path that is only reachable **under a race** is *not* an excuse: the
+independent audit FVS-AUDIT-001 showed that the failure path of the lock
+helpers — the path where the lock has been taken and the decrement to zero
+then fails — is reachable *deterministically*, by making the lock contended
+so that the helper blocks between its two steps while the count is changed
+underneath it. The tests that reach it are part of the tree
+(`lib/fvs_refcount_adversarial_kunit.c`), and the mutations of that path are
+detected by them.
 
 The set that the reference counting component uses is in
 `tools/ferret/audit/mutation-test.sh`, and its results are in
@@ -345,8 +351,11 @@ The gate passes when:
 
 1. phases 1 to 9 have been executed and their evidence is in the repository;
 2. every mutation that is expected to be detected was detected;
-3. no sanitizer reported anything, or the sanitizer is explicitly listed as
-   NOT RUN with the reason;
+3. no sanitizer report *implicates the audited component*, and the reports
+   that implicate other components are listed here with their tracking issue.
+   A report that cannot be attributed is a failure of the phase: an
+   unattributable report is not evidence of anything. A sanitizer that could
+   not be run at all is listed as NOT RUN with the reason;
 4. the coverage report lists the uncovered paths;
 5. the soundness review has no unresolved finding — a finding that cannot be
    resolved is listed as an open risk in the registry, and the component

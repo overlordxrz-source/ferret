@@ -7,7 +7,10 @@
 set -euo pipefail
 
 SRC=${SRC:-/mnt/projects/ferret}
-OUTROOT=${OUTROOT:-/build}
+# The project's own trees live under /build/ferret, not directly under
+# /build: the container is shared, and another run (an independent audit,
+# say) must not be able to overwrite these objects and logs.
+OUTROOT=${OUTROOT:-/build/ferret}
 ROOT=$OUTROOT/initramfs
 
 echo "==> building freestanding init"

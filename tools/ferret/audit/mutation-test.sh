@@ -47,10 +47,12 @@ mutations() {
 dec-not-one-ignores-one|detected|rust/kernel/sync/refcount.rs|report a count of one as decremented
 dec-not-one-underflow|detected|rust/kernel/sync/refcount.rs|decrement the count of zero instead of warning
 dec-not-one-saturation|detected|rust/kernel/sync/refcount.rs|decrement the saturated count instead of leaving it alone
+dec-not-one-retry-broken|detected|rust/kernel/sync/refcount.rs|do not update the expected value when the compare-and-exchange fails
 saturate-wrong-value|detected|rust/kernel/sync/refcount.rs|saturate the count to zero instead of REFCOUNT_SATURATED
 lock-taken-when-it-must-not-be|detected|lib/refcount_rust.rs|take the mutex even when the first step failed
-lock-not-released|undetected|lib/refcount_rust.rs|do not release the spinlock on the failure path
-irqsave-not-restored|undetected|lib/refcount_rust.rs|do not restore the interrupt state on the failure path
+lock-not-released|detected|lib/refcount_rust.rs|do not release the spinlock on the failure path
+mutex-not-released|detected|lib/refcount_rust.rs|do not release the mutex on the failure path
+irqsave-not-restored|detected|lib/refcount_rust.rs|do not restore the interrupt state on the failure path
 dec-if-one-relaxed|undetected|rust/kernel/sync/refcount.rs|use a relaxed compare-and-exchange instead of a release one
 EOF
 }
@@ -127,6 +129,25 @@ elif name == "lock-taken-when-it-must-not-be":
 
     // SAFETY: the caller passes a valid, initialised mutex.
     unsafe { bindings::mutex_lock(lock) };
+"""
+elif name == "dec-not-one-retry-broken":
+	old = """                // The C updates the expected value on failure and retries.
+                Err(current) => val = current as u32,
+"""
+	new = """                // MUTATION: the expected value is not updated on failure.
+                Err(_current) => val = 0,
+"""
+elif name == "mutex-not-released":
+	old = """    if !r.dec_and_test() {
+        // SAFETY: the mutex is held here.
+        unsafe { bindings::mutex_unlock(lock) };
+        return false;
+    }
+"""
+	new = """    if !r.dec_and_test() {
+        // MUTATION: the mutex is not released on the failure path.
+        return false;
+    }
 """
 elif name == "lock-not-released":
 	old = """    if !r.dec_and_test() {
@@ -219,19 +240,70 @@ run_mutation() { # <name> <expectation> <file> <description>
 	fi
 
 	SRC_MOUNT="/mnt/projects/ferret/.audit-worktrees/$name" \
-		"$ROOT/tools/ferret/boot.sh" rust >>"$LOG" 2>&1
+		"$ROOT/tools/ferret/boot.sh" rust 300 >>"$LOG" 2>&1
 	local boot_rc=$?
 	local blog="$ROOT/artifacts/rust/boot.log"
+	# Keep the boot log of the mutated kernel: the detection has to be
+	# auditable, not just a PASS line. The next boot would overwrite it.
+	cp -f "$blog" "$ART/mutation-boot-$name.log" 2>/dev/null || true
+
+	# What counts as a detection: the audited suite reports a failure; the
+	# kernel panics after the suites started; or the boot does not finish
+	# while the suites are running (a mutation that leaves a lock held or
+	# loops forever is detected by the hang, and the log shows no verdict).
+	# A boot that never got as far as the suites proves nothing about the
+	# mutation and must not be recorded as one.
+	local kunit_failed=0 panic=0 started=0 verdict=0 hung=0
+	grep -qaE 'not ok [0-9]+ ' "$blog" && kunit_failed=1
+	grep -qa 'Kernel panic' "$blog" && panic=1
+	grep -qaE 'ok [0-9]+ (refcount_diff|refcount_rust|fvs_refcount)' "$blog" && started=1
+	grep -qaE '(ok|not ok) [0-9]+ (refcount_diff|refcount_rust|fvs_refcount)' "$blog" && verdict=1
 
 	local failed=0
-	if grep -qaE 'not ok [0-9]+ ' "$blog"; then
+	if [ "$kunit_failed" -eq 1 ]; then
+		failed=1
+	elif [ "$panic" -eq 1 ] && [ "$started" -eq 1 ]; then
+		failed=1
+	elif [ "$boot_rc" -ne 0 ] && [ "$started" -eq 1 ] && [ "$verdict" -eq 0 ]; then
+		hung=1
 		failed=1
 	fi
-	if [ "$boot_rc" -ne 0 ]; then
-		failed=1
+
+	if [ "$failed" -eq 1 ]; then
+		say "   the failing tests in the mutated kernel:"
+		grep -aE 'not ok [0-9]+ ' "$blog" | sed 's/^/      /' | tee -a "$LOG"
+		if [ "$kunit_failed" -eq 0 ] && [ "$hung" -eq 0 ]; then
+			say "      (none: the kernel panicked after the suites started)"
+		fi
+		if [ "$hung" -eq 1 ]; then
+			say "      (none: the boot did not finish while the suites were"
+			say "      running — the mutation hangs the kernel; last lines:)"
+			tail -n 5 "$blog" | sed 's/^/      /' | tee -a "$LOG"
+		fi
+	fi
+
+	local invalid=0
+	if [ "$failed" -eq 0 ] && [ "$boot_rc" -ne 0 ] && [ "$started" -eq 0 ]; then
+		invalid=1
+		say "INVALID  the mutated kernel did not boot far enough to run the"
+		say "         audited suites (boot exit $boot_rc, no suite started)."
+		say "         This is not a detection; see"
+		say "         artifacts/audit/mutation-boot-$name.log"
 	fi
 
 	git -C "$ROOT" worktree remove --force "$wt" >/dev/null 2>&1
+
+	# The build tree now holds the objects of the mutated source. The next
+	# mutation only restores the files it touches, so the objects of the
+	# files this mutation touched have to be rebuilt: touch them, so that
+	# the build system does not keep the objects of the mutated source.
+	for f in rust/kernel/sync/refcount.rs lib/refcount_rust.rs; do
+		touch "$ROOT/$f"
+	done
+
+	if [ "$invalid" -eq 1 ]; then
+		return 3
+	fi
 
 	if [ "$failed" -eq 1 ]; then
 		if [ "$expect" = "detected" ]; then
@@ -245,10 +317,12 @@ run_mutation() { # <name> <expectation> <file> <description>
 	if [ "$expect" = "undetected" ]; then
 		say "KNOWN LIMIT  the mutation was NOT detected, as declared"
 		say "             the functional suites cannot see it: the defect is"
-		say "             either in the memory ordering or on a path that is"
-		say "             only reachable under a race. The mitigation is the"
-		say "             disassembly review and the code review of that path."
-		return 1
+		say "             in the memory ordering, which no functional test"
+		say "             can observe. The mitigation is the disassembly"
+		say "             review and the code review, not the tests."
+		# Not a coverage hole: the protocol declares this mutation
+		# not detectable, and requires it to be listed with its reason.
+		return 2
 	fi
 
 	say "HOLE  the mutation was NOT detected: the suite has a coverage gap"
@@ -258,6 +332,9 @@ run_mutation() { # <name> <expectation> <file> <description>
 selected=("$@")
 
 holes=0
+limits=0
+invalid=0
+detected=0
 total=0
 MUTATION_LIST=$(mktemp)
 trap 'rm -f "$MUTATION_LIST"' EXIT
@@ -274,13 +351,22 @@ while IFS='|' read -r name expect file desc; do
 	total=$((total + 1))
 	# The build and the boot inside the worker read the standard input, so
 	# they get none: the list of the mutations is read from there.
-	run_mutation "$name" "$expect" "$file" "$desc" </dev/null ||
-		holes=$((holes + 1))
+	rc=0
+	run_mutation "$name" "$expect" "$file" "$desc" </dev/null || rc=$?
+	case $rc in
+	0) detected=$((detected + 1)) ;;
+	2) limits=$((limits + 1)) ;;
+	3) invalid=$((invalid + 1)) ;;
+	*) holes=$((holes + 1)) ;;
+	esac
 done <"$MUTATION_LIST"
 
 say ""
 say "== mutation testing summary"
 say "mutations:  $total"
+say "detected:   $detected"
+say "declared not detectable: $limits"
+say "invalid (did not boot):  $invalid"
 say "coverage holes: $holes"
 
 if [ "${MUTATION_BUILD:-0}" != "1" ]; then
@@ -300,5 +386,16 @@ fi
 if [ "$holes" -ne 0 ]; then
 	say "RESULT: FAIL ($holes coverage holes)"
 	exit 1
+fi
+if [ "$invalid" -ne 0 ]; then
+	say "RESULT: FAIL ($invalid invalid runs: the mutated kernel did not"
+	say "run the suites, so the mutation is neither detected nor cleared)"
+	exit 1
+fi
+if [ "$limits" -ne 0 ]; then
+	say "RESULT: PASS (with $limits declared not-detectable mutation:"
+	say "a known limit of the tests, listed with its reason in the"
+	say "coverage report of the audit)"
+	exit 0
 fi
 say "RESULT: PASS"
