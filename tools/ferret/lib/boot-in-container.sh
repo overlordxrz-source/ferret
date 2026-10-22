@@ -14,7 +14,9 @@ TIMEOUT=${2:-900}
 ARCH=${ARCH:-x86_64}
 OUTROOT=${OUTROOT:-/build}
 OUT=$OUTROOT/linux-$VARIANT
-ART=/mnt/projects/ferret/artifacts/$VARIANT
+# The artefact directory can be overridden so that two runs (a developer
+# and an independent auditor, say) do not write into the same tree.
+ART=${ART:-/mnt/projects/ferret/artifacts/$VARIANT}
 LOG=$ART/boot.log
 
 mkdir -p "$ART"
