@@ -739,6 +739,14 @@ static unsigned int diff_run_phase(struct kunit *test, enum diff_phase phase,
 				DIFF_THREADS * iterations);
 		KUNIT_EXPECT_EQ(test, refcount_read(&shared->count),
 				initial - decrements);
+		/*
+		 * The count starts one above the total number of decrements, so
+		 * no worker can ever see a count of one before its own last
+		 * iteration: a refusal means the loop gave up after a failed
+		 * compare-and-exchange instead of retrying, which is exactly
+		 * the defect the retry path exists to avoid.
+		 */
+		KUNIT_EXPECT_EQ(test, refused, 0u);
 		/* The count never drops below one. */
 		KUNIT_EXPECT_GE(test, refcount_read(&shared->count), 1u);
 		break;

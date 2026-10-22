@@ -63,7 +63,7 @@ mutations() {
 dec-not-one-ignores-one|detected|rust/kernel/sync/refcount.rs|report a count of one as decremented
 dec-not-one-underflow|detected|rust/kernel/sync/refcount.rs|decrement the count of zero instead of warning
 dec-not-one-saturation|detected|rust/kernel/sync/refcount.rs|decrement the saturated count instead of leaving it alone
-dec-not-one-retry-broken|detected|rust/kernel/sync/refcount.rs|retry with a wrong expected value instead of the one the compare-and-exchange returned
+dec-not-one-retry-broken|detected|rust/kernel/sync/refcount.rs|do not retry: give up after a failed compare-and-exchange
 saturate-wrong-value|detected|rust/kernel/sync/refcount.rs|saturate the count to zero instead of REFCOUNT_SATURATED
 lock-taken-when-it-must-not-be|detected|lib/refcount_rust.rs|take the mutex even when the first step failed
 lock-not-released|detected|lib/refcount_rust.rs|do not release the spinlock on the failure path
@@ -162,10 +162,12 @@ elif name == "dec-not-one-retry-broken":
                     // retry, exactly as the C loop does.
                     #[cfg(CONFIG_KUNIT)]
                     retry_stats::record();
-                    // MUTATION: retry with a wrong expected value instead
-                    // of the one the compare-and-exchange returned.
-                    let _ = current;
-                    val = val.wrapping_add(1);
+                    // MUTATION: do not retry: report the decrement as
+                    // refused after the compare-and-exchange failed.
+                    val = current as u32;
+                    if val > 0 {
+                        return false;
+                    }
                 }
 """
 elif name == "mutex-not-released":
