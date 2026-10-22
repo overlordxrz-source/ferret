@@ -687,6 +687,26 @@ static unsigned int diff_run_phase(struct kunit *test, enum diff_phase phase,
 		udelay(100);
 
 	/*
+	 * Place the sleeping workers on the CPUs the guest has, round-robin,
+	 * so that on release there is one worker per CPU and they really run
+	 * at the same time. Without this the scheduler can wake them one
+	 * after the other, each finishes its whole loop before the next
+	 * starts, and the compare-and-exchange never fails: measured, a run
+	 * with five attempts and no placement still saw no retry at all.
+	 *
+	 * The placement is done while the workers sleep on the completion,
+	 * which is the safe moment to change their affinity. If a CPU is not
+	 * online the test fails rather than pretending it contended.
+	 */
+	for (i = 0; i < DIFF_THREADS; i++) {
+		if (set_cpus_allowed_ptr(threads[i],
+					 cpumask_of(i % num_online_cpus()))) {
+			KUNIT_FAIL(test, "cannot place worker %u on a CPU\n", i);
+			return 0;
+		}
+	}
+
+	/*
 	 * Release the tasks together, so that they really contend. Without
 	 * this, the first task runs its whole loop before the next one is
 	 * even created, the compare-and-exchange never fails, and the retry
