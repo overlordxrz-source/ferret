@@ -38,6 +38,8 @@ set -uo pipefail
 HERE=$(cd "$(dirname "$0")" && pwd)
 ROOT=$(cd "$HERE/../../.." && pwd)
 ART=${ART:-$ROOT/artifacts/audit}
+OUTROOT=${OUTROOT:-/build/ferret}
+export OUTROOT
 
 NAME=${1:?usage: sanitizer.sh <name> <config-switch>...}
 shift
@@ -75,6 +77,9 @@ say "==> booting"
 boot_rc=$?
 
 BLOG="$ART/boot.log"
+# Keep the boot log of this sanitized kernel: the next sanitizer boot would
+# overwrite $ART/boot.log, and the evidence of a report has to be readable.
+cp -f "$BLOG" "$ART/sanitizer-$NAME-boot.log" 2>/dev/null || true
 
 # ---------------------------------------------------------------------------
 # Parsing the reports
@@ -109,11 +114,20 @@ if ! grep -qa 'Linux version' "$BLOG"; then
 	exit 1
 fi
 
-# The sanitizer has to be *on*: the kernel prints a banner when it starts.
-for banner in "KernelAddressSanitizer initialized" "UndefinedBehaviorSanitizer" \
-	"data-race" "KCSAN"; do
-	if printf '%s' "$EXTRA_SWITCHES" | grep -qw "$banner"; then
-		say "NOTE  looking for the $banner banner"
+# The sanitizer has to be *on*. A banner in the log is not a reliable check
+# (KCSAN has none), so read it from the config of the kernel that was built
+# and booted. The build tree lives in the container, so the read does too.
+CONFIG_FILE="$OUTROOT/linux-rust/.config"
+if ! "$ROOT/tools/ferret/docker/run.sh" test -f "$CONFIG_FILE" >/dev/null 2>&1; then
+	say "FAIL  no kernel config at $CONFIG_FILE: the sanitizer cannot be shown to be on"
+	exit 1
+fi
+for sw in "$@"; do
+	if "$ROOT/tools/ferret/docker/run.sh" grep -qE "^CONFIG_${sw}=y$" "$CONFIG_FILE"; then
+		say "PASS  CONFIG_${sw}=y in the built kernel"
+	else
+		say "FAIL  CONFIG_${sw} is not set in $CONFIG_FILE"
+		exit 1
 	fi
 done
 
@@ -135,12 +149,20 @@ else
 	external=0
 fi
 
-if grep -qaE 'ok [0-9]+ refcount_diff' "$BLOG"; then
-	say "PASS  the differential suite ran inside the sanitized kernel"
-else
-	say "FAIL  the differential suite did not report success inside the sanitized kernel"
-	exit 1
-fi
+# The audited suites have to have *passed* inside the sanitized kernel. The
+# suite verdict line is "ok <n> <suite>" (the individual tests are
+# "ok <n> <suite>_<test>"), and the serial console terminates it with "\r".
+for suite in refcount_rust refcount_diff fvs_refcount fvs_refcount_adv; do
+	if grep -qaE "ok [0-9]+ $suite[[:space:]]*$" "$BLOG" &&
+		! grep -qaE "not ok [0-9]+ $suite[[:space:]]*$" "$BLOG"; then
+		say "PASS  $suite passed inside the sanitized kernel"
+	else
+		say "FAIL  $suite did not pass inside the sanitized kernel"
+		grep -aE "(ok|not ok) [0-9]+ $suite[[:space:]]*$" "$BLOG" |
+			sed 's/^/      /' | tee -a "$LOG"
+		exit 1
+	fi
+done
 
 if grep -qa 'KernelAddressSanitizer initialized' "$BLOG"; then
 	say "PASS  KASAN was active in this kernel (the banner is in the log)"

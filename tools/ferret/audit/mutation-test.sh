@@ -82,9 +82,9 @@ elif name == "dec-not-one-underflow":
 	old = """            if new > val {
                 // The count was zero: this is an underflow. The C warns once
                 // and returns true without decrementing.
-                warn_once(
+                warn_once!(
                     &UNDERFLOW_WARNED,
-                    "refcount_t: underflow; use-after-free.\\n",
+                    "refcount_t: underflow; use-after-free.\\n"
                 );
 
                 return true;
@@ -93,9 +93,9 @@ elif name == "dec-not-one-underflow":
 	new = """            if new > val {
                 // The count was zero: this is an underflow. The C warns once
                 // and returns true without decrementing.
-                warn_once(
+                warn_once!(
                     &UNDERFLOW_WARNED,
-                    "refcount_t: underflow; use-after-free.\\n",
+                    "refcount_t: underflow; use-after-free.\\n"
                 );
 
                 // MUTATION: the underflow also decrements the count.
@@ -216,14 +216,15 @@ run_mutation() { # <name> <expectation> <file> <description>
 	rm -rf "$wt"
 	git -C "$ROOT" worktree prune
 	git -C "$ROOT" worktree add --detach "$wt" HEAD >/dev/null 2>&1 || {
-		say "FAIL  could not create the worktree $wt"
-		return 1
+		say "INVALID  could not create the worktree $wt"
+		return 3
 	}
 
 	apply_mutation "$wt" "$file" "$name" >>"$LOG" 2>&1 || {
-		say "FAIL  could not apply the mutation"
+		say "INVALID  could not apply the mutation: the patch context does"
+		say "         not match the source. Nothing was tested."
 		git -C "$ROOT" worktree remove --force "$wt" >/dev/null 2>&1
-		return 1
+		return 3
 	}
 
 	# The build and the boot of the mutated tree. The artifacts of the
@@ -236,7 +237,7 @@ run_mutation() { # <name> <expectation> <file> <description>
 	if [ "$build_rc" -ne 0 ]; then
 		say "INVALID  the mutation did not build: the mutation itself is broken"
 		git -C "$ROOT" worktree remove --force "$wt" >/dev/null 2>&1
-		return 1
+		return 3
 	fi
 
 	SRC_MOUNT="/mnt/projects/ferret/.audit-worktrees/$name" \
