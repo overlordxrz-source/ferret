@@ -109,7 +109,7 @@ write_boot() { # <artifact-dir> <boot-log> <variant> <arch> <output>
 	# image that build produced; otherwise the "boot" evidence and the
 	# "build" evidence describe different kernels.
 	if [ -f "$ART/$dir/provenance.txt" ]; then
-		built=$(prov_field "$(grep -a '^provenance: ' "$ART/$dir/provenance.txt" | tail -1)" image)
+		built=$(prov_field "$(grep -a '^provenance: commit=' "$ART/$dir/provenance.txt" | tail -1)" image)
 		booted=$(sed -n 's/^booted-image: //p' "$ART/$dir/boot-provenance.txt" | tail -1)
 		if [ -z "$built" ] || [ "$built" != "$booted" ]; then
 			echo "the boot in $dir is not the image its build produced" >&2

@@ -196,7 +196,7 @@ phase_boot() {
 				head -3 | sed 's/^/      /' | tee -a "$LOG"
 			return 1
 		fi
-		built=$(prov_field "$(grep -a '^provenance: ' "$ROOT/artifacts/rust/provenance.txt" | tail -1)" image)
+		built=$(prov_field "$(grep -a '^provenance: commit=' "$ROOT/artifacts/rust/provenance.txt" | tail -1)" image)
 		booted=$(sed -n 's/^booted-image: //p' "$ROOT/artifacts/rust/boot-provenance.txt" | tail -1)
 		if [ -z "$built" ] || [ "$built" != "$booted" ]; then
 			say "FAIL  the booted image ($booted) is not the one the build produced ($built)"

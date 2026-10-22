@@ -46,6 +46,6 @@ fi
 	printf 'booted-image: %s\n' "$img"
 	printf 'guest: %s %s\n' "$guest" "$mode"
 } >"$art/boot-provenance.txt"
-echo "provenance: wrote $art/boot-provenance.txt"
+echo "==> provenance written to $art/boot-provenance.txt"
 
 exit $rc

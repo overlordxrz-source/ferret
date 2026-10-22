@@ -93,7 +93,7 @@ if ! prov_check "$ART/provenance.txt" >>"$LOG" 2>&1; then
 	prov_check "$ART/provenance.txt" 2>&1 | sed 's/^/      /' | tee -a "$LOG"
 	exit 1
 fi
-prov_line=$(grep -a '^provenance: ' "$ART/provenance.txt" | tail -1)
+prov_line=$(grep -a '^provenance: commit=' "$ART/provenance.txt" | tail -1)
 prov_cfg=$(prov_field "$prov_line" config)
 say "$prov_line"
 if [ -n "$prov_cfg" ] && [ -f "$ART/config-$prov_cfg.txt" ]; then

@@ -148,7 +148,7 @@ prov_write_build() { # <variant> <arch> <artifact-dir>
 		prov_store_config "$dir/config" "$dir" >/dev/null
 	fi
 	prov_stamp "$cfg" "$img" >"$dir/provenance.txt"
-	echo "provenance: wrote $dir/provenance.txt"
+	echo "==> provenance written to $dir/provenance.txt"
 }
 
 # The boot wrapper calls this after a boot. It also records the image that was
@@ -161,7 +161,7 @@ prov_write_boot() { # <variant> <arch> <artifact-dir> [initramfs-container-path]
 	img=$(prov_image_hash "$v" "$a")
 	cfg=$(prov_config_hash "$v" "$a")
 	if [ -f "$dir/provenance.txt" ]; then
-		built=$(prov_field "$(grep -a '^provenance: ' "$dir/provenance.txt" | tail -1)" image)
+		built=$(prov_field "$(grep -a '^provenance: commit=' "$dir/provenance.txt" | tail -1)" image)
 		if [ -n "$built" ] && [ -n "$img" ] && [ "$built" != "$img" ]; then
 			echo "provenance: the booted image ($img) is not the one the build" >&2
 			echo "            in $dir produced ($built): the tree was rebuilt" >&2
@@ -178,7 +178,7 @@ prov_write_boot() { # <variant> <arch> <artifact-dir> [initramfs-container-path]
 		printf 'booted-image: %s\n' "$img"
 		printf 'initramfs: %s\n' "$init_hash"
 	} >"$dir/boot-provenance.txt"
-	echo "provenance: wrote $dir/boot-provenance.txt"
+	echo "==> provenance written to $dir/boot-provenance.txt"
 }
 
 # Check an artifact's last provenance stamp against the current tree.
@@ -190,7 +190,9 @@ prov_check() { # <artifact-or-stamp-file>
 		echo "provenance: $f does not exist"
 		return 1
 	fi
-	line=$(grep -a '^provenance: ' "$f" | tail -1)
+	# The stamp is the line with the fields, not the "wrote ..." progress
+	# messages that the wrappers print into the logs.
+	line=$(grep -a '^provenance: commit=' "$f" | tail -1)
 	if [ -z "$line" ]; then
 		echo "provenance: $f has no provenance stamp"
 		return 1

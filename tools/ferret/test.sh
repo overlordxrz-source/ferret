@@ -151,6 +151,6 @@ done
 . "$HERE/lib/provenance.sh"
 prov_stamp "$(prov_config_hash rust x86_64)" "$(prov_image_hash rust x86_64)" \
 	>"$ROOT/artifacts/results-provenance.txt"
-echo "provenance: wrote artifacts/results-provenance.txt" | tee -a "$RESULTS"
+echo "==> provenance written to artifacts/results-provenance.txt" | tee -a "$RESULTS"
 
 exit "$rc"
