@@ -240,7 +240,7 @@ run_mutation() { # <name> <expectation> <file> <description>
 	fi
 
 	SRC_MOUNT="/mnt/projects/ferret/.audit-worktrees/$name" \
-		"$ROOT/tools/ferret/boot.sh" rust 300 >>"$LOG" 2>&1
+		"$ROOT/tools/ferret/boot.sh" rust 180 >>"$LOG" 2>&1
 	local boot_rc=$?
 	local blog="$ROOT/artifacts/rust/boot.log"
 	# Keep the boot log of the mutated kernel: the detection has to be

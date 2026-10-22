@@ -26,14 +26,15 @@ promise and a race in the concurrency test) are fixed.
 | Rust implementation | done | `lib/refcount_rust.rs`, all 6 exported symbols |
 | C object in the Rust build | absent | `lib/refcount.o` is not built; `lib/refcount_rust.o` defines every symbol |
 | Exports | preserved | all 6 symbols keep `EXPORT_SYMBOL` (non-GPL) via `lib/refcount_export.c` |
-| Rust unit tests (`refcount_rust`) | PASS | 7 cases: the `KRef` lifetime, the saturated count, the count of one, and a model test over 20 000 pseudo-random operations |
-| Differential KUnit (`refcount_diff`) | PASS | 9 cases against the unmodified C, including a randomised property test and a concurrency phase |
+| Rust unit tests (`refcount_rust`) | PASS | 4 cases: `dec_if_one` on a saturated count, `dec_not_one` on a count of one, on a larger count, and on a saturated count |
+| Differential KUnit (`refcount_diff`) | PASS | 9 cases against the unmodified C, including a randomised property test whose coverage is asserted, and a concurrency phase with a start barrier |
+| Adversarial KUnit (`fvs_refcount`, `fvs_refcount_adv`) | PASS | 18 cases contributed by the independent audit FVS-AUDIT-001 and taken into the tree: the boundary sweeps, the deterministic failure path of the three lock helpers, the randomised differential test, and the contract model |
 | Concurrency | PASS | 4 tasks × 250 decrements: 1 000 successful decrements, the count ends at exactly 1; the race for the last reference has exactly one winner, in both implementations |
 | Linkage evidence | PASS | one definition per symbol, size match, ksymtab, export class, in both variants |
 | arm64 build | PASS | the arm64 Ferret kernel builds and the arm64 linkage report is green |
 | Clean cycle | PASS | 16/16 steps, exit status 0 (x86_64 and arm64 builds, the linkage checks, the KUnit suites, the four Ubuntu boots) |
 | Independent-verification gate | PASS | the gate is defined in [`AUDIT_PROTOCOL.md`](../../AUDIT_PROTOCOL.md); the report is [`design/COMPONENT_005_AUDIT.md`](design/COMPONENT_005_AUDIT.md) |
-| Mutation testing | PASS | five mutations detected, three declared not detectable (the memory ordering, and two paths that are only reachable under a race) |
+| Mutation testing | PASS | nine mutations detected, one declared not detectable (the memory ordering, which no functional test can observe) |
 | KASAN + UBSAN | PASS | the audited suites pass inside a sanitized kernel, with no report pointing at the audited component |
 | KCSAN | **NOT RUN** | the build and the boot of a KCSAN kernel do not fit in the checkpoint's time budget |
 | Native performance | NOT TESTED | the host has no KVM; all measurements would be QEMU TCG |
@@ -88,6 +89,24 @@ already had:
   The semantics are identical, the cost is a call per operation. This is the
   price of not re-implementing the ordering, and it is the reason the port
   does not use Rust's own atomics.
+
+### The independent audit FVS-AUDIT-001
+
+The component was audited independently (FVS-AUDIT-001, against the pinned
+head `32b9daabdbee`). The audit reached the verdict **REQUIRE FURTHER
+EVIDENCE**: it found no defect in the port, but it found that the evidence
+of the self-audit was weaker than it read — the randomised tests never
+reached the boundary states, the "model" was a transliteration of the
+implementation, the warning path was never compared, and the failure path of
+the lock helpers was declared untestable when it is in fact deterministically
+reachable.
+
+The audit's adversarial test suites are now part of the tree, the randomised
+tests draw their state from the boundary table and assert their own
+coverage, the model is a model of the *contract*, the warning behaviour is
+checked from the boot log, and the mutation classifications are corrected.
+The disposition of every finding is in
+[`design/COMPONENT_005_AUDIT.md`](design/COMPONENT_005_AUDIT.md) §12.
 
 ### The `KRef` soundness review
 

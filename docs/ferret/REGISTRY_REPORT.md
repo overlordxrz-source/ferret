@@ -56,8 +56,9 @@ Baseline: `v6.18.57` (`2ff600d29ee478d0a8d46ef8a58afb5e038fe692`)
 | `bitmap` | linkage-ownership | static-analysis | PASS | `docs/ferret/evidence/linkage-x86_64.txt` |
 | `refcount` | kunit-refcount-rust | rust-unit-kunit | PASS | `docs/ferret/evidence/boot-x86_64-rust.txt` |
 | `refcount` | kunit-refcount-differential | differential-kunit | PASS | `docs/ferret/evidence/boot-x86_64-rust.txt` |
-| `refcount` | kunit-refcount-concurrency | differential-kunit | PASS | `docs/ferret/evidence/boot-x86_64-rust.txt` |
-| `refcount` | kunit-refcount-property-and-model | property-test | PASS | `docs/ferret/evidence/boot-x86_64-rust.txt` |
+| `refcount` | kunit-refcount-property-and-coverage | property-test | PASS | `docs/ferret/evidence/boot-x86_64-rust.txt` |
+| `refcount` | kunit-refcount-concurrency | concurrency-test | PASS | `docs/ferret/evidence/boot-x86_64-rust.txt` |
+| `refcount` | kunit-refcount-adversarial | adversarial-kunit | PASS | `docs/ferret/evidence/boot-x86_64-rust.txt` |
 | `refcount` | kunit-refcount-under-kasan-ubsan | sanitizer-kunit | PASS | `artifacts/audit/sanitizer-kasan-ubsan.txt` |
 | `refcount` | mutation-testing | mutation-testing | PASS | `artifacts/audit/mutation-test.txt` |
 | `refcount` | linkage-ownership | static-analysis | PASS | `docs/ferret/evidence/linkage-x86_64.txt` |

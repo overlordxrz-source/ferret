@@ -962,7 +962,8 @@
       "dependencies": [
         "the refcount_t primitive stays in C (include/linux/refcount.h): it is a header type that the C code embeds in its own structures, and its inline operations are what the kernel's own code calls",
         "the kernel crate needed a borrowed view of a C refcount_t (kernel::sync::Refcount::from_ptr), the saturation-aware operations (try_dec_if_one, try_dec_not_one, warn_saturate, set_saturated) and a handle for C-owned objects (kernel::sync::KRef); all were added in this checkpoint",
-        "spin_lock_irqsave() and spin_unlock_irqrestore() are macros, so two C helpers were added to the Rust-for-Linux helper set (rust/helpers/spinlock.c)"
+        "spin_lock_irqsave() and spin_unlock_irqrestore() are macros, so two C helpers were added to the Rust-for-Linux helper set (rust/helpers/spinlock.c)",
+        "the port adds about 350 lines to the vendored upstream Rust-for-Linux kernel crate (rust/kernel/sync/refcount.rs, rust/kernel/sync/kref.rs): every upstream synchronisation of that crate has to carry the additions. The other checkpoints of this project did the same (the bitmap added Flags::from_gfp()), so the divergence is a known cost of the approach and not a new one."
       ],
       "call_sites": "the exported helpers are called from the inline operations of the refcount_t primitive, which the whole kernel uses (include/linux/refcount.h); the primitive itself is embedded in struct kref, struct rcu_head, struct device and others",
       "status": "migrated",
@@ -985,16 +986,23 @@
           "evidence": "docs/ferret/evidence/boot-x86_64-rust.txt"
         },
         {
-          "name": "kunit-refcount-concurrency",
-          "kind": "differential-kunit",
+          "name": "kunit-refcount-property-and-coverage",
+          "kind": "property-test",
           "config": "CONFIG_REFCOUNT_DIFF_KUNIT_TEST",
           "result": "PASS",
           "evidence": "docs/ferret/evidence/boot-x86_64-rust.txt"
         },
         {
-          "name": "kunit-refcount-property-and-model",
-          "kind": "property-test",
-          "config": "CONFIG_KUNIT",
+          "name": "kunit-refcount-concurrency",
+          "kind": "concurrency-test",
+          "config": "CONFIG_REFCOUNT_DIFF_KUNIT_TEST",
+          "result": "PASS",
+          "evidence": "docs/ferret/evidence/boot-x86_64-rust.txt"
+        },
+        {
+          "name": "kunit-refcount-adversarial",
+          "kind": "adversarial-kunit",
+          "config": "CONFIG_FVS_REFCOUNT_ADVERSARIAL_KUNIT_TEST",
           "result": "PASS",
           "evidence": "docs/ferret/evidence/boot-x86_64-rust.txt"
         },
@@ -1033,10 +1041,11 @@
       "risks": [
         "The exported helpers are on the reference-counting hot path of the whole kernel: the C inline operations of the primitive call refcount_warn_saturate() for every saturation event, so the Rust code is now on that path.",
         "The Rust code calls the C atomic primitives through the kernel crate's Atomic wrapper, which is a real function call, where the C inlined them. The semantics are identical (the same atomic_try_cmpxchg_release() primitive), the cost is one call per operation. This is deliberate: re-implementing the ordering in Rust's own atomics would have been a semantic substitution.",
-        "The C WARN_ONCE() uses a racy flag and may print the same warning twice; the Rust version uses an atomic compare-and-exchange and prints it exactly once. The message text is unchanged.",
-        "The memory ordering is not verified by a test: a relaxed compare-and-exchange produces the same results and passes the whole suite. The mitigation is the disassembly review and the code review; the mutation testing measures the hole instead of hiding it.",
-        "The failure path of the lock helpers, after the lock has been taken, is not covered by a test: it is only reachable when another task decrements the count concurrently. The mutation testing measures that hole as well.",
-        "kernel::sync::KRef cannot make the lifetime of a C-owned object safe: the object must be alive for the lifetime of the handle, and the accesses through the raw pointer are the caller's responsibility. The soundness review is in docs/ferret/design/COMPONENT_005_AUDIT.md."
+        "The C WARN_ONCE() uses a racy flag and may print the same warning twice; the Rust version uses an atomic compare-and-exchange and prints it exactly once. The message text is unchanged. The log prefix of the Rust's message is the kernel crate's, so the two messages are not byte-identical in the log.",
+        "The memory ordering is not verified by a test: a relaxed compare-and-exchange produces the same results and passes the whole suite. The mitigation is the disassembly review and the code review; the mutation campaign measures the hole instead of hiding it.",
+        "The failure path of the lock helpers, after the lock has been taken, is covered by the deterministic tests of the independent audit (the lock is made contended, so the helper blocks between its two steps while the count changes underneath it). It is not covered by the project's own differential suite.",
+        "kernel::sync::KRef cannot make the lifetime of a C-owned object safe: the object must be alive for the lifetime of the handle, and the accesses through the raw pointer are the caller's responsibility. The handle adopts a reference that the caller must already hold; the safety contract says so. The soundness review is in docs/ferret/design/COMPONENT_005_AUDIT.md.",
+        "The lifetime of KRef and of Refcount::from_ptr() is chosen by the caller and is not enforced by the type system. This is an accepted risk, acknowledged before the independent audit."
       ],
       "unsafe_boundaries": [
         "The exported functions take the caller's refcount_t pointer; the Rust code borrows it and never frees or reallocates it.",
@@ -1054,7 +1063,7 @@
       "investigation": {
         "document": "docs/ferret/design/COMPONENT_005_INVESTIGATION.md",
         "audit": "docs/ferret/design/COMPONENT_005_AUDIT.md",
-        "verdict": "implemented in checkpoint 005, audited against AUDIT_PROTOCOL.md; the clean cycle passed 16/16",
+        "verdict": "implemented in checkpoint 005; audited by the independent audit FVS-AUDIT-001 and re-verified against its findings; the clean cycle passed 16/16",
         "prerequisites": "the borrowed refcount view, the saturation-aware operations and the KRef handle in the kernel crate, all added in this checkpoint"
       }
     }

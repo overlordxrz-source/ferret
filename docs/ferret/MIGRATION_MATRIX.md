@@ -86,12 +86,19 @@ Reference counting migration details (checkpoint 005):
   helpers were added to the Rust-for-Linux helper set
   (`rust/helpers/spinlock.c`): `spin_lock_irqsave()` and
   `spin_unlock_irqrestore()` are macros, so they cannot be bound directly.
-* Tests: `refcount_rust` (6 Rust unit tests, including the `KRef` lifetime)
-  and `refcount_diff` (8 differential cases against the unmodified C
-  compiled under test-only names), covering the count of zero, the count of
-  one, `INT_MAX`, the saturated count, the negative ("bad") counts, the
-  saturation warning, the three lock helpers and a concurrency phase with
-  four tasks.
+* Tests: `refcount_rust` (4 Rust unit tests), `refcount_diff` (9
+  differential cases against the unmodified C compiled under test-only
+  names) and the adversarial suites of the independent audit
+  (`fvs_refcount`, 10 cases, and `fvs_refcount_adv`, 8 cases), which are part
+  of the tree. They cover the count of zero, the count of one, `INT_MAX`, the
+  saturated count, the negative ("bad") counts, the saturation warning, the
+  three lock helpers, a randomised property test (2 000 pseudo-random
+  operations, both implementations compared at every step, with the coverage
+  of the test **asserted**), a concurrency phase (four tasks released
+  together through a start barrier, so that they really contend and the
+  compare-and-exchange retry path is executed), the deterministic failure
+  path of the three lock helpers, and the `KRef` against a model of the
+  contract.
 * Documented deviations: the C `WARN_ONCE()` uses a racy flag and may print
   the same warning twice; the Rust version prints it exactly once (the
   message text is unchanged). The Rust code calls the C atomic primitives
@@ -100,11 +107,19 @@ Reference counting migration details (checkpoint 005):
 * Remaining C dependency: `lib/refcount_export.c` (ksymtab only).
 * Independent verification: the component went through the gate in
   [`AUDIT_PROTOCOL.md`](../../AUDIT_PROTOCOL.md) — the clean 16-step cycle
-  (16/16), the mutation testing (five mutations detected, three declared not
-  detectable), the KASAN+UBSAN build (the audited suites pass, no report
-  points at the component), the property and model tests, and the Rust
-  soundness review. The report is
-  [`design/COMPONENT_005_AUDIT.md`](design/COMPONENT_005_AUDIT.md).
+  (16/16), the mutation testing, the KASAN+UBSAN and the KCSAN builds (the
+  audited suites pass inside them, with no report pointing at the component),
+  the property and contract-model tests, and the Rust soundness review. The
+  report is [`design/COMPONENT_005_AUDIT.md`](design/COMPONENT_005_AUDIT.md).
+* Independent audit: the component was audited by FVS-AUDIT-001, which found
+  no defect in the port but found that the evidence of the self-audit was
+  weaker than it read (the randomised tests never reached the boundary
+  states, the "model" was a transliteration of the implementation, the
+  warning path was never compared, and the failure path of the lock helpers
+  was declared untestable). The audit's test suites are now part of the tree,
+  the findings are disposed of in §12 of the audit report, and the pull
+  request stays open until the gate has been re-run on the revision that
+  answers them.
 * State: **migrated** — the clean cycle and the verification gate both
   passed.
 

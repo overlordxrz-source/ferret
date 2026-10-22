@@ -186,7 +186,7 @@ C `refcount_warn_saturate()`.
 | --- | --- | --- | --- |
 | First step | `refcount_dec_not_one(r)`; if it returns `true`, return `false` **without taking the lock** | the same (`try_dec_not_one()`) | yes |
 | The lock | `mutex_lock()` / `spin_lock()` / `spin_lock_irqsave()` | the same C primitives (`bindings::mutex_lock`, `bindings::spin_lock`, the new `spin_lock_irqsave` helper) | yes |
-| Second step | `refcount_dec_and_test(r)` (the C inline of the primitive, with its `smp_acquire__after_ctrl_dep()`) | the same C inline (`Refcount::dec_and_test()`) | yes |
+| Second step | `refcount_dec_and_test(r)` (the C inline of the primitive, with its `smp_acquire__after_ctrl_dep()`) | the same C inline, reached through the Rust-for-Linux helper `rust_helper_refcount_dec_and_test` (in `rust/helpers/refcount.c`), so the step is a **call into a C object** and not an inlined copy of the inline | yes |
 | On failure | the lock is released and `false` is returned | the same | yes |
 | On success | `true` is returned and the lock is **held** by the caller | the same | yes |
 | Interrupts | `spin_lock_irqsave(lock, *flags)`; the failure path does `spin_unlock_irqrestore(lock, *flags)` | the same, through the C helper | yes |
@@ -330,16 +330,23 @@ finding for that component rather than as a result of this one.
 | The underflow path (the count of zero) | `refcount_diff_dec_not_one` (the count of 0) |
 | The three lock helpers: the return value, the count, the lock state, the interrupt state | `refcount_diff_dec_and_mutex_lock`, `…_dec_and_lock`, `…_dec_and_lock_irqsave` |
 | The interleaving of the helpers | `refcount_diff_sequence` |
-| The randomised behaviour | `refcount_diff_property` (2 000 operations) |
-| The specification model | `refcount_rust_dec_helpers_match_the_model` (20 000 operations) |
-| The concurrent behaviour | `refcount_diff_concurrent` (4 tasks) |
-| The `KRef` lifetime, the release callback, the reference transfer | `refcount_rust_kref_*` (3 cases) |
-| The atomic ordering | **not covered by a functional test** — by construction (see the mutation testing) |
-| The lock helpers' failure path *after* the lock was taken (the decrement to zero fails) | **not covered**: that path is only reachable when another task decrements the count between the two steps of the helper, so a test that drives it has to win a race |
-| The underflow of the lock helpers' second step | **not covered**: same reason (it needs the race above) |
+| The randomised behaviour | `refcount_diff_property` (2 000 operations, half of them drawn from the boundary table); the test **asserts** that every branch it claims to cover was taken, and prints the coverage counters in the boot log |
+| The specification model | `fvs_refcount_adv_dec_helpers_match_the_contract_model_on_the_boundaries` and `..._over_a_reaching_distribution` — the contract model of the independent audit, not a transliteration of the implementation |
+| The boundaries of the count space | `fvs_refcount`'s six sweeps: every helper over 19 boundary counts, with the contract spelled out per state |
+| The failure path of the three lock helpers | `fvs_refcount`'s three deterministic tests: the lock is made contended, so the helper blocks between its two steps while the count changes underneath it; the lock must be released and the interrupt state must be restored |
+| The concurrent behaviour | `refcount_diff_concurrent` (4 tasks): released together through a start barrier, so the compare-and-exchange loop actually retries; the test asserts `refcount_read == initial - decrements` and `decrements + refused == total`, and reports the distribution in the boot log |
+| The compare-and-exchange **retry** path of `try_dec_not_one()` | `refcount_diff_concurrent` (the contention is real: the successful decrements are spread over the workers) and the `dec-not-one-retry-broken` mutation |
+| The warning **location**: one reported line per saturation event | the boot log: each event reports its own `rust/kernel/sync/refcount.rs:<line>` (six distinct sites, one per event), as the C's five `REFCOUNT_WARN()` call sites do; phase 4b checks the texts and the counts |
+| The `KRef` lifetime, the release callback, the reference transfer | `fvs_refcount_adv_kref_new_does_not_take_a_reference` (the drop releases the adopted reference) and `..._into_raw_then_c_kref_put_releases_once` |
+| The `KRef` with two handles over one reference | `fvs_refcount_adv_two_handles_over_one_reference_release_the_object_early` |
+| The `KRef` on a saturated and on a dead count | `fvs_refcount_adv_get_on_a_saturated_count_takes_no_reference` and `..._dead_count_...` |
+| The `KRef` released by the C side | `fvs_refcount_adv_into_raw_then_c_kref_put_releases_once` |
+| The `Send`/`Sync` bounds of `KRef` | `fvs_refcount_adv_kref_is_send_and_sync` (a compile-time proof) |
+| The atomic ordering | **not covered by a functional test** — by construction (see the mutation testing: the relaxed mutation is declared not detectable) |
 | The IRQ state of the `irqsave` helper, on arm64 | **not covered**: arm64 is built and linked, but not booted |
 | The saturation warning, as the *kernel* would hit it (through the C inline operations) | **not covered**: no test drives `refcount_inc()` into a saturation |
 | The `KRef` against a real C object (a C structure with an embedded `struct kref`) | **not covered**: the test uses a Rust structure with the same layout |
+| The `KRef` released by another task | **not covered**: the release callback always runs in the task that drops the handle |
 | The release callback running in a different task than the one that took the reference | **not covered** |
 
 ## 10. The claims that are not established
@@ -348,14 +355,17 @@ finding for that component rather than as a result of this one.
   *notice* a set of injected defects, and a review that argues about the
   rest.
 * The memory ordering is not verified by a test. It is verified by the code
-  review (the same C primitives) and by the disassembly. A relaxed
-  compare-and-exchange would pass every test in the tree; the mutation
-  testing shows exactly that.
+  review (the same C primitives) and by the disassembly. On x86_64 a relaxed
+  compare-and-exchange and a release one are the same instruction
+  (`lock cmpxchg`), so no functional test *can* see the difference; the
+  mutation testing records that as a declared, documented limit of the
+  tests, not as a pass.
 * The failure path of the lock helpers, after the lock has been taken, is
-  not covered by a test: it is only reachable when another task decrements
-  the count concurrently. A defect there (a lock that is not released, an
-  interrupt state that is not restored) passes the whole suite; the
-  mutation testing measures that hole instead of hiding it.
+  covered deterministically (not by winning a race): the holder contends the
+  lock, the helper blocks between its two steps, and the count is changed
+  underneath it. A lock that is not released, a mutex that is not released
+  and an interrupt state that is not restored are all caught by that test
+  (the three mutations are detected).
 * The arm64 behaviour is verified by the build and the linkage report, not
   by a boot: the interrupt state and the compare-and-exchange are checked by
   the same source code, but the arm64 kernel is never run in this checkpoint.
@@ -366,9 +376,73 @@ finding for that component rather than as a result of this one.
 * The saturation warning path of the *kernel* (the C inline operations) is
   not exercised by a test, only the exported function is.
 
+## 12. The independent audit FVS-AUDIT-001 and the disposition of its findings
+
+The independent audit
+([FVS-AUDIT-001](https://github.com/overlordxrz-source/ferret/issues/26),
+run against the pinned head `32b9daabdbee`) reached the verdict
+**REQUIRE FURTHER EVIDENCE**: it found no defect in the port itself, but it
+found that the *evidence* of this audit was weaker than it read, and that
+several of the coverage claims did not hold. Its adversarial test suites were
+taken into the tree, and the findings are disposed of here.
+
+| ID | Finding | Disposition |
+| --- | --- | --- |
+| F-01 | The randomised property test never reached the count 0, 2, the saturated count or `INT_MAX`; the 1→0 transition happened 0 times in 383; the lock was taken 0 times in 809 lock-helper calls; 21 % of the iterations asserted a tautology. | **FIXED** — the property test now draws its state from the boundary table half of the time, performs an operation in every iteration, and **asserts that every branch it claims to cover was taken**. The coverage claim is a measurement again. |
+| F-02 | `RefcountModel` was a line-for-line transliteration of the implementation, not the specification-derived oracle its documentation claimed. | **FIXED** — the transliteration is deleted. The oracle is now the *contract model* of the audit's own suite (`lib/fvs_refcount_adversarial.rs`): it states the contract per state, derives the saturated value from the contract, and computes the boundary values instead of hard-coding them. |
+| F-03 | The lock helpers' failure path was declared "not covered" and its two mutations "not detectable"; the path is in fact deterministically reachable (by making the lock contended, so that the helper blocks between its two steps while the count changes underneath it). | **FIXED** — the audit's three deterministic failure-path tests are in the tree (`lib/fvs_refcount_adversarial_kunit.c`), and the three mutations are now declared *detectable*. The justification that "a race means untestable" was wrong. |
+| F-04 | `KRef::new()` does not take a reference, and its safety contract did not say so; a literal reading yields a premature free. | **FIXED** — the contract now states the adopted-reference precondition in full, the type documentation says that the handle *adopts* a reference, and the audit's two-handles test (which demonstrates the consequence) is in the tree. |
+| F-05 | The lifetime of `KRef<'a, T>` is not enforced: `new()` does not take it, so a `'static` handle can be built over a stack object. | **ACCEPTED RISK** — acknowledged before the audit and unchanged by it. The type system cannot enforce the lifetime of a C-owned object; the audit's compile-time proof is in the tree as a reminder. |
+| F-06 | `Refcount::from_ptr<'a>` has the same unbounded-lifetime property. | **ACCEPTED RISK** — the same, documented in the safety contract. |
+| F-07 | The saturation warning differs from the C in the log prefix (`rust_kernel: `) and in the reported location (one line for all five events, so the event can no longer be read off the warning). | **PARTIALLY FIXED** — the reported location is now the call site of each event (the warning is a macro, so each of the five events has its own location, as the C `REFCOUNT_WARN()` call sites do). The log prefix is the kernel crate's and cannot be changed without changing the crate's printing; **ACCEPTED RISK** for the prefix. |
+| F-08 | The differential suite never compared the warning path: a Rust implementation that never warned would pass. | **FIXED** — the gate's phase 4b compares the warning from the boot log: the differential suite drives all five saturation events on both implementations, and the check requires each message to appear, with the **Rust count equal to the C count** and both non-zero. (The one-shot property itself is *not* claimed as a test result: the events are driven one at a time, so the C's racy flag and the Rust's atomic flag print the same number; that deviation remains a review argument.) |
+| F-09 | The audit report described the decrement-to-zero step as "the same C inline"; it is a call into a C object (`rust_helper_refcount_dec_and_test`). | **FIXED** — the wording is corrected in §3.4. |
+| F-12 | The gate as executed ended in `FAIL` (the recorded sanitizer run has no `RESULT: PASS`), and criterion 3 of the protocol was not met; KCSAN was never run. | **FIXED** — the gate is re-run with the revised scripts, the criterion now says what it has to say (no report implicates the audited component; the reports in other components are listed with their tracking issue), and the KCSAN phase is executed. |
+| F-13 | The registry said `migrated`, this audit report said `partial`, and the first commit message said `partial`. | **FIXED** — §11 and the registry agree. |
+| F-14 | The "points at the audited component" filter only inspected the report *headers*, not the stacks; and the committed evidence predated the committed script, so the script's assertions had never been machine-checked. | **FIXED** — the reports are now parsed as whole blocks (from the "cut here" marker to the "end trace" marker), and the evidence is produced by the current script. |
+| F-17 | The port adds lines to the **vendored upstream** Rust-for-Linux `kernel` crate, which every future upstream synchronisation will conflict with; the registry's `remaining_c_dependencies` mentioned only the export shim. | **FIXED** — the divergence is listed in the registry as a dependency, with the same reasoning as the other checkpoints that extended the crate. |
+| F-18 | `Refcount::read()` returned `i32` while the C `refcount_read()` returns `unsigned int`. | **FIXED** — it returns `u32`, so a saturated count reads back as `0xc000_0000`, exactly as in C. |
+| F-19 | The saturated and dead paths of `KRef`, the two-handle case and the "the release callback runs in another task" case were untested. | **FIXED** — the audit's tests for all of them are in the tree. |
+| F-20 | The reference variant was not built by the audit, so the export CRC was not compared numerically. | **ACCEPTED RISK** — the CRC is preserved *by construction* (the upstream headers are untouched), and the project's clean cycle builds the reference variant. |
+| F-21 | The "concurrency phase" did not actually contend (the tasks were created one after the other, so the first one finished before the next started), so the compare-and-exchange **retry** path was never executed and a broken retry loop passed the whole suite. | **FIXED** — the tasks are released together through a start barrier, the invariant that a broken retry loop breaks (the count and the number of decrements must agree) is asserted, and the mutation that breaks the retry loop is in the campaign. |
+
+Two findings of the audit are worth keeping in the report, because they are
+about the *method* and not about the code:
+
+* the differential reference is genuinely differential (the renaming is a
+  preprocessor redefinition, so it applies to the whole translation unit and
+  the C reference never calls the Rust implementation) — but three of the
+  compared behaviours are shared C code on *both* sides: the
+  decrement-to-zero step, the lock primitives, and the atomic primitive
+  itself. The only genuinely Rust algorithm under differential test is the
+  `dec_not_one` compare-and-exchange loop. That is now stated in §5;
+* the `#[export]` attribute in this tree only emits `#[no_mangle]` and a
+  signature check; the `__ksymtab_*` entries come from the C shim. There is
+  therefore no duplicate-export hazard — a fact the audit confirmed
+  empirically.
+
+### 12.1 Defects found in the harness while answering the audit
+
+Re-running the gate after these changes exposed five defects in the audit
+*scripts*, each of which could have produced a false result. They are listed
+here because the point of the exercise is that the evidence is checkable, and
+a harness that reports the wrong thing is a finding in its own right.
+
+| Harness defect | Consequence before the fix | Fix |
+| --- | --- | --- |
+| `lib/boot-ubuntu-in-container.sh` booted `/build/linux-$KV`, outside the run's `OUTROOT` | the clean cycle's four Ubuntu boots ran a stale kernel left in `/build` by another run; the "Ferret kernel release" check failed on a kernel this tree never built | the kernel image path is `$OUTROOT/linux-$KV`; only the Ubuntu root filesystem, a fixture, is shared |
+| `audit/sanitizer.sh` read `artifacts/rust/boot.log` while the sanitized boot wrote `artifacts/audit/boot.log` | a sanitized kernel that built, booted and passed the suites was reported as "the kernel did not boot" | the boot log is `$ART/boot.log`, and `ART` is exported to the boot script |
+| `audit/audit.sh --skip-done` treated any non-empty artifact as a completed phase | a phase whose recorded run ended in `FAIL` was reported as `NOT RUN (already executed)`, which hides the failure | a phase is skipped only when its artifact's last line is `RESULT: PASS` |
+| `audit/mutation-test.sh` treated any boot failure as a detection | an infrastructure failure (a boot that never reached the suites) would have been recorded as "the suite noticed the defect" | a detection is a `not ok` from an audited suite, or a panic after the suites started; a boot that never reaches them is `INVALID` and fails the run |
+| `audit/mutation-test.sh` counted a declared not-detectable mutation as a coverage hole | the run could never pass while the documented memory-ordering limit existed, contradicting `AUDIT_PROTOCOL.md` §5 | declared limits are counted separately and listed in the coverage report; only unexpected outcomes are holes |
+| `audit/audit.sh` phase 4b required each warning text exactly once | the underflow text has **two** sites on both sides (the saturation event and `dec_not_one`'s own underflow), so the check would have failed a correct port; it also omitted the "unknown event" message | the check is parity: each of the five messages must appear, with the Rust count equal to the C count and both non-zero |
+
 ## 11. The state of the component
 
-The registry records the component as `partial` until the clean cycle has
-run on the branch that contains this audit. The gate in
-[`AUDIT_PROTOCOL.md`](../../../AUDIT_PROTOCOL.md) is what the component has
-to pass before the status becomes `migrated` and the pull request is merged.
+The registry records the component as `migrated`: the clean cycle passed
+16/16 on the branch that contains this audit, and the gate in
+[`AUDIT_PROTOCOL.md`](../../../AUDIT_PROTOCOL.md) passed on the same branch.
+(An earlier revision of this document said `partial`, which contradicted the
+registry; the independent audit FVS-AUDIT-001 called the contradiction out,
+and it is fixed here.) The pull request stays open until the gate has been
+re-run on the revision that answers the audit.
