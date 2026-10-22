@@ -133,7 +133,7 @@ if ! prov_check "$ART/boot-provenance.txt" >>"$LOG" 2>&1; then
 	exit 1
 fi
 built_image=$(prov_field "$prov_line" image)
-booted_image=$(prov_field "$(grep -a '^booted-image: ' "$ART/boot-provenance.txt" | tail -1)" booted-image)
+booted_image=$(sed -n 's/^booted-image: //p' "$ART/boot-provenance.txt" | tail -1)
 if [ "$built_image" != "$booted_image" ] || [ -z "$built_image" ]; then
 	say "FAIL  the booted image ($booted_image) is not the one this run built ($built_image)"
 	exit 1
