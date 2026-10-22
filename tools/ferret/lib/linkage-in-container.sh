@@ -17,7 +17,9 @@ x86_64) ARCH_SUFFIX= ;;
 *) ARCH_SUFFIX="-$ARCH" ;;
 esac
 OUT=$OUTROOT/linux-$VARIANT$ARCH_SUFFIX
-ART=/mnt/projects/ferret/artifacts/$VARIANT$ARCH_SUFFIX
+# The artefact directory can be overridden so that two runs (a developer
+# and an independent auditor, say) do not write into the same tree.
+ART=${ART:-/mnt/projects/ferret/artifacts/$VARIANT$ARCH_SUFFIX}
 LOG=$ART/linkage.txt
 VMLINUX=$OUT/vmlinux
 TMP=$(mktemp -d)

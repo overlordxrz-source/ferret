@@ -58,6 +58,11 @@ refcount_reports=$(grep -aE 'UBSAN:|KASAN:|runtime error:|KCSAN:' "$BLOG" |
 
 say ""
 say "== sanitizer report summary ($NAME)"
+if ! grep -qa 'Linux version' "$BLOG"; then
+	say "FAIL  the kernel did not boot: the boot log has no kernel output"
+	say "      (a boot that did not run has no sanitizer report either)"
+	exit 1
+fi
 if [ -n "$reports" ]; then
 	say "NOTE  the sanitizer reported something in this kernel:"
 	printf '%s\n' "$reports" | sed 's/^/      /' | tee -a "$LOG"
