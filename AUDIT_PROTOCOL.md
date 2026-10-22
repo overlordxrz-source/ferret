@@ -63,6 +63,23 @@ git log -1 --format='%H %s'          # record the audited commit
 * No state from the developer's machine may be used: the protocol uses a
   fresh output tree (`OUTROOT`) and a fresh worktree for the mutations.
 
+**The auditor must use its own output tree and its own artefact directory.**
+The container is shared: a developer who is building at the same time writes
+into the same `/build/linux-rust` tree and into the same `artifacts/`
+directory, and the two runs then overwrite each other's objects, logs and
+evidence. Both the build tree and the artefact directory can be redirected:
+
+```sh
+OUTROOT=/build/audit ART=/mnt/projects/ferret/artifacts/audit \
+	tools/ferret/build.sh rust
+```
+
+A run that shares the output tree with another run is not a valid audit: the
+build may pick up the other run's objects, and the evidence it produces may
+belong to a different kernel. This is not a theoretical hazard: it happened
+during the development of this protocol, and it is recorded in
+`docs/ferret/design/ISSUE_025_KFIFO_UBSAN.md` §8.
+
 The host helpers do the container plumbing:
 
 ```sh

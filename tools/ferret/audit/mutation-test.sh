@@ -286,6 +286,13 @@ say "coverage holes: $holes"
 if [ "${MUTATION_BUILD:-0}" != "1" ]; then
 	say ""
 	say "==> restoring the pristine build tree"
+	# The rsync preserves the modification times, so the restored files
+	# would look *older* than the objects that were built from the
+	# mutated ones, and the build system would keep those objects. Touch
+	# every file a mutation touched, so that they are rebuilt.
+	for f in rust/kernel/sync/refcount.rs lib/refcount_rust.rs; do
+		touch "$ROOT/$f"
+	done
 	"$ROOT/tools/ferret/build.sh" rust >>"$LOG" 2>&1
 	say "==> pristine build restored"
 fi

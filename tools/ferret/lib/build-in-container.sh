@@ -20,7 +20,10 @@ VARIANT=${1:?usage: build.sh <ref|rust>}
 # several hundred). .git and evidence are not needed for the build.
 SRC=$OUTROOT/src
 mkdir -p "$SRC"
-rsync -a --delete --exclude=.git/ --exclude=artifacts/ "$SRC_MOUNT/" "$SRC/"
+# --checksum: the modification times alone are not enough. A worktree (or a
+# checkout) can restore a file with an *older* time than the object that was
+# built from it, and the build system would then keep the stale object.
+rsync -a --delete --checksum --exclude=.git/ --exclude=artifacts/ "$SRC_MOUNT/" "$SRC/"
 
 case "$VARIANT" in
 ref | rust) ;;
@@ -36,7 +39,9 @@ x86_64) ARCH_SUFFIX= ;;
 esac
 OUT=$OUTROOT/linux-$VARIANT$ARCH_SUFFIX
 LOG=$OUTROOT/logs/$VARIANT$ARCH_SUFFIX
-ART=/mnt/projects/ferret/artifacts/$VARIANT$ARCH_SUFFIX
+# The artefact directory can be overridden so that two runs (a developer
+# and an independent auditor, say) do not write into the same tree.
+ART=${ART:-/mnt/projects/ferret/artifacts/$VARIANT$ARCH_SUFFIX}
 mkdir -p "$LOG" "$ART"
 
 if [ "${CLEAN:-0}" = "1" ]; then
