@@ -146,6 +146,18 @@ fi
 # A failure of another component's suite is an external finding: it is
 # reported, and it does not make the audited component fail. A failure of the
 # audited component's own suites is a failure of this gate.
+# Did the suite <suite> pass in the boot log? The verdict line of a suite is
+# "ok <n> <suite>"; a failing suite prints "not ok <n> <suite>". The whole
+# line has to be looked at, because "ok 17 refcount_diff" is contained in
+# "not ok 17 refcount_diff".
+suite_passed() { # <log> <suite>
+	[ -s "$1" ] || return 1
+	awk -v suite="$2" '
+		$0 ~ ("ok [0-9]+ " suite "[[:space:]]*$") &&
+		$0 !~ ("not ok [0-9]+ " suite "[[:space:]]*$") { found = 1 }
+		END { exit !found }' "$1"
+}
+
 phase_boot() {
 	phase "phase 4: boot with the KUnit suites"
 	if "$ROOT/tools/ferret/boot.sh" rust >>"$LOG" 2>&1; then
@@ -153,8 +165,16 @@ phase_boot() {
 		return 0
 	fi
 
-	if grep -qaE 'ok [0-9]+ (refcount_diff|refcount_rust|fvs_refcount)' \
-		"$ROOT/artifacts/rust/boot.log" 2>/dev/null; then
+	# The verdict line of a suite is "ok <n> <suite>", a failing suite prints
+	# "not ok <n> <suite>". The whole line has to be looked at: the string
+	# "ok 17 refcount_diff" is contained in "not ok 17 refcount_diff".
+	local audited_ok=1 suite
+	for suite in refcount_rust refcount_diff fvs_refcount fvs_refcount_adv; do
+		if ! suite_passed "$ROOT/artifacts/rust/boot.log" "$suite"; then
+			audited_ok=0
+		fi
+	done
+	if [ "$audited_ok" -eq 1 ] && [ -s "$ROOT/artifacts/rust/boot.log" ]; then
 		say "NOTE  phase 4: the boot failed, but the audited suites passed:"
 		grep -aE 'not ok [0-9]+ ' "$ROOT/artifacts/rust/boot.log" |
 			sed 's/^/      /' | tee -a "$LOG"

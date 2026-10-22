@@ -34,9 +34,9 @@ promise and a race in the concurrency test) are fixed.
 | arm64 build | PASS | the arm64 Ferret kernel builds and the arm64 linkage report is green |
 | Clean cycle | PASS | 16/16 steps, exit status 0 (x86_64 and arm64 builds, the linkage checks, the KUnit suites, the four Ubuntu boots) |
 | Independent-verification gate | PASS | the gate is defined in [`AUDIT_PROTOCOL.md`](../../AUDIT_PROTOCOL.md); the report is [`design/COMPONENT_005_AUDIT.md`](design/COMPONENT_005_AUDIT.md) |
-| Mutation testing | PASS | nine mutations detected, one declared not detectable (the memory ordering, which no functional test can observe) |
-| KASAN + UBSAN | PASS | the audited suites pass inside a sanitized kernel, with no report pointing at the audited component |
-| KCSAN | **NOT RUN** | the build and the boot of a KCSAN kernel do not fit in the checkpoint's time budget |
+| Mutation testing | PASS | 10 mutations: 9 detected, 1 declared not detectable (the memory ordering, which no functional test can observe), 0 coverage holes, 0 invalid runs |
+| KASAN + UBSAN | PASS | the audited suites pass inside a kernel with `CONFIG_KASAN{,_GENERIC,_INLINE}` and `CONFIG_UBSAN{,_BOUNDS,_SHIFT}`; no report implicates the component and there is no external report; the 14 WARN splats are the warning-path tests (7 Rust, 7 C) |
+| KCSAN | PASS | `CONFIG_KCSAN=y` and `CONFIG_KCSAN_EARLY_ENABLE=y`; the audited suites pass inside the sanitized kernel, no data-race report implicates the component and there is no external report |
 | Native performance | NOT TESTED | the host has no KVM; all measurements would be QEMU TCG |
 
 What the port covers:
@@ -373,7 +373,8 @@ The defect was in the harness, not in the kernel: the symbols were exported as
 * Physical hardware boot — everything runs under QEMU.
 * Loadable-module Rust components (`CONFIG_CRC16=m` / `CONFIG_CRC_CCITT=m` are
   still the C implementation).
-* LTP, kselftests, sanitizer (KASAN/KCSAN/UBSAN) and lockdep boots.
+* LTP, kselftests and lockdep boots. (The KASAN+UBSAN and the KCSAN boots
+  *were* run for this component; the suites pass inside them, see §5.)
 * Container runtimes, musl userspace, 32-bit compat.
 * Ubuntu networking end-to-end, storage beyond one virtio disk, graphical
   desktop, suspend/resume.

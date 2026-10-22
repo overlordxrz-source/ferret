@@ -1014,6 +1014,13 @@
           "evidence": "artifacts/audit/sanitizer-kasan-ubsan.txt"
         },
         {
+          "name": "kunit-refcount-under-kcsan",
+          "kind": "sanitizer-kunit",
+          "config": "CONFIG_KCSAN",
+          "result": "PASS",
+          "evidence": "artifacts/audit/sanitizer-kcsan.txt"
+        },
+        {
           "name": "mutation-testing",
           "kind": "mutation-testing",
           "result": "PASS",
@@ -1044,14 +1051,14 @@
         "The C WARN_ONCE() uses a racy flag and may print the same warning twice; the Rust version uses an atomic compare-and-exchange and prints it exactly once. The message text is unchanged. The log prefix of the Rust's message is the kernel crate's, so the two messages are not byte-identical in the log.",
         "The memory ordering is not verified by a test: a relaxed compare-and-exchange produces the same results and passes the whole suite. The mitigation is the disassembly review and the code review; the mutation campaign measures the hole instead of hiding it.",
         "The failure path of the lock helpers, after the lock has been taken, is covered by the deterministic tests of the independent audit (the lock is made contended, so the helper blocks between its two steps while the count changes underneath it). It is not covered by the project's own differential suite.",
-        "kernel::sync::KRef cannot make the lifetime of a C-owned object safe: the object must be alive for the lifetime of the handle, and the accesses through the raw pointer are the caller's responsibility. The handle adopts a reference that the caller must already hold; the safety contract says so. The soundness review is in docs/ferret/design/COMPONENT_005_AUDIT.md.",
-        "The lifetime of KRef and of Refcount::from_ptr() is chosen by the caller and is not enforced by the type system. This is an accepted risk, acknowledged before the independent audit."
+        "The lifetime of KRef and of Refcount::from_ptr() is chosen by the caller and is not enforced by the type system. This is an accepted risk, acknowledged before the independent audit.",
+        "kernel::sync::KRef::new() adopts a reference that the caller must already hold; the handle releases exactly one reference when it is dropped, so a caller that does not hold one releases the object one reference too early. The precondition is in the safety documentation of the constructor and is covered by the audit's test (fvs_refcount_adv_kref_new_does_not_take_a_reference)."
       ],
       "unsafe_boundaries": [
         "The exported functions take the caller's refcount_t pointer; the Rust code borrows it and never frees or reallocates it.",
         "The lock helpers take the caller's lock pointer and leave the lock held on success, exactly as the C original does; the caller is responsible for releasing it.",
         "The decrement-if-not-one helper reproduces the C loop, including the refusal to decrement a count of one and the underflow warning that returns true without decrementing.",
-        "kernel::sync::KRef holds a unique borrow of the C object (PhantomData<&'a mut T>) and a raw pointer to the object; the release callback is the one the C code would pass to kref_put()."
+        "kernel::sync::KRef holds a raw pointer to the C object and a plain lifetime marker (PhantomData<&'a ()>); the marker deliberately does not promise exclusive or shared access, because the C code may hold other references to the same object and the object is reached through a raw pointer, so the borrow checker could not enforce such a promise anyway. Send and Sync are stated explicitly and separately. The release callback is the one the C code would pass to kref_put()."
       ],
       "remaining_c_dependencies": [
         {
@@ -1063,7 +1070,7 @@
       "investigation": {
         "document": "docs/ferret/design/COMPONENT_005_INVESTIGATION.md",
         "audit": "docs/ferret/design/COMPONENT_005_AUDIT.md",
-        "verdict": "implemented in checkpoint 005; audited by the independent audit FVS-AUDIT-001 and re-verified against its findings; the clean cycle passed 16/16",
+        "verdict": "implemented in checkpoint 005; audited by the independent audit FVS-AUDIT-001 and re-verified against its findings, whose adversarial test suites are part of the tree; the mutation campaign detects 9 of 10 mutations (the 10th, the memory ordering, is a declared limit), the KASAN+UBSAN and KCSAN kernels run the audited suites without a report, and the clean cycle passes 16/16",
         "prerequisites": "the borrowed refcount view, the saturation-aware operations and the KRef handle in the kernel crate, all added in this checkpoint"
       }
     }

@@ -1,0 +1,1378 @@
+c[?7l[2J[0mSeaBIOS (version 1.16.3-debian-1.16.3-2)
+
+
+iPXE (https://ipxe.org) 00:03.0 CA00 PCI2.10 PnP PMM+7EFCAE00+7EF0AE00 CA00
+Press Ctrl-B to configure iPXE (PCI 00:03.0)...                                                                               
+
+
+Booting from ROM...
+c[?7l[2J[    0.000000] Linux version 6.18.57-ferret-rust (root@3ea769cb049c) (Ubuntu clang version 18.1.3 (1ubuntu1), Ubuntu LLD 18.1.3) #20 SMP PREEMPT_DYNAMIC Thu Oct 22 06:36:49 UTC 2026
+[    0.000000] Command line: console=ttyS0 panic=-1 loglevel=7 rdinit=/init
+[    0.000000] BIOS-provided physical RAM map:
+[    0.000000] BIOS-e820: [mem 0x0000000000000000-0x000000000009fbff] usable
+[    0.000000] BIOS-e820: [mem 0x000000000009fc00-0x000000000009ffff] reserved
+[    0.000000] BIOS-e820: [mem 0x00000000000f0000-0x00000000000fffff] reserved
+[    0.000000] BIOS-e820: [mem 0x0000000000100000-0x000000007ffdffff] usable
+[    0.000000] BIOS-e820: [mem 0x000000007ffe0000-0x000000007fffffff] reserved
+[    0.000000] BIOS-e820: [mem 0x00000000fffc0000-0x00000000ffffffff] reserved
+[    0.000000] BIOS-e820: [mem 0x000000fd00000000-0x000000ffffffffff] reserved
+[    0.000000] NX (Execute Disable) protection: active
+[    0.000000] APIC: Static calls initialized
+[    0.000000] SMBIOS 3.0.0 present.
+[    0.000000] DMI: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.16.3-debian-1.16.3-2 04/01/2014
+[    0.000000] DMI: Memory slots populated: 1/1
+[    0.000000] tsc: Fast TSC calibration using PIT
+[    0.000000] tsc: Detected 999.998 MHz processor
+[    0.008413] last_pfn = 0x7ffe0 max_arch_pfn = 0x10000000000
+[    0.008861] MTRR map: 4 entries (3 fixed + 1 variable; max 19), built from 8 variable MTRRs
+[    0.009004] x86/PAT: Configuration [0-7]: WB  WC  UC- UC  WB  WP  UC- WT  
+[    0.019981] found SMP MP-table at [mem 0x000f5480-0x000f548f]
+[    0.021264] Using GB pages for direct mapping
+[    0.025595] RAMDISK: [mem 0x7ffdf000-0x7ffdffff]
+[    0.025896] ACPI: Early table checksum verification disabled
+[    0.026191] ACPI: RSDP 0x00000000000F52B0 000014 (v00 BOCHS )
+[    0.026487] ACPI: RSDT 0x000000007FFE1CAD 000034 (v01 BOCHS  BXPC     00000001 BXPC 00000001)
+[    0.026975] ACPI: FACP 0x000000007FFE1B59 000074 (v01 BOCHS  BXPC     00000001 BXPC 00000001)
+[    0.027405] ACPI: DSDT 0x000000007FFE0040 001B19 (v01 BOCHS  BXPC     00000001 BXPC 00000001)
+[    0.027452] ACPI: FACS 0x000000007FFE0000 000040
+[    0.027483] ACPI: APIC 0x000000007FFE1BCD 000080 (v03 BOCHS  BXPC     00000001 BXPC 00000001)
+[    0.027499] ACPI: HPET 0x000000007FFE1C4D 000038 (v01 BOCHS  BXPC     00000001 BXPC 00000001)
+[    0.027514] ACPI: WAET 0x000000007FFE1C85 000028 (v01 BOCHS  BXPC     00000001 BXPC 00000001)
+[    0.027574] ACPI: Reserving FACP table memory at [mem 0x7ffe1b59-0x7ffe1bcc]
+[    0.027591] ACPI: Reserving DSDT table memory at [mem 0x7ffe0040-0x7ffe1b58]
+[    0.027596] ACPI: Reserving FACS table memory at [mem 0x7ffe0000-0x7ffe003f]
+[    0.027601] ACPI: Reserving APIC table memory at [mem 0x7ffe1bcd-0x7ffe1c4c]
+[    0.027606] ACPI: Reserving HPET table memory at [mem 0x7ffe1c4d-0x7ffe1c84]
+[    0.027611] ACPI: Reserving WAET table memory at [mem 0x7ffe1c85-0x7ffe1cac]
+[    0.029025] No NUMA configuration found
+[    0.029036] Faking a node at [mem 0x0000000000000000-0x000000007ffdffff]
+[    0.029490] NODE_DATA(0) allocated [mem 0x7ffdb900-0x7ffdefff]
+[    0.031554] Zone ranges:
+[    0.031560]   DMA      [mem 0x0000000000001000-0x0000000000ffffff]
+[    0.031634]   DMA32    [mem 0x0000000001000000-0x000000007ffdffff]
+[    0.031641]   Normal   empty
+[    0.031652] Movable zone start for each node
+[    0.031670] Early memory node ranges
+[    0.031688]   node   0: [mem 0x0000000000001000-0x000000000009efff]
+[    0.031814]   node   0: [mem 0x0000000000100000-0x000000007ffdffff]
+[    0.031891] Initmem setup node 0 [mem 0x0000000000001000-0x000000007ffdffff]
+[    0.034449] On node 0, zone DMA: 1 pages in unavailable ranges
+[    0.034770] On node 0, zone DMA: 97 pages in unavailable ranges
+[    0.172548] On node 0, zone DMA32: 32 pages in unavailable ranges
+[    0.173083] ACPI: PM-Timer IO Port: 0x608
+[    0.173498] ACPI: LAPIC_NMI (acpi_id[0xff] dfl dfl lint[0x1])
+[    0.173813] IOAPIC[0]: apic_id 0, version 32, address 0xfec00000, GSI 0-23
+[    0.173898] ACPI: INT_SRC_OVR (bus 0 bus_irq 0 global_irq 2 dfl dfl)
+[    0.174069] ACPI: INT_SRC_OVR (bus 0 bus_irq 5 global_irq 5 high level)
+[    0.174099] ACPI: INT_SRC_OVR (bus 0 bus_irq 9 global_irq 9 high level)
+[    0.174164] ACPI: INT_SRC_OVR (bus 0 bus_irq 10 global_irq 10 high level)
+[    0.174171] ACPI: INT_SRC_OVR (bus 0 bus_irq 11 global_irq 11 high level)
+[    0.174327] ACPI: Using ACPI (MADT) for SMP configuration information
+[    0.174355] ACPI: HPET id: 0x8086a201 base: 0xfed00000
+[    0.174675] CPU topo: Max. logical packages:   1
+[    0.174683] CPU topo: Max. logical dies:       1
+[    0.174694] CPU topo: Max. dies per package:   1
+[    0.174754] CPU topo: Max. threads per core:   1
+[    0.174863] CPU topo: Num. cores per package:     2
+[    0.174873] CPU topo: Num. threads per package:   2
+[    0.174879] CPU topo: Allowing 2 present CPUs plus 0 hotplug CPUs
+[    0.175443] PM: hibernation: Registered nosave memory: [mem 0x00000000-0x00000fff]
+[    0.175465] PM: hibernation: Registered nosave memory: [mem 0x0009f000-0x000fffff]
+[    0.175557] [mem 0x80000000-0xfffbffff] available for PCI devices
+[    0.175597] Booting paravirtualized kernel on bare hardware
+[    0.175764] clocksource: refined-jiffies: mask: 0xffffffff max_cycles: 0xffffffff, max_idle_ns: 1910969940391419 ns
+[    0.186337] setup_percpu: NR_CPUS:64 nr_cpumask_bits:2 nr_cpu_ids:2 nr_node_ids:1
+[    0.191799] percpu: Embedded 52 pages/cpu s172184 r8192 d32616 u1048576
+[    0.193065] Kernel command line: console=ttyS0 panic=-1 loglevel=7 rdinit=/init
+[    0.194080] random: crng init done
+[    0.194168] printk: log buffer data + meta data: 262144 + 917504 = 1179648 bytes
+[    0.199037] Dentry cache hash table entries: 262144 (order: 9, 2097152 bytes, linear)
+[    0.203109] Inode-cache hash table entries: 131072 (order: 8, 1048576 bytes, linear)
+[    0.205336] Fallback order for Node 0: 0 
+[    0.205508] Built 1 zonelists, mobility grouping on.  Total pages: 524158
+[    0.205520] Policy zone: DMA32
+[    0.205683] mem auto-init: stack:all(zero), heap alloc:off, heap free:off
+[    0.228543] SLUB: HWalign=64, Order=0-3, MinObjects=0, CPUs=2, Nodes=1
+[    0.239573] Dynamic Preempt: voluntary
+[    0.246812] rcu: Preemptible hierarchical RCU implementation.
+[    0.246825] rcu: 	RCU event tracing is enabled.
+[    0.246851] rcu: 	RCU restricting CPUs from NR_CPUS=64 to nr_cpu_ids=2.
+[    0.247033] 	Trampoline variant of Tasks RCU enabled.
+[    0.247042] 	Tracing variant of Tasks RCU enabled.
+[    0.247111] rcu: RCU calculated value of scheduler-enlistment delay is 100 jiffies.
+[    0.247131] rcu: Adjusting geometry for rcu_fanout_leaf=16, nr_cpu_ids=2
+[    0.247945] RCU Tasks: Setting shift to 1 and lim to 1 rcu_task_cb_adjust=1 rcu_task_cpu_ids=2.
+[    0.247967] RCU Tasks Trace: Setting shift to 1 and lim to 1 rcu_task_cb_adjust=1 rcu_task_cpu_ids=2.
+[    0.264212] NR_IRQS: 4352, nr_irqs: 440, preallocated irqs: 16
+[    0.270494] rcu: srcu_init: Setting srcu_struct sizes based on contention.
+[    0.270931] clocksource: jiffies: mask: 0xffffffff max_cycles: 0xffffffff, max_idle_ns: 1911260446275000 ns
+[    0.277241] Console: colour VGA+ 80x25
+[    0.278482] printk: legacy console [ttyS0] enabled
+[    0.284999] ACPI: Core revision 20250807
+[    0.288873] clocksource: hpet: mask: 0xffffffff max_cycles: 0xffffffff, max_idle_ns: 19112604467 ns
+[    0.292188] APIC: Switch to symmetric I/O mode setup
+[    0.294988] ..TIMER: vector=0x30 apic1=0 pin1=2 apic2=-1 pin2=-1
+[    0.300205] clocksource: tsc-early: mask: 0xffffffffffffffff max_cycles: 0x1cd42a73115, max_idle_ns: 881590563823 ns
+[    0.300511] Calibrating delay loop (skipped), value calculated using timer frequency.. 1999.99 BogoMIPS (lpj=999998)
+[    0.302108] x86/cpu: User Mode Instruction Prevention (UMIP) activated
+[    0.310310] Last level iTLB entries: 4KB 0, 2MB 0, 4MB 0
+[    0.310439] Last level dTLB entries: 4KB 0, 2MB 0, 4MB 0, 1GB 0
+[    0.311542] mitigations: Enabled attack vectors: user_kernel, user_user, SMT mitigations: auto
+[    0.312120] Speculative Store Bypass: Vulnerable
+[    0.312521] Spectre V2 : Mitigation: Retpolines
+[    0.312686] Spectre V1 : Mitigation: usercopy/swapgs barriers and __user pointer sanitization
+[    0.312832] Spectre V2 : Spectre v2 / SpectreRSB: Filling RSB on context switch and VMEXIT
+[    0.317504] x86/fpu: Supporting XSAVE feature 0x001: 'x87 floating point registers'
+[    0.319578] x86/fpu: Supporting XSAVE feature 0x002: 'SSE registers'
+[    0.319654] x86/fpu: Supporting XSAVE feature 0x004: 'AVX registers'
+[    0.319706] x86/fpu: Supporting XSAVE feature 0x008: 'MPX bounds registers'
+[    0.319760] x86/fpu: Supporting XSAVE feature 0x010: 'MPX CSR'
+[    0.319832] x86/fpu: Supporting XSAVE feature 0x200: 'Protection Keys User registers'
+[    0.320005] x86/fpu: xstate_offset[2]:  576, xstate_sizes[2]:  256
+[    0.320431] x86/fpu: xstate_offset[3]:  960, xstate_sizes[3]:   64
+[    0.320485] x86/fpu: xstate_offset[4]: 1024, xstate_sizes[4]:   64
+[    0.320551] x86/fpu: xstate_offset[9]: 2688, xstate_sizes[9]:    8
+[    0.320612] x86/fpu: Enabled xstate features 0x21f, context size is 2696 bytes, using 'standard' format.
+[    0.475651] Freeing SMP alternatives memory: 60K
+[    0.477197] pid_max: default: 32768 minimum: 301
+[    0.493402] LSM: initializing lsm=capability,selinux
+[    0.498543] SELinux:  Initializing.
+[    0.508779] Mount-cache hash table entries: 4096 (order: 3, 32768 bytes, linear)
+[    0.509317] Mountpoint-cache hash table entries: 4096 (order: 3, 32768 bytes, linear)
+[    0.671361] smpboot: CPU0: AMD QEMU TCG CPU version 2.5+ (family: 0x6, model: 0x6, stepping: 0x3)
+[    0.690707] Performance Events: PMU not available due to virtualization, using software events only.
+[    0.694864] signal: max sigframe size: 3632
+[    0.697836] rcu: Hierarchical SRCU implementation.
+[    0.697991] rcu: 	Max phase no-delay instances is 400.
+[    0.700060] Timer migration: 1 hierarchy levels; 8 children per group; 1 crossnode level
+[    0.707143] smp: Bringing up secondary CPUs ...
+[    0.720247] smpboot: x86: Booting SMP configuration:
+[    0.720421] .... node  #0, CPUs:      #1
+[    0.020507] calibrate_delay_direct() dropping min bogoMips estimate 2 = 965812
+[    0.020507] calibrate_delay_direct() dropping min bogoMips estimate 0 = 1016458
+[    0.020507] calibrate_delay_direct() dropping min bogoMips estimate 3 = 1054737
+[    0.815933] smp: Brought up 1 node, 2 CPUs
+[    0.816445] smpboot: Total of 2 processors activated (4393.12 BogoMIPS)
+[    0.828913] Memory: 2011948K/2096632K available (19881K kernel code, 2793K rwdata, 8492K rodata, 2916K init, 884K bss, 80992K reserved, 0K cma-reserved)
+[    0.844201] devtmpfs: initialized
+[    0.859736] posixtimers hash table entries: 1024 (order: 2, 16384 bytes, linear)
+[    0.859736] futex hash table entries: 512 (32768 bytes on 1 NUMA nodes, total 32 KiB, linear).
+[    0.867558] PM: RTC time: 06:37:03, date: 2026-10-22
+[    0.874451] NET: Registered PF_NETLINK/PF_ROUTE protocol family
+[    0.878407] audit: initializing netlink subsys (disabled)
+[    0.882433] audit: type=2000 audit(1792651023.591:1): state=initialized audit_enabled=0 res=1
+[    0.887707] thermal_sys: Registered thermal governor 'step_wise'
+[    0.888517] cpuidle: using governor menu
+[    0.893361] PCI: Using configuration type 1 for base access
+[    0.893910] mtrr: your CPUs had inconsistent fixed MTRR settings
+[    0.894112] mtrr: your CPUs had inconsistent variable MTRR settings
+[    0.894485] mtrr: your CPUs had inconsistent MTRRdefType settings
+[    0.894589] mtrr: probably your BIOS does not setup all CPUs.
+[    0.894704] mtrr: corrected configuration.
+[    0.896524] kprobes: kprobe jump-optimization is enabled. All kprobes are optimized if possible.
+[    0.902231] HugeTLB: registered 2.00 MiB page size, pre-allocated 0 pages
+[    0.902372] HugeTLB: 28 KiB vmemmap can be freed for a 2.00 MiB page
+[    0.913827] ACPI: Added _OSI(Module Device)
+[    0.914004] ACPI: Added _OSI(Processor Device)
+[    0.914082] ACPI: Added _OSI(Processor Aggregator Device)
+[    0.942901] ACPI: 1 ACPI AML tables successfully acquired and loaded
+[    0.967273] ACPI: Interpreter enabled
+[    0.967762] ACPI: PM: (supports S0 S3 S4 S5)
+[    0.968408] ACPI: Using IOAPIC for interrupt routing
+[    0.969154] PCI: Using host bridge windows from ACPI; if necessary, use "pci=nocrs" and report a bug
+[    0.969301] PCI: Using E820 reservations for host bridge windows
+[    0.970431] ACPI: Enabled 2 GPEs in block 00 to 0F
+[    1.020073] ACPI: PCI Root Bridge [PCI0] (domain 0000 [bus 00-ff])
+[    1.020361] acpi PNP0A03:00: _OSC: OS supports [ASPM ClockPM Segments MSI HPX-Type3]
+[    1.020691] acpi PNP0A03:00: _OSC: not requesting OS control; OS requires [ExtendedConfig ASPM ClockPM MSI]
+[    1.021582] acpi PNP0A03:00: fail to add MMCONFIG information, can't access extended configuration space under this bridge
+[    1.025513] PCI host bridge to bus 0000:00
+[    1.025833] pci_bus 0000:00: root bus resource [io  0x0000-0x0cf7 window]
+[    1.026053] pci_bus 0000:00: root bus resource [io  0x0d00-0xffff window]
+[    1.026139] pci_bus 0000:00: root bus resource [mem 0x000a0000-0x000bffff window]
+[    1.026361] pci_bus 0000:00: root bus resource [mem 0x80000000-0xfebfffff window]
+[    1.026361] pci_bus 0000:00: root bus resource [mem 0x100000000-0x17fffffff window]
+[    1.026361] pci_bus 0000:00: root bus resource [bus 00-ff]
+[    1.027449] pci 0000:00:00.0: [8086:1237] type 00 class 0x060000 conventional PCI endpoint
+[    1.033007] pci 0000:00:01.0: [8086:7000] type 00 class 0x060100 conventional PCI endpoint
+[    1.034647] pci 0000:00:01.1: [8086:7010] type 00 class 0x010180 conventional PCI endpoint
+[    1.035998] pci 0000:00:01.1: BAR 4 [io  0xc040-0xc04f]
+[    1.036195] pci 0000:00:01.1: BAR 0 [io  0x01f0-0x01f7]: legacy IDE quirk
+[    1.036361] pci 0000:00:01.1: BAR 1 [io  0x03f6]: legacy IDE quirk
+[    1.036361] pci 0000:00:01.1: BAR 2 [io  0x0170-0x0177]: legacy IDE quirk
+[    1.036361] pci 0000:00:01.1: BAR 3 [io  0x0376]: legacy IDE quirk
+[    1.036943] pci 0000:00:01.3: [8086:7113] type 00 class 0x068000 conventional PCI endpoint
+[    1.037540] pci 0000:00:01.3: quirk: [io  0x0600-0x063f] claimed by PIIX4 ACPI
+[    1.037674] pci 0000:00:01.3: quirk: [io  0x0700-0x070f] claimed by PIIX4 SMB
+[    1.038603] pci 0000:00:02.0: [1234:1111] type 00 class 0x030000 conventional PCI endpoint
+[    1.040094] pci 0000:00:02.0: BAR 0 [mem 0xfd000000-0xfdffffff pref]
+[    1.040251] pci 0000:00:02.0: BAR 2 [mem 0xfebb0000-0xfebb0fff]
+[    1.040328] pci 0000:00:02.0: ROM [mem 0xfeba0000-0xfebaffff pref]
+[    1.040772] pci 0000:00:02.0: Video device with shadowed ROM at [mem 0x000c0000-0x000dffff]
+[    1.041361] pci 0000:00:03.0: [8086:100e] type 00 class 0x020000 conventional PCI endpoint
+[    1.042150] pci 0000:00:03.0: BAR 0 [mem 0xfeb80000-0xfeb9ffff]
+[    1.042265] pci 0000:00:03.0: BAR 1 [io  0xc000-0xc03f]
+[    1.042349] pci 0000:00:03.0: ROM [mem 0xfeb00000-0xfeb7ffff pref]
+[    1.052796] ACPI: PCI: Interrupt link LNKA configured for IRQ 10
+[    1.053361] ACPI: PCI: Interrupt link LNKB configured for IRQ 10
+[    1.053949] ACPI: PCI: Interrupt link LNKC configured for IRQ 11
+[    1.055112] ACPI: PCI: Interrupt link LNKD configured for IRQ 11
+[    1.055701] ACPI: PCI: Interrupt link LNKS configured for IRQ 9
+[    1.061528] iommu: Default domain type: Translated
+[    1.061670] iommu: DMA domain TLB invalidation policy: lazy mode
+[    1.067361] SCSI subsystem initialized
+[    1.070360] ACPI: bus type USB registered
+[    1.070361] usbcore: registered new interface driver usbfs
+[    1.070746] usbcore: registered new interface driver hub
+[    1.071006] usbcore: registered new device driver usb
+[    1.071723] pps_core: LinuxPPS API ver. 1 registered
+[    1.071818] pps_core: Software ver. 5.3.6 - Copyright 2005-2007 Rodolfo Giometti <giometti@linux.it>
+[    1.072003] PTP clock support registered
+[    1.074526] Advanced Linux Sound Architecture Driver Initialized.
+[    1.079427] NetLabel: Initializing
+[    1.079539] NetLabel:  domain hash size = 128
+[    1.079610] NetLabel:  protocols = UNLABELED CIPSOv4 CALIPSO
+[    1.081139] NetLabel:  unlabeled traffic allowed by default
+[    1.086361] PCI: Using ACPI for IRQ routing
+[    1.088361] pci 0000:00:02.0: vgaarb: setting as boot VGA device
+[    1.088361] pci 0000:00:02.0: vgaarb: bridge control possible
+[    1.088361] pci 0000:00:02.0: vgaarb: VGA device added: decodes=io+mem,owns=io+mem,locks=none
+[    1.088361] vgaarb: loaded
+[    1.089361] hpet0: at MMIO 0xfed00000, IRQs 2, 8, 0
+[    1.089541] hpet0: 3 comparators, 64-bit 100.000000 MHz counter
+[    1.092857] clocksource: Switched to clocksource tsc-early
+[    1.740469] VFS: Disk quotas dquot_6.6.0
+[    1.740802] VFS: Dquot-cache hash table entries: 512 (order 0, 4096 bytes)
+[    1.745400] pnp: PnP ACPI init
+[    1.750440] pnp: PnP ACPI: found 5 devices
+[    1.770717] clocksource: acpi_pm: mask: 0xffffff max_cycles: 0xffffff, max_idle_ns: 2085701024 ns
+[    1.771540] NET: Registered PF_INET protocol family
+[    1.773635] IP idents hash table entries: 32768 (order: 6, 262144 bytes, linear)
+[    1.781278] tcp_listen_portaddr_hash hash table entries: 1024 (order: 2, 16384 bytes, linear)
+[    1.781455] Table-perturb hash table entries: 65536 (order: 6, 262144 bytes, linear)
+[    1.781571] TCP established hash table entries: 16384 (order: 5, 131072 bytes, linear)
+[    1.782156] TCP bind hash table entries: 16384 (order: 7, 524288 bytes, linear)
+[    1.783162] TCP: Hash tables configured (established 16384 bind 16384)
+[    1.784407] UDP hash table entries: 1024 (order: 4, 65536 bytes, linear)
+[    1.784903] UDP-Lite hash table entries: 1024 (order: 4, 65536 bytes, linear)
+[    1.786317] NET: Registered PF_UNIX/PF_LOCAL protocol family
+[    1.788561] RPC: Registered named UNIX socket transport module.
+[    1.788653] RPC: Registered udp transport module.
+[    1.788700] RPC: Registered tcp transport module.
+[    1.788743] RPC: Registered tcp-with-tls transport module.
+[    1.788794] RPC: Registered tcp NFSv4.1 backchannel transport module.
+[    1.792234] pci_bus 0000:00: resource 4 [io  0x0000-0x0cf7 window]
+[    1.792338] pci_bus 0000:00: resource 5 [io  0x0d00-0xffff window]
+[    1.792396] pci_bus 0000:00: resource 6 [mem 0x000a0000-0x000bffff window]
+[    1.792455] pci_bus 0000:00: resource 7 [mem 0x80000000-0xfebfffff window]
+[    1.792515] pci_bus 0000:00: resource 8 [mem 0x100000000-0x17fffffff window]
+[    1.793274] pci 0000:00:01.0: PIIX3: Enabling Passive Release
+[    1.793413] pci 0000:00:00.0: Limiting direct PCI/PCI transfers
+[    1.793602] PCI: CLS 0 bytes, default 64
+[    1.797667] Unpacking initramfs...
+[    1.800983] Initialise system trusted keyrings
+[    1.803794] workingset: timestamp_bits=56 max_order=19 bucket_order=0
+[    1.807151] Freeing initrd memory: 4K
+[    1.807640] NFS: Registering the id_resolver key type
+[    1.807870] Key type id_resolver registered
+[    1.808076] Key type id_legacy registered
+[    1.808817] 9p: Installing v9fs 9p2000 file system support
+[    1.977782] Key type asymmetric registered
+[    1.977965] Asymmetric key parser 'x509' registered
+[    1.978413] Block layer SCSI generic (bsg) driver version 0.4 loaded (major 251)
+[    1.978796] io scheduler mq-deadline registered
+[    1.978886] io scheduler kyber registered
+[    1.979180] test_bitmap: loaded.
+[    1.982707] test_bitmap: parselist: 14: input is '0-2047:128/256' OK, Time: 1708
+[    1.983084] test_bitmap: bitmap_print_to_pagebuf: input is '0-32767
+[    1.983084] ', Time: 16083
+[    2.103312] test_bitmap: Time spent in test_bitmap_read_perf:	3419715
+[    2.111070] test_bitmap: Time spent in test_bitmap_write_perf:	7627808
+[    2.116389] test_bitmap: all 390447 tests passed
+[    2.122366] Serial: 8250/16550 driver, 4 ports, IRQ sharing enabled
+[    2.126213] 00:04: ttyS0 at I/O 0x3f8 (irq = 4, base_baud = 115200) is a 16550A
+[    2.132217] Non-volatile memory driver v1.3
+[    2.132302] Linux agpgart interface v0.103
+[    2.134021] ACPI: bus type drm_connector registered
+[    2.158174] loop: module loaded
+[    2.168714] scsi host0: ata_piix
+[    2.171308] scsi host1: ata_piix
+[    2.171786] ata1: PATA max MWDMA2 cmd 0x1f0 ctl 0x3f6 bmdma 0xc040 irq 14 lpm-pol 0
+[    2.171937] ata2: PATA max MWDMA2 cmd 0x170 ctl 0x376 bmdma 0xc048 irq 15 lpm-pol 0
+[    2.175929] e100: Intel(R) PRO/100 Network Driver
+[    2.176117] e100: Copyright(c) 1999-2006 Intel Corporation
+[    2.176686] e1000: Intel(R) PRO/1000 Network Driver
+[    2.176746] e1000: Copyright (c) 1999-2006 Intel Corporation.
+[    2.331566] ata2: found unknown device (class 0)
+[    2.335130] ata2.00: ATAPI: QEMU DVD-ROM, 2.5+, max UDMA/100
+[    2.343889] scsi 1:0:0:0: CD-ROM            QEMU     QEMU DVD-ROM     2.5+ PQ: 0 ANSI: 5
+[    2.359334] sr 1:0:0:0: [sr0] scsi3-mmc drive: 4x/4x cd/rw xa/form2 tray
+[    2.369229] cdrom: Uniform CD-ROM driver Revision: 3.20
+[    2.370250] ACPI: \_SB_.LNKC: Enabled at IRQ 11
+[    2.379008] sr 1:0:0:0: Attached scsi generic sg0 type 5
+[    2.652456] e1000 0000:00:03.0 eth0: (PCI:33MHz:32-bit) 52:54:00:12:34:56
+[    2.652906] e1000 0000:00:03.0 eth0: Intel(R) PRO/1000 Network Connection
+[    2.653282] e1000e: Intel(R) PRO/1000 Network Driver
+[    2.653335] e1000e: Copyright(c) 1999 - 2015 Intel Corporation.
+[    2.653499] sky2: driver version 1.30
+[    2.655374] usbcore: registered new interface driver usblp
+[    2.655568] usbcore: registered new interface driver usb-storage
+[    2.656409] i8042: PNP: PS/2 Controller [PNP0303:KBD,PNP0f13:MOU] at 0x60,0x64 irq 1,12
+[    2.658901] serio: i8042 KBD port at 0x60,0x64 irq 1
+[    2.659131] serio: i8042 AUX port at 0x60,0x64 irq 12
+[    2.660636] rtc_cmos PNP0B00:00: RTC can wake from S4
+[    2.664947] rtc_cmos PNP0B00:00: registered as rtc0
+[    2.665616] rtc_cmos PNP0B00:00: alarms up to one day, y3k, 242 bytes nvram, hpet irqs
+[    2.666719] device-mapper: ioctl: 4.50.0-ioctl (2025-04-28) initialised: dm-devel@lists.linux.dev
+[    2.667035] amd_pstate: the _CPC object is not present in SBIOS or ACPI disabled
+[    2.667288] hid: raw HID events driver (C) Jiri Kosina
+[    2.668885] usbcore: registered new interface driver usbhid
+[    2.669211] usbhid: USB HID core driver
+[    2.678408] Initializing XFRM netlink socket
+[    2.678716] NET: Registered PF_INET6 protocol family
+[    2.684204] Segment Routing with IPv6
+[    2.684406] In-situ OAM (IOAM) with IPv6
+[    2.685217] sit: IPv6, IPv4 and MPLS over IPv4 tunneling driver
+[    2.688279] NET: Registered PF_PACKET protocol family
+[    2.689454] 9pnet: Installing 9P2000 support
+[    2.689778] Key type dns_resolver registered
+[    2.691515] IPI shorthand broadcast: enabled
+[    2.719639] sched_clock: Marking stable (2699577631, 19507642)->(3019037373, -299952100)
+[    2.721695] registered taskstats version 1
+[    2.721765] Loading compiled-in X.509 certificates
+[    2.734336] Demotion targets for Node 0: null
+[    2.736714] PM:   Magic number: 14:892:620
+[    2.737048] netconsole: network logging started
+[    2.737697] cfg80211: Loading compiled-in X.509 certificates for regulatory database
+[    2.742659] kworker/u8:0 (58) used greatest stack depth: 14416 bytes left
+[    2.748735] Loaded X.509 cert 'sforshee: 00b28ddf47aef9cea7'
+[    2.749343] Loaded X.509 cert 'wens: 61c038651aabdcf94bd0ac7ff06c7248db18c600'
+[    2.750079] ALSA device list:
+[    2.750973] faux_driver regulatory: Direct firmware load for regulatory.db failed with error -2
+[    2.751159]   No soundcards found.
+[    2.751286] KTAP version 1
+[    2.751326] 1..19
+[    2.751369] cfg80211: failed to load regulatory.db
+[    2.752353]     KTAP version 1
+[    2.752399]     # Subtest: rust_allocator
+[    2.752483]     # speed: normal
+[    2.752733]     1..1
+[    2.754169]     # test_alignment.speed: normal
+[    2.754254]     ok 1 test_alignment
+[    2.754420] ok 1 rust_allocator
+[    2.754521]     KTAP version 1
+[    2.754547]     # Subtest: rust_kvec
+[    2.754576]     # speed: normal
+[    2.754584]     1..1
+[    2.756374]     # test_kvec_retain.speed: normal
+[    2.756390]     ok 1 test_kvec_retain
+[    2.756441] ok 2 rust_kvec
+[    2.756559]     KTAP version 1
+[    2.756585]     # Subtest: rust_kernel_bitmap
+[    2.756619]     # speed: normal
+[    2.756638]     1..6
+[    2.757364]     # bitmap_borrow.speed: normal
+[    2.757381]     ok 1 bitmap_borrow
+[    2.758108]     # bitmap_copy.speed: normal
+[    2.758173]     ok 2 bitmap_copy
+[    2.758728]     # bitmap_vec_new.speed: normal
+[    2.758771]     ok 3 bitmap_vec_new
+[    2.759658]     # bitmap_set_clear_find.speed: normal
+[    2.759703]     ok 4 bitmap_set_clear_find
+[    2.760058] rust_kernel: Bit `index` must be < 128, was 2048
+[    2.760432] rust_kernel: Bit `index` must be < 128, was 2048
+[    2.760491] rust_kernel: Bit `index` must be < 128, was 2048
+[    2.760550] rust_kernel: Bit `index` must be < 128, was 2048
+[    2.761085]     # owned_bitmap_out_of_bounds.speed: normal
+[    2.761163]     ok 5 owned_bitmap_out_of_bounds
+[    2.762033]     # bitmap_copy_and_extend.speed: normal
+[    2.762093]     ok 6 bitmap_copy_and_extend
+[    2.762144] # rust_kernel_bitmap: pass:6 fail:0 skip:0 total:6
+[    2.762199] # Totals: pass:6 fail:0 skip:0 total:6
+[    2.762250] ok 3 rust_kernel_bitmap
+[    2.762355]     KTAP version 1
+[    2.762383]     # Subtest: rust_kernel_kunit
+[    2.762416]     # speed: normal
+[    2.762425]     1..3
+[    2.763071]     # rust_test_kunit_example_test.speed: normal
+[    2.763088]     ok 1 rust_test_kunit_example_test
+[    2.763707]     # rust_test_kunit_in_kunit_test.speed: normal
+[    2.763765]     ok 2 rust_test_kunit_in_kunit_test
+[    2.764388]     # rust_test_kunit_always_disabled_test.speed: normal
+[    2.764449]     ok 3 rust_test_kunit_always_disabled_test # SKIP 
+[    2.764521] # rust_kernel_kunit: pass:2 fail:0 skip:1 total:3
+[    2.764571] # Totals: pass:2 fail:0 skip:1 total:3
+[    2.764625] ok 4 rust_kernel_kunit
+[    2.764717]     KTAP version 1
+[    2.764744]     # Subtest: rust_kernel_str
+[    2.764776]     # speed: normal
+[    2.764783]     1..8
+[    2.765482]     # test_cstr_to_str.speed: normal
+[    2.765495]     ok 1 test_cstr_to_str
+[    2.766088]     # test_cstr_to_str_invalid_utf8.speed: normal
+[    2.766136]     ok 2 test_cstr_to_str_invalid_utf8
+[    2.766701]     # test_cstr_as_str_unchecked.speed: normal
+[    2.766760]     ok 3 test_cstr_as_str_unchecked
+[    2.768138]     # test_cstr_display.speed: normal
+[    2.768192]     ok 4 test_cstr_display
+[    2.768944]     # test_cstr_display_all_bytes.speed: normal
+[    2.769166]     ok 5 test_cstr_display_all_bytes
+[    2.770020]     # test_cstr_debug.speed: normal
+[    2.770090]     ok 6 test_cstr_debug
+[    2.770931]     # test_bstr_display.speed: normal
+[    2.770981]     ok 7 test_bstr_display
+[    2.771932]     # test_bstr_debug.speed: normal
+[    2.771981]     ok 8 test_bstr_debug
+[    2.772020] # rust_kernel_str: pass:8 fail:0 skip:0 total:8
+[    2.772179] # Totals: pass:8 fail:0 skip:0 total:8
+[    2.772271] ok 5 rust_kernel_str
+[    2.772363]     KTAP version 1
+[    2.772390]     # Subtest: rust_atomics
+[    2.772420]     # speed: normal
+[    2.772428]     1..4
+[    2.773166]     # atomic_basic_tests.speed: normal
+[    2.773180]     ok 1 atomic_basic_tests
+[    2.773822]     # atomic_xchg_tests.speed: normal
+[    2.773873]     ok 2 atomic_xchg_tests
+[    2.774739]     # atomic_cmpxchg_tests.speed: normal
+[    2.774787]     ok 3 atomic_cmpxchg_tests
+[    2.775566]     # atomic_arithmetic_tests.speed: normal
+[    2.775617]     ok 4 atomic_arithmetic_tests
+[    2.775662] # rust_atomics: pass:4 fail:0 skip:0 total:4
+[    2.775700] # Totals: pass:4 fail:0 skip:0 total:4
+[    2.775743] ok 6 rust_atomics
+[    2.775875]     KTAP version 1
+[    2.775907]     # Subtest: kfifo_rust
+[    2.776069]     # speed: normal
+[    2.776078]     1..13
+[    2.776666]     # kfifo_rust_in_out_roundtrip.speed: normal
+[    2.776682]     ok 1 kfifo_rust_in_out_roundtrip
+[    2.777330]     # kfifo_rust_out_is_clamped_to_the_content.speed: normal
+[    2.777386]     ok 2 kfifo_rust_out_is_clamped_to_the_content
+[    2.777906]     # kfifo_rust_in_is_clamped_to_the_free_space.speed: normal
+[    2.777970]     ok 3 kfifo_rust_in_is_clamped_to_the_free_space
+[    2.778661]     # kfifo_rust_wrap_around_keeps_the_order.speed: normal
+[    2.778722]     ok 4 kfifo_rust_wrap_around_keeps_the_order
+[    2.779345]     # kfifo_rust_peek_does_not_consume.speed: normal
+[    2.779404]     ok 5 kfifo_rust_peek_does_not_consume
+[    2.779923]     # kfifo_rust_record_roundtrip.speed: normal
+[    2.779976]     ok 6 kfifo_rust_record_roundtrip
+[    2.780651]     # kfifo_rust_record_skip.speed: normal
+[    2.780702]     ok 7 kfifo_rust_record_skip
+[    2.781317]     # kfifo_rust_max_r.speed: normal
+[    2.781367]     ok 8 kfifo_rust_max_r
+[    2.781887]     # kfifo_rust_max_r_large_recsize.speed: normal
+[    2.781934]     ok 9 kfifo_rust_max_r_large_recsize
+[    2.782575]     # kfifo_rust_init_zero_element_size.speed: normal
+[    2.782628]     ok 10 kfifo_rust_init_zero_element_size
+[    2.784255]     # kfifo_rust_user_copy_fault.speed: normal
+[    2.784315]     ok 11 kfifo_rust_user_copy_fault
+[    2.784843]     # kfifo_rust_power_of_two_helpers.speed: normal
+[    2.784900]     ok 12 kfifo_rust_power_of_two_helpers
+[    2.785622]     # kfifo_rust_alloc_and_free.speed: normal
+[    2.785676]     ok 13 kfifo_rust_alloc_and_free
+[    2.785721] # kfifo_rust: pass:13 fail:0 skip:0 total:13
+[    2.785763] # Totals: pass:13 fail:0 skip:0 total:13
+[    2.785808] ok 7 kfifo_rust
+[    2.785918]     KTAP version 1
+[    2.785948]     # Subtest: kfifo_diff
+[    2.786139]     # module: kfifo_diff_kunit
+[    2.786180]     1..10
+[    2.787011]     ok 1 kfifo_diff_init
+[    2.787777]     ok 2 kfifo_diff_alloc
+[    2.790446]     ok 3 kfifo_diff_random_sequences
+[    2.791245]     ok 4 kfifo_diff_wrap_around
+[    2.792641]     ok 5 kfifo_diff_records
+[    2.793307]     ok 6 kfifo_diff_max_r
+[    2.794180]     ok 7 kfifo_diff_dma_prepare
+[    2.794897]     ok 8 kfifo_diff_dma_wrap
+[    2.795737]     ok 9 kfifo_diff_user_copy_fault
+[    2.869069] kfifo benchmark: 20000 iterations of in(64)+out(64), best of 3
+[    2.869163] kfifo benchmark: rust 12665443 ns, c 11444857 ns
+[    2.869225] kfifo benchmark: rust/c ratio 1106 per mille
+[    2.869412] tsc: Refined TSC clocksource calibration: 999.995 MHz
+[    2.869731] clocksource: tsc: mask: 0xffffffffffffffff max_cycles: 0x1cd424c4a68, max_idle_ns: 881590510633 ns
+[    2.869756]     ok 10 kfifo_diff_benchmark
+[    2.869912] # kfifo_diff: pass:10 fail:0 skip:0 total:10
+[    2.870116] clocksource: Switched to clocksource tsc
+[    2.870136] # Totals: pass:10 fail:0 skip:0 total:10
+[    2.870230] ok 8 kfifo_diff
+[    2.870330]     KTAP version 1
+[    2.870356]     # Subtest: crc16_rust
+[    2.870388]     # speed: normal
+[    2.870398]     1..5
+[    2.871097]     # crc16_rust_check_value.speed: normal
+[    2.871111]     ok 1 crc16_rust_check_value
+[    2.871630]     # crc16_rust_empty_buffer.speed: normal
+[    2.871681]     ok 2 crc16_rust_empty_buffer
+[    2.872236]     # crc16_rust_incremental.speed: normal
+[    2.872289]     ok 3 crc16_rust_incremental
+[    2.872860]     # crc16_rust_all_initial_values_single_byte.speed: normal
+[    2.872911]     ok 4 crc16_rust_all_initial_values_single_byte
+[    2.873632]     # crc16_rust_deterministic_prng.speed: normal
+[    2.873694]     ok 5 crc16_rust_deterministic_prng
+[    2.873742] # crc16_rust: pass:5 fail:0 skip:0 total:5
+[    2.873784] # Totals: pass:5 fail:0 skip:0 total:5
+[    2.873826] ok 9 crc16_rust
+[    2.873915]     KTAP version 1
+[    2.874065]     # Subtest: crc16_diff
+[    2.874125]     # module: crc16_diff_kunit
+[    2.874136]     1..2
+[    2.877958]     ok 1 crc16_diff_edge_cases
+[    2.900315]     ok 2 crc16_diff_random_streams
+[    2.900371] # crc16_diff: pass:2 fail:0 skip:0 total:2
+[    2.900412] # Totals: pass:2 fail:0 skip:0 total:2
+[    2.900455] ok 10 crc16_diff
+[    2.900552]     KTAP version 1
+[    2.900578]     # Subtest: crc_ccitt_rust
+[    2.900609]     # speed: normal
+[    2.900617]     1..7
+[    2.901177]     # crc_ccitt_rust_check_value.speed: normal
+[    2.901192]     ok 1 crc_ccitt_rust_check_value
+[    2.901808]     # crc_ccitt_rust_check_value_init_ffff.speed: normal
+[    2.901869]     ok 2 crc_ccitt_rust_check_value_init_ffff
+[    2.902424]     # crc_ccitt_rust_empty_buffer.speed: normal
+[    2.902488]     ok 3 crc_ccitt_rust_empty_buffer
+[    2.903094]     # crc_ccitt_rust_incremental.speed: normal
+[    2.903148]     ok 4 crc_ccitt_rust_incremental
+[    2.903707]     # crc_ccitt_rust_all_initial_values_single_byte.speed: normal
+[    2.903759]     ok 5 crc_ccitt_rust_all_initial_values_single_byte
+[    2.904359]     # crc_ccitt_rust_table_matches_bitwise.speed: normal
+[    2.904424]     ok 6 crc_ccitt_rust_table_matches_bitwise
+[    2.905134]     # crc_ccitt_rust_deterministic_prng.speed: normal
+[    2.905195]     ok 7 crc_ccitt_rust_deterministic_prng
+[    2.905244] # crc_ccitt_rust: pass:7 fail:0 skip:0 total:7
+[    2.905287] # Totals: pass:7 fail:0 skip:0 total:7
+[    2.905333] ok 11 crc_ccitt_rust
+[    2.905460]     KTAP version 1
+[    2.905493]     # Subtest: crc_ccitt_diff
+[    2.905524]     # module: crc_ccitt_diff_kunit
+[    2.905532]     1..3
+[    2.906237]     ok 1 crc_ccitt_diff_table
+[    2.909132]     ok 2 crc_ccitt_diff_edge_cases
+[    2.931770]     ok 3 crc_ccitt_diff_random_streams
+[    2.931825] # crc_ccitt_diff: pass:3 fail:0 skip:0 total:3
+[    2.931871] # Totals: pass:3 fail:0 skip:0 total:3
+[    2.931919] ok 12 crc_ccitt_diff
+[    2.932208]     KTAP version 1
+[    2.932240]     # Subtest: crc
+[    2.932269]     # module: crc_kunit
+[    2.932278]     1..8
+[    3.076677] input: ImExPS/2 Generic Explorer Mouse as /devices/platform/i8042/serio1/input/input1
+[    3.079076] input: AT Translated Set 2 keyboard as /devices/platform/i8042/serio0/input/input2
+[    3.189610] hrtimer: interrupt took 17959 ns
+[    3.664933]     ok 1 crc16_test
+[    3.665506]     ok 2 crc16_benchmark # SKIP not enabled
+[    4.048388]     ok 3 crc32_le_test
+[    4.048860]     ok 4 crc32_le_benchmark # SKIP not enabled
+[    4.888320]     ok 5 crc32_be_test
+[    4.889764]     ok 6 crc32_be_benchmark # SKIP not enabled
+[    5.575489]     ok 7 crc32c_test
+[    5.576458]     ok 8 crc32c_benchmark # SKIP not enabled
+[    5.576612] # crc: pass:4 fail:0 skip:4 total:8
+[    5.576670] # Totals: pass:4 fail:0 skip:4 total:8
+[    5.576726] ok 13 crc
+[    5.576978]     KTAP version 1
+[    5.577014]     # Subtest: kfifo
+[    5.577046]     # module: kfifo_kunit
+[    5.577057]     1..10
+[    5.577827]     ok 1 kfifo_test_reset_should_clear_the_fifo
+[    5.578498]     ok 2 kfifo_test_define_should_define_an_empty_fifo
+[    5.579378]     ok 3 kfifo_test_len_should_ret_n_of_stored_elements
+[    5.580127]     ok 4 kfifo_test_put_should_insert_and_get_should_pop
+[    5.580935]     ok 5 kfifo_test_in_should_insert_multiple_elements
+[    5.581858]     ok 6 kfifo_test_out_should_pop_multiple_elements
+[    5.582613]     ok 7 kfifo_test_dec_init_should_define_an_empty_fifo
+[    5.583357]     ok 8 kfifo_test_define_should_equal_declare_init
+[    5.584118]     ok 9 kfifo_test_alloc_should_initiliaze_a_ptr_fifo
+[    5.584869]     ok 10 kfifo_test_peek_should_not_remove_elements
+[    5.585085] # kfifo: pass:10 fail:0 skip:0 total:10
+[    5.585146] # Totals: pass:10 fail:0 skip:0 total:10
+[    5.585200] ok 14 kfifo
+[    5.585305]     KTAP version 1
+[    5.585335]     # Subtest: bitmap_diff
+[    5.585370]     # module: bitmap_diff_kunit
+[    5.585379]     1..11
+[    5.587912]     ok 1 bitmap_diff_sizes
+[    5.588964]     ok 2 bitmap_diff_set_clear
+[    5.590467]     ok 3 bitmap_diff_shifts
+[    5.591525]     ok 4 bitmap_diff_cut
+[    5.592280]     ok 5 bitmap_diff_cut_out_of_range
+[    5.593486]     ok 6 bitmap_diff_find_next_zero_area
+[    5.595928]     ok 7 bitmap_diff_remap
+[    5.596902]     ok 8 bitmap_diff_arr32
+[    5.597979]     ok 9 bitmap_diff_alloc
+[    5.598770]     ok 10 bitmap_diff_alloc_node
+[    5.613390] bitmap benchmark: 2000 iterations over 1024 bits, best of 3
+[    5.613508] bitmap benchmark: all operations, rust 2450887 ns, c 2043135 ns, ratio 1199 per mille
+[    5.624716] bitmap benchmark: without the weight helpers, rust 1811259 ns, c 1851509 ns, ratio 978 per mille
+[    5.625228]     ok 11 bitmap_diff_benchmark
+[    5.625247] # bitmap_diff: pass:11 fail:0 skip:0 total:11
+[    5.625304] # Totals: pass:11 fail:0 skip:0 total:11
+[    5.625367] ok 15 bitmap_diff
+[    5.625490]     KTAP version 1
+[    5.625527]     # Subtest: refcount_rust
+[    5.625563]     # speed: normal
+[    5.625574]     1..4
+[    5.626342]     # dec_if_one_ignores_a_saturated_count.speed: normal
+[    5.626359]     ok 1 dec_if_one_ignores_a_saturated_count
+[    5.627036]     # dec_not_one_refuses_a_count_of_one.speed: normal
+[    5.627110]     ok 2 dec_not_one_refuses_a_count_of_one
+[    5.627732]     # dec_not_one_decrements_a_larger_count.speed: normal
+[    5.627796]     ok 3 dec_not_one_decrements_a_larger_count
+[    5.628511]     # dec_not_one_leaves_a_saturated_count_alone.speed: normal
+[    5.628574]     ok 4 dec_not_one_leaves_a_saturated_count_alone
+[    5.628636] # refcount_rust: pass:4 fail:0 skip:0 total:4
+[    5.628691] # Totals: pass:4 fail:0 skip:0 total:4
+[    5.628750] ok 16 refcount_rust
+[    5.628851]     KTAP version 1
+[    5.628887]     # Subtest: fvs_refcount
+[    5.628922]     # module: fvs_refcount_adversarial_kunit
+[    5.628931]     1..10
+[    5.629882]     ok 1 fvs_sweep_dec_if_one
+[    5.630355] rust_kernel: refcount_t: underflow; use-after-free.
+[    5.630696] ------------[ cut here ]------------
+[    5.630799] WARNING: CPU: 0 PID: 256 at /build/ferret/src/rust/kernel/sync/refcount.rs:240 _RNvMNtNtCshc5sK6KjdJJ_6kernel4sync8refcountNtB2_8Refcount15try_dec_not_one+0xc0/0xe0
+[    5.631296] Modules linked in:
+[    5.631691] CPU: 0 UID: 0 PID: 256 Comm: kunit_try_catch Tainted: G                 N  6.18.57-ferret-rust #20 PREEMPT(voluntary) 
+[    5.631850] Tainted: [N]=TEST
+[    5.631898] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.16.3-debian-1.16.3-2 04/01/2014
+[    5.632069] RIP: 0010:_RNvMNtNtCshc5sK6KjdJJ_6kernel4sync8refcountNtB2_8Refcount15try_dec_not_one+0xc0/0xe0
+[    5.632328] Code: 24 08 48 89 44 24 20 48 c7 44 24 28 00 00 00 00 48 8d 54 24 10 48 c7 c7 d0 36 27 86 48 c7 c6 67 7a 87 86 31 c0 e8 b0 16 a0 ff <0f> 0b 89 d8 48 83 c4 40 5b 41 5e 41 5f c3 cc cc cc cc 66 66 66 66
+[    5.632542] RSP: 0018:ff6f779f0028bdc0 EFLAGS: 00000246
+[    5.632620] RAX: 0000000000000033 RBX: ff6f779f00013c01 RCX: 4a2c0a8951211800
+[    5.632686] RDX: 0000000000000002 RSI: 00000000ffffdfff RDI: ffffffff86c87b00
+[    5.632755] RBP: 0000000000013c01 R08: 0000000000001fff R09: ffffffff86c57b00
+[    5.632817] R10: 0000000000005ffd R11: 0000000000000004 R12: 0000000000000000
+[    5.632888] R13: 0000000000000024 R14: ff6f779f0028be3c R15: ff6f779f0028bdc4
+[    5.632984] FS:  0000000000000000(0000) GS:ff166b9a76518000(0000) knlGS:0000000000000000
+[    5.633058] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[    5.633256] CR2: 00fffffffffff000 CR3: 0000000011a2c000 CR4: 0000000000751ef0
+[    5.633371] PKRU: 55555554
+[    5.633436] Call Trace:
+[    5.633946]  <TASK>
+[    5.634154]  fvs_sweep_dec_not_one+0x84/0x410
+[    5.634331]  kunit_try_run_case+0x8f/0x190
+[    5.634382]  kunit_generic_run_threadfn_adapter+0x1d/0x40
+[    5.634442]  ? __pfx_kunit_generic_run_threadfn_adapter+0x10/0x10
+[    5.634501]  kthread+0x209/0x250
+[    5.634553]  ? __pfx_kthread+0x10/0x10
+[    5.634594]  ret_from_fork+0xbe/0x170
+[    5.634637]  ? __pfx_kthread+0x10/0x10
+[    5.634678]  ret_from_fork_asm+0x1a/0x30
+[    5.634748]  </TASK>
+[    5.634817] ---[ end trace 0000000000000000 ]---
+[    5.635093] ------------[ cut here ]------------
+[    5.635155] refcount_t: underflow; use-after-free.
+[    5.635247] WARNING: CPU: 0 PID: 256 at lib/refcount.c:87 refcount_dec_not_one_c_ref+0x4f/0x60
+[    5.635332] Modules linked in:
+[    5.635369] CPU: 0 UID: 0 PID: 256 Comm: kunit_try_catch Tainted: G        W        N  6.18.57-ferret-rust #20 PREEMPT(voluntary) 
+[    5.635463] Tainted: [W]=WARN, [N]=TEST
+[    5.635496] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.16.3-debian-1.16.3-2 04/01/2014
+[    5.635568] RIP: 0010:refcount_dec_not_one_c_ref+0x4f/0x60
+[    5.635622] Code: db eb 09 80 3d f3 7c 7f 01 00 74 09 89 d8 5b c3 cc cc cc cc cc c6 05 e1 7c 7f 01 01 90 48 c7 c7 ab ca 91 86 e8 12 b0 a0 ff 90 <0f> 0b 90 90 eb dc 66 66 2e 0f 1f 84 00 00 00 00 00 90 90 90 90 90
+[    5.635756] RSP: 0018:ff6f779f0028be10 EFLAGS: 00000246
+[    5.635803] RAX: 4a2c0a8951211800 RBX: ff6f779f00013c01 RCX: 4a2c0a8951211800
+[    5.635865] RDX: 0000000000000002 RSI: 00000000ffffdfff RDI: ffffffff86c87b00
+[    5.635921] RBP: 0000000000013c01 R08: 0000000000001fff R09: ffffffff86c57b00
+[    5.635977] R10: 0000000000005ffd R11: 0000000000000004 R12: 0000000000000000
+[    5.636231] R13: 0000000000000024 R14: ff6f779f0028be3c R15: ff6f779f0028be38
+[    5.636322] FS:  0000000000000000(0000) GS:ff166b9a76518000(0000) knlGS:0000000000000000
+[    5.636390] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[    5.636437] CR2: 00fffffffffff000 CR3: 0000000011a2c000 CR4: 0000000000751ef0
+[    5.636494] PKRU: 55555554
+[    5.636519] Call Trace:
+[    5.636545]  <TASK>
+[    5.636568]  fvs_sweep_dec_not_one+0x8e/0x410
+[    5.636619]  kunit_try_run_case+0x8f/0x190
+[    5.636666]  kunit_generic_run_threadfn_adapter+0x1d/0x40
+[    5.636719]  ? __pfx_kunit_generic_run_threadfn_adapter+0x10/0x10
+[    5.636776]  kthread+0x209/0x250
+[    5.636814]  ? __pfx_kthread+0x10/0x10
+[    5.636855]  ret_from_fork+0xbe/0x170
+[    5.636901]  ? __pfx_kthread+0x10/0x10
+[    5.636941]  ret_from_fork_asm+0x1a/0x30
+[    5.637084]  </TASK>
+[    5.637108] ---[ end trace 0000000000000000 ]---
+[    5.637297] kunit_try_catch (256) used greatest stack depth: 13424 bytes left
+[    5.637630]     ok 2 fvs_sweep_dec_not_one
+[    5.637967] rust_kernel: refcount_t: saturated; leaking memory.
+[    5.638119] ------------[ cut here ]------------
+[    5.638160] WARNING: CPU: 1 PID: 258 at /build/ferret/src/rust/kernel/sync/refcount.rs:182 _RNvMNtNtCshc5sK6KjdJJ_6kernel4sync8refcountNtB2_8Refcount13warn_saturate+0x2bc/0x350
+[    5.638298] Modules linked in:
+[    5.638341] CPU: 1 UID: 0 PID: 258 Comm: kunit_try_catch Tainted: G        W        N  6.18.57-ferret-rust #20 PREEMPT(voluntary) 
+[    5.638441] Tainted: [W]=WARN, [N]=TEST
+[    5.638474] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.16.3-debian-1.16.3-2 04/01/2014
+[    5.638546] RIP: 0010:_RNvMNtNtCshc5sK6KjdJJ_6kernel4sync8refcountNtB2_8Refcount13warn_saturate+0x2bc/0x350
+[    5.638632] Code: 24 08 48 89 44 24 20 48 c7 44 24 28 00 00 00 00 48 8d 54 24 10 48 c7 c7 d0 36 27 86 48 c7 c6 67 7a 87 86 31 c0 e8 14 18 a0 ff <0f> 0b eb 7e c7 44 24 0c 00 00 00 00 48 8d 74 24 0c 48 c7 c7 8c be
+[    5.638769] RSP: 0018:ff6f779f0028bce0 EFLAGS: 00000246
+[    5.638817] RAX: 0000000000000033 RBX: 0000000000000000 RCX: b99f8ec55c164900
+[    5.638884] RDX: 0000000000000002 RSI: 00000000ffffdfff RDI: ffffffff86c87b00
+[    5.638940] RBP: 0000000000000000 R08: 0000000000001fff R09: ffffffff86c57b00
+[    5.638995] R10: 0000000000005ffd R11: 0000000000000004 R12: 00000000c0000000
+[    5.639053] R13: 0000000000000000 R14: ff6f779f0028be3c R15: ff6f779f0028be38
+[    5.639234] FS:  0000000000000000(0000) GS:ff166b9a76618000(0000) knlGS:0000000000000000
+[    5.639298] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[    5.639345] CR2: 00fffffffffff000 CR3: 0000000011a2c000 CR4: 0000000000751ef0
+[    5.639401] PKRU: 55555554
+[    5.639426] Call Trace:
+[    5.639453]  <TASK>
+[    5.639484]  ? update_load_avg+0x1da/0x820
+[    5.639533]  ? sched_balance_newidle+0xe9/0x3e0
+[    5.639583]  ? __switch_to+0x15b/0x590
+[    5.639625]  fvs_sweep_warn_saturate+0x6b/0x240
+[    5.639676]  kunit_try_run_case+0x8f/0x190
+[    5.639725]  kunit_generic_run_threadfn_adapter+0x1d/0x40
+[    5.639781]  ? __pfx_kunit_generic_run_threadfn_adapter+0x10/0x10
+[    5.639838]  kthread+0x209/0x250
+[    5.639884]  ? __pfx_kthread+0x10/0x10
+[    5.639924]  ret_from_fork+0xbe/0x170
+[    5.639965]  ? __pfx_kthread+0x10/0x10
+[    5.640265]  ret_from_fork_asm+0x1a/0x30
+[    5.640333]  </TASK>
+[    5.640356] ---[ end trace 0000000000000000 ]---
+[    5.640438] ------------[ cut here ]------------
+[    5.640479] refcount_t: saturated; leaking memory.
+[    5.640551] WARNING: CPU: 1 PID: 258 at lib/refcount.c:19 refcount_warn_saturate_c_ref+0xe0/0x140
+[    5.640641] Modules linked in:
+[    5.640677] CPU: 1 UID: 0 PID: 258 Comm: kunit_try_catch Tainted: G        W        N  6.18.57-ferret-rust #20 PREEMPT(voluntary) 
+[    5.640769] Tainted: [W]=WARN, [N]=TEST
+[    5.640801] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.16.3-debian-1.16.3-2 04/01/2014
+[    5.640881] RIP: 0010:refcount_warn_saturate_c_ref+0xe0/0x140
+[    5.641101] Code: 90 90 c3 cc cc cc cc cc 80 3d d7 7d 7f 01 00 0f 85 64 ff ff ff c6 05 ca 7d 7f 01 01 90 48 c7 c7 c6 7c 87 86 e8 01 b1 a0 ff 90 <0f> 0b 90 90 c3 cc cc cc cc cc 80 3d b0 7d 7f 01 00 0f 85 38 ff ff
+[    5.641243] RSP: 0018:ff6f779f0028be18 EFLAGS: 00000246
+[    5.641293] RAX: b99f8ec55c164900 RBX: ff6f779f00013c08 RCX: b99f8ec55c164900
+[    5.641353] RDX: 0000000000000002 RSI: 00000000ffffdfff RDI: ffffffff86c87b00
+[    5.641409] RBP: 0000000000000000 R08: 0000000000001fff R09: ffffffff86c57b00
+[    5.641465] R10: 0000000000005ffd R11: 0000000000000004 R12: 00000000c0000000
+[    5.641520] R13: 0000000000000000 R14: ff6f779f0028be3c R15: ff6f779f0028be38
+[    5.641579] FS:  0000000000000000(0000) GS:ff166b9a76618000(0000) knlGS:0000000000000000
+[    5.641643] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[    5.641689] CR2: 00fffffffffff000 CR3: 0000000011a2c000 CR4: 0000000000751ef0
+[    5.641747] PKRU: 55555554
+[    5.641780] Call Trace:
+[    5.641806]  <TASK>
+[    5.641832]  fvs_sweep_warn_saturate+0x75/0x240
+[    5.641904]  kunit_try_run_case+0x8f/0x190
+[    5.641953]  kunit_generic_run_threadfn_adapter+0x1d/0x40
+[    5.642005]  ? __pfx_kunit_generic_run_threadfn_adapter+0x10/0x10
+[    5.642069]  kthread+0x209/0x250
+[    5.642249]  ? __pfx_kthread+0x10/0x10
+[    5.642291]  ret_from_fork+0xbe/0x170
+[    5.642335]  ? __pfx_kthread+0x10/0x10
+[    5.642375]  ret_from_fork_asm+0x1a/0x30
+[    5.642426]  </TASK>
+[    5.642449] ---[ end trace 0000000000000000 ]---
+[    5.642542] rust_kernel: refcount_t: saturated; leaking memory.
+[    5.642625] ------------[ cut here ]------------
+[    5.642665] WARNING: CPU: 1 PID: 258 at /build/ferret/src/rust/kernel/sync/refcount.rs:188 _RNvMNtNtCshc5sK6KjdJJ_6kernel4sync8refcountNtB2_8Refcount13warn_saturate+0x142/0x350
+[    5.642797] Modules linked in:
+[    5.642835] CPU: 1 UID: 0 PID: 258 Comm: kunit_try_catch Tainted: G        W        N  6.18.57-ferret-rust #20 PREEMPT(voluntary) 
+[    5.642941] Tainted: [W]=WARN, [N]=TEST
+[    5.642974] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.16.3-debian-1.16.3-2 04/01/2014
+[    5.643048] RIP: 0010:_RNvMNtNtCshc5sK6KjdJJ_6kernel4sync8refcountNtB2_8Refcount13warn_saturate+0x142/0x350
+[    5.643354] Code: 24 08 48 89 44 24 50 48 c7 44 24 58 00 00 00 00 48 8d 54 24 40 48 c7 c7 d0 36 27 86 48 c7 c6 67 7a 87 86 31 c0 e8 8e 19 a0 ff <0f> 0b e9 f5 01 00 00 c7 44 24 0c 00 00 00 00 48 8d 74 24 0c 48 c7
+[    5.643490] RSP: 0018:ff6f779f0028bce0 EFLAGS: 00000246
+[    5.643537] RAX: 0000000000000033 RBX: 0000000000000001 RCX: b99f8ec55c164900
+[    5.643596] RDX: 0000000000000002 RSI: 00000000ffffdfff RDI: ffffffff86c87b00
+[    5.643675] RBP: 0000000000000001 R08: 0000000000001fff R09: ffffffff86c57b00
+[    5.643741] R10: 0000000000005ffd R11: 0000000000000004 R12: 00000000c0000000
+[    5.643801] R13: 0000000000000004 R14: ff6f779f0028be3c R15: ff6f779f0028be38
+[    5.643858] FS:  0000000000000000(0000) GS:ff166b9a76618000(0000) knlGS:0000000000000000
+[    5.643926] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[    5.643975] CR2: 00fffffffffff000 CR3: 0000000011a2c000 CR4: 0000000000751ef0
+[    5.644112] PKRU: 55555554
+[    5.644148] Call Trace:
+[    5.644198]  <TASK>
+[    5.644224]  ? nbcon_cpu_emergency_exit+0x9/0x40
+[    5.644276]  ? refcount_warn_saturate_c_ref+0xe0/0x140
+[    5.644330]  ? refcount_warn_saturate_c_ref+0xe2/0x140
+[    5.644382]  ? exc_invalid_op+0x1a/0x50
+[    5.644435]  ? refcount_warn_saturate_c_ref+0xe2/0x140
+[    5.644487]  fvs_sweep_warn_saturate+0x6b/0x240
+[    5.644545]  kunit_try_run_case+0x8f/0x190
+[    5.644595]  kunit_generic_run_threadfn_adapter+0x1d/0x40
+[    5.644653]  ? __pfx_kunit_generic_run_threadfn_adapter+0x10/0x10
+[    5.644718]  kthread+0x209/0x250
+[    5.644761]  ? __pfx_kthread+0x10/0x10
+[    5.644805]  ret_from_fork+0xbe/0x170
+[    5.644849]  ? __pfx_kthread+0x10/0x10
+[    5.644904]  ret_from_fork_asm+0x1a/0x30
+[    5.645071]  </TASK>
+[    5.645099] ---[ end trace 0000000000000000 ]---
+[    5.645171] ------------[ cut here ]------------
+[    5.645218] refcount_t: saturated; leaking memory.
+[    5.645297] WARNING: CPU: 1 PID: 258 at lib/refcount.c:22 refcount_warn_saturate_c_ref+0x64/0x140
+[    5.645390] Modules linked in:
+[    5.645428] CPU: 1 UID: 0 PID: 258 Comm: kunit_try_catch Tainted: G        W        N  6.18.57-ferret-rust #20 PREEMPT(voluntary) 
+[    5.645528] Tainted: [W]=WARN, [N]=TEST
+[    5.645563] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.16.3-debian-1.16.3-2 04/01/2014
+[    5.645641] RIP: 0010:refcount_warn_saturate_c_ref+0x64/0x140
+[    5.645703] Code: 00 00 00 83 fe 01 0f 85 a4 00 00 00 80 3d 50 7e 7f 01 00 75 e0 c6 05 47 7e 7f 01 01 90 48 c7 c7 c6 7c 87 86 e8 7d b1 a0 ff 90 <0f> 0b 90 90 c3 cc cc cc cc cc 80 3d 29 7e 7f 01 00 75 b8 c6 05 20
+[    5.645854] RSP: 0018:ff6f779f0028be18 EFLAGS: 00000246
+[    5.645915] RAX: b99f8ec55c164900 RBX: ff6f779f00013c08 RCX: b99f8ec55c164900
+[    5.645979] RDX: 0000000000000002 RSI: 00000000ffffdfff RDI: ffffffff86c87b00
+[    5.646043] RBP: 0000000000000001 R08: 0000000000001fff R09: ffffffff86c57b00
+[    5.646317] R10: 0000000000005ffd R11: 0000000000000004 R12: 00000000c0000000
+[    5.646390] R13: 0000000000000004 R14: ff6f779f0028be3c R15: ff6f779f0028be38
+[    5.646452] FS:  0000000000000000(0000) GS:ff166b9a76618000(0000) knlGS:0000000000000000
+[    5.646524] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[    5.646581] CR2: 00fffffffffff000 CR3: 0000000011a2c000 CR4: 0000000000751ef0
+[    5.646642] PKRU: 55555554
+[    5.646669] Call Trace:
+[    5.646699]  <TASK>
+[    5.646723]  fvs_sweep_warn_saturate+0x75/0x240
+[    5.646783]  kunit_try_run_case+0x8f/0x190
+[    5.646834]  kunit_generic_run_threadfn_adapter+0x1d/0x40
+[    5.646901]  ? __pfx_kunit_generic_run_threadfn_adapter+0x10/0x10
+[    5.647101]  kthread+0x209/0x250
+[    5.647158]  ? __pfx_kthread+0x10/0x10
+[    5.647206]  ret_from_fork+0xbe/0x170
+[    5.647253]  ? __pfx_kthread+0x10/0x10
+[    5.647301]  ret_from_fork_asm+0x1a/0x30
+[    5.647356]  </TASK>
+[    5.647380] ---[ end trace 0000000000000000 ]---
+[    5.647467] rust_kernel: refcount_t: addition on 0; use-after-free.
+[    5.647566] ------------[ cut here ]------------
+[    5.647609] WARNING: CPU: 1 PID: 258 at /build/ferret/src/rust/kernel/sync/refcount.rs:191 _RNvMNtNtCshc5sK6KjdJJ_6kernel4sync8refcountNtB2_8Refcount13warn_saturate+0x1c0/0x350
+[    5.647747] Modules linked in:
+[    5.647785] CPU: 1 UID: 0 PID: 258 Comm: kunit_try_catch Tainted: G        W        N  6.18.57-ferret-rust #20 PREEMPT(voluntary) 
+[    5.647903] Tainted: [W]=WARN, [N]=TEST
+[    5.647939] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.16.3-debian-1.16.3-2 04/01/2014
+[    5.648102] RIP: 0010:_RNvMNtNtCshc5sK6KjdJJ_6kernel4sync8refcountNtB2_8Refcount13warn_saturate+0x1c0/0x350
+[    5.648205] Code: 80 00 00 00 48 c7 84 24 88 00 00 00 00 00 00 00 48 8d 54 24 70 48 c7 c7 d0 36 27 86 48 c7 c6 67 7a 87 86 31 c0 e8 10 19 a0 ff <0f> 0b e9 77 01 00 00 c7 44 24 0c 00 00 00 00 48 8d 74 24 0c 48 c7
+[    5.648355] RSP: 0018:ff6f779f0028bce0 EFLAGS: 00000246
+[    5.648411] RAX: 0000000000000037 RBX: 0000000000000002 RCX: b99f8ec55c164900
+[    5.648476] RDX: 0000000000000002 RSI: 00000000ffffdfff RDI: ffffffff86c87b00
+[    5.648542] RBP: 0000000000000002 R08: 0000000000001fff R09: ffffffff86c57b00
+[    5.648607] R10: 0000000000005ffd R11: 0000000000000004 R12: 00000000c0000000
+[    5.648671] R13: 0000000000000008 R14: ff6f779f0028be3c R15: ff6f779f0028be38
+[    5.648739] FS:  0000000000000000(0000) GS:ff166b9a76618000(0000) knlGS:0000000000000000
+[    5.648809] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[    5.648865] CR2: 00fffffffffff000 CR3: 0000000011a2c000 CR4: 0000000000751ef0
+[    5.649030] PKRU: 55555554
+[    5.649135] Call Trace:
+[    5.649164]  <TASK>
+[    5.649187]  ? nbcon_cpu_emergency_exit+0x9/0x40
+[    5.649243]  ? refcount_warn_saturate_c_ref+0x64/0x140
+[    5.649298]  ? refcount_warn_saturate_c_ref+0x66/0x140
+[    5.649355]  ? handle_bug+0x84/0x160
+[    5.649400]  ? exc_invalid_op+0x1a/0x50
+[    5.649455]  ? refcount_warn_saturate_c_ref+0x66/0x140
+[    5.649516]  fvs_sweep_warn_saturate+0x6b/0x240
+[    5.649571]  kunit_try_run_case+0x8f/0x190
+[    5.649621]  kunit_generic_run_threadfn_adapter+0x1d/0x40
+[    5.649682]  ? __pfx_kunit_generic_run_threadfn_adapter+0x10/0x10
+[    5.649747]  kthread+0x209/0x250
+[    5.649790]  ? __pfx_kthread+0x10/0x10
+[    5.649836]  ret_from_fork+0xbe/0x170
+[    5.649887]  ? __pfx_kthread+0x10/0x10
+[    5.649938]  ret_from_fork_asm+0x1a/0x30
+[    5.650217]  </TASK>
+[    5.650249] ---[ end trace 0000000000000000 ]---
+[    5.650313] ------------[ cut here ]------------
+[    5.650354] refcount_t: addition on 0; use-after-free.
+[    5.650434] WARNING: CPU: 1 PID: 258 at lib/refcount.c:25 refcount_warn_saturate_c_ref+0x8c/0x140
+[    5.650521] Modules linked in:
+[    5.650558] CPU: 1 UID: 0 PID: 258 Comm: kunit_try_catch Tainted: G        W        N  6.18.57-ferret-rust #20 PREEMPT(voluntary) 
+[    5.650661] Tainted: [W]=WARN, [N]=TEST
+[    5.650705] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.16.3-debian-1.16.3-2 04/01/2014
+[    5.650785] RIP: 0010:refcount_warn_saturate_c_ref+0x8c/0x140
+[    5.650846] Code: ff 90 0f 0b 90 90 c3 cc cc cc cc cc 80 3d 29 7e 7f 01 00 75 b8 c6 05 20 7e 7f 01 01 90 48 c7 c7 ac 2e 8a 86 e8 55 b1 a0 ff 90 <0f> 0b 90 90 c3 cc cc cc cc cc 80 3d 02 7e 7f 01 00 75 90 c6 05 f9
+[    5.651141] RSP: 0018:ff6f779f0028be18 EFLAGS: 00000246
+[    5.651199] RAX: b99f8ec55c164900 RBX: ff6f779f00013c08 RCX: b99f8ec55c164900
+[    5.651260] RDX: 0000000000000002 RSI: 00000000ffffdfff RDI: ffffffff86c87b00
+[    5.651321] RBP: 0000000000000002 R08: 0000000000001fff R09: ffffffff86c57b00
+[    5.651381] R10: 0000000000005ffd R11: 0000000000000004 R12: 00000000c0000000
+[    5.651445] R13: 0000000000000008 R14: ff6f779f0028be3c R15: ff6f779f0028be38
+[    5.651507] FS:  0000000000000000(0000) GS:ff166b9a76618000(0000) knlGS:0000000000000000
+[    5.651579] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[    5.651630] CR2: 00fffffffffff000 CR3: 0000000011a2c000 CR4: 0000000000751ef0
+[    5.651692] PKRU: 55555554
+[    5.651720] Call Trace:
+[    5.651747]  <TASK>
+[    5.651776]  fvs_sweep_warn_saturate+0x75/0x240
+[    5.651835]  kunit_try_run_case+0x8f/0x190
+[    5.651899]  kunit_generic_run_threadfn_adapter+0x1d/0x40
+[    5.652075]  ? __pfx_kunit_generic_run_threadfn_adapter+0x10/0x10
+[    5.652147]  kthread+0x209/0x250
+[    5.652192]  ? __pfx_kthread+0x10/0x10
+[    5.652235]  ret_from_fork+0xbe/0x170
+[    5.652280]  ? __pfx_kthread+0x10/0x10
+[    5.652323]  ret_from_fork_asm+0x1a/0x30
+[    5.652381]  </TASK>
+[    5.652407] ---[ end trace 0000000000000000 ]---
+[    5.652483] rust_kernel: refcount_t: underflow; use-after-free.
+[    5.652570] ------------[ cut here ]------------
+[    5.652612] WARNING: CPU: 1 PID: 258 at /build/ferret/src/rust/kernel/sync/refcount.rs:194 _RNvMNtNtCshc5sK6KjdJJ_6kernel4sync8refcountNtB2_8Refcount13warn_saturate+0x247/0x350
+[    5.652758] Modules linked in:
+[    5.652797] CPU: 1 UID: 0 PID: 258 Comm: kunit_try_catch Tainted: G        W        N  6.18.57-ferret-rust #20 PREEMPT(voluntary) 
+[    5.652920] Tainted: [W]=WARN, [N]=TEST
+[    5.652957] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.16.3-debian-1.16.3-2 04/01/2014
+[    5.653240] RIP: 0010:_RNvMNtNtCshc5sK6KjdJJ_6kernel4sync8refcountNtB2_8Refcount13warn_saturate+0x247/0x350
+[    5.653384] Code: 00 48 c7 84 24 b8 00 00 00 00 00 00 00 48 8d 94 24 a0 00 00 00 48 c7 c7 d0 36 27 86 48 c7 c6 67 7a 87 86 31 c0 e8 89 18 a0 ff <0f> 0b e9 f0 00 00 00 c7 44 24 0c 00 00 00 00 48 8d 74 24 0c 48 c7
+[    5.653535] RSP: 0018:ff6f779f0028bce0 EFLAGS: 00000246
+[    5.653592] RAX: 0000000000000033 RBX: 0000000000000003 RCX: b99f8ec55c164900
+[    5.653653] RDX: 0000000000000002 RSI: 00000000ffffdfff RDI: ffffffff86c87b00
+[    5.653723] RBP: 0000000000000003 R08: 0000000000001fff R09: ffffffff86c57b00
+[    5.653783] R10: 0000000000005ffd R11: 0000000000000004 R12: 00000000c0000000
+[    5.653846] R13: 000000000000000c R14: ff6f779f0028be3c R15: ff6f779f0028be38
+[    5.653919] FS:  0000000000000000(0000) GS:ff166b9a76618000(0000) knlGS:0000000000000000
+[    5.653990] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[    5.654170] CR2: 00fffffffffff000 CR3: 0000000011a2c000 CR4: 0000000000751ef0
+[    5.654245] PKRU: 55555554
+[    5.654274] Call Trace:
+[    5.654301]  <TASK>
+[    5.654324]  ? nbcon_cpu_emergency_exit+0x9/0x40
+[    5.654382]  ? refcount_warn_saturate_c_ref+0x8c/0x140
+[    5.654443]  ? refcount_warn_saturate_c_ref+0x8e/0x140
+[    5.654501]  ? handle_bug+0x84/0x160
+[    5.654547]  ? exc_invalid_op+0x1a/0x50
+[    5.654599]  ? refcount_warn_saturate_c_ref+0x8e/0x140
+[    5.654655]  fvs_sweep_warn_saturate+0x6b/0x240
+[    5.654709]  kunit_try_run_case+0x8f/0x190
+[    5.654763]  kunit_generic_run_threadfn_adapter+0x1d/0x40
+[    5.654821]  ? __pfx_kunit_generic_run_threadfn_adapter+0x10/0x10
+[    5.654964]  kthread+0x209/0x250
+[    5.655009]  ? __pfx_kthread+0x10/0x10
+[    5.655053]  ret_from_fork+0xbe/0x170
+[    5.655097]  ? __pfx_kthread+0x10/0x10
+[    5.655144]  ret_from_fork_asm+0x1a/0x30
+[    5.655200]  </TASK>
+[    5.655225] ---[ end trace 0000000000000000 ]---
+[    5.655303] ------------[ cut here ]------------
+[    5.655346] refcount_t: underflow; use-after-free.
+[    5.655424] WARNING: CPU: 1 PID: 258 at lib/refcount.c:28 refcount_warn_saturate_c_ref+0xb4/0x140
+[    5.655517] Modules linked in:
+[    5.655555] CPU: 1 UID: 0 PID: 258 Comm: kunit_try_catch Tainted: G        W        N  6.18.57-ferret-rust #20 PREEMPT(voluntary) 
+[    5.655659] Tainted: [W]=WARN, [N]=TEST
+[    5.655694] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.16.3-debian-1.16.3-2 04/01/2014
+[    5.655772] RIP: 0010:refcount_warn_saturate_c_ref+0xb4/0x140
+[    5.655835] Code: ff 90 0f 0b 90 90 c3 cc cc cc cc cc 80 3d 02 7e 7f 01 00 75 90 c6 05 f9 7d 7f 01 01 90 48 c7 c7 ab ca 91 86 e8 2d b1 a0 ff 90 <0f> 0b 90 90 c3 cc cc cc cc cc 80 3d d7 7d 7f 01 00 0f 85 64 ff ff
+[    5.655997] RSP: 0018:ff6f779f0028be18 EFLAGS: 00000246
+[    5.656152] RAX: b99f8ec55c164900 RBX: ff6f779f00013c08 RCX: b99f8ec55c164900
+[    5.656330] RDX: 0000000000000002 RSI: 00000000ffffdfff RDI: ffffffff86c87b00
+[    5.656394] RBP: 0000000000000003 R08: 0000000000001fff R09: ffffffff86c57b00
+[    5.656457] R10: 0000000000005ffd R11: 0000000000000004 R12: 00000000c0000000
+[    5.656519] R13: 000000000000000c R14: ff6f779f0028be3c R15: ff6f779f0028be38
+[    5.656580] FS:  0000000000000000(0000) GS:ff166b9a76618000(0000) knlGS:0000000000000000
+[    5.656649] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[    5.656699] CR2: 00fffffffffff000 CR3: 0000000011a2c000 CR4: 0000000000751ef0
+[    5.656763] PKRU: 55555554
+[    5.656790] Call Trace:
+[    5.656816]  <TASK>
+[    5.656839]  fvs_sweep_warn_saturate+0x75/0x240
+[    5.656905]  kunit_try_run_case+0x8f/0x190
+[    5.656959]  kunit_generic_run_threadfn_adapter+0x1d/0x40
+[    5.657134]  ? __pfx_kunit_generic_run_threadfn_adapter+0x10/0x10
+[    5.657201]  kthread+0x209/0x250
+[    5.657244]  ? __pfx_kthread+0x10/0x10
+[    5.657291]  ret_from_fork+0xbe/0x170
+[    5.657338]  ? __pfx_kthread+0x10/0x10
+[    5.657383]  ret_from_fork_asm+0x1a/0x30
+[    5.657437]  </TASK>
+[    5.657460] ---[ end trace 0000000000000000 ]---
+[    5.657531] rust_kernel: refcount_t: decrement hit 0; leaking memory.
+[    5.657623] ------------[ cut here ]------------
+[    5.657664] WARNING: CPU: 1 PID: 258 at /build/ferret/src/rust/kernel/sync/refcount.rs:197 _RNvMNtNtCshc5sK6KjdJJ_6kernel4sync8refcountNtB2_8Refcount13warn_saturate+0xbc/0x350
+[    5.657805] Modules linked in:
+[    5.657845] CPU: 1 UID: 0 PID: 258 Comm: kunit_try_catch Tainted: G        W        N  6.18.57-ferret-rust #20 PREEMPT(voluntary) 
+[    5.657958] Tainted: [W]=WARN, [N]=TEST
+[    5.657994] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.16.3-debian-1.16.3-2 04/01/2014
+[    5.658073] RIP: 0010:_RNvMNtNtCshc5sK6KjdJJ_6kernel4sync8refcountNtB2_8Refcount13warn_saturate+0xbc/0x350
+[    5.658259] Code: 00 48 c7 84 24 e8 00 00 00 00 00 00 00 48 8d 94 24 d0 00 00 00 48 c7 c7 d0 36 27 86 48 c7 c6 67 7a 87 86 31 c0 e8 14 1a a0 ff <0f> 0b e9 7b 02 00 00 85 db 0f 84 83 01 00 00 83 fb 01 0f 85 ec 01
+[    5.658418] RSP: 0018:ff6f779f0028bce0 EFLAGS: 00000246
+[    5.658474] RAX: 0000000000000039 RBX: 0000000000000004 RCX: b99f8ec55c164900
+[    5.658537] RDX: 0000000000000002 RSI: 00000000ffffdfff RDI: ffffffff86c87b00
+[    5.658598] RBP: 0000000000000004 R08: 0000000000001fff R09: ffffffff86c57b00
+[    5.658659] R10: 0000000000005ffd R11: 0000000000000004 R12: 00000000c0000000
+[    5.658722] R13: 0000000000000010 R14: ff6f779f0028be3c R15: ff6f779f0028be38
+[    5.658783] FS:  0000000000000000(0000) GS:ff166b9a76618000(0000) knlGS:0000000000000000
+[    5.658876] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[    5.658930] CR2: 00fffffffffff000 CR3: 0000000011a2c000 CR4: 0000000000751ef0
+[    5.659088] PKRU: 55555554
+[    5.659144] Call Trace:
+[    5.659180]  <TASK>
+[    5.659204]  ? nbcon_cpu_emergency_exit+0x9/0x40
+[    5.659263]  ? refcount_warn_saturate_c_ref+0xb4/0x140
+[    5.659322]  ? refcount_warn_saturate_c_ref+0xb6/0x140
+[    5.659378]  ? handle_bug+0x84/0x160
+[    5.659423]  ? exc_invalid_op+0x1a/0x50
+[    5.659474]  ? refcount_warn_saturate_c_ref+0xb6/0x140
+[    5.659530]  fvs_sweep_warn_saturate+0x6b/0x240
+[    5.659591]  kunit_try_run_case+0x8f/0x190
+[    5.659643]  kunit_generic_run_threadfn_adapter+0x1d/0x40
+[    5.659700]  ? __pfx_kunit_generic_run_threadfn_adapter+0x10/0x10
+[    5.659765]  kthread+0x209/0x250
+[    5.659810]  ? __pfx_kthread+0x10/0x10
+[    5.659853]  ret_from_fork+0xbe/0x170
+[    5.659901]  ? __pfx_kthread+0x10/0x10
+[    5.660038]  ret_from_fork_asm+0x1a/0x30
+[    5.660100]  </TASK>
+[    5.660125] ---[ end trace 0000000000000000 ]---
+[    5.660191] ------------[ cut here ]------------
+[    5.660233] refcount_t: decrement hit 0; leaking memory.
+[    5.660320] WARNING: CPU: 1 PID: 258 at lib/refcount.c:31 refcount_warn_saturate_c_ref+0x12b/0x140
+[    5.660410] Modules linked in:
+[    5.660449] CPU: 1 UID: 0 PID: 258 Comm: kunit_try_catch Tainted: G        W        N  6.18.57-ferret-rust #20 PREEMPT(voluntary) 
+[    5.660556] Tainted: [W]=WARN, [N]=TEST
+[    5.660596] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.16.3-debian-1.16.3-2 04/01/2014
+[    5.660673] RIP: 0010:refcount_warn_saturate_c_ref+0x12b/0x140
+[    5.660738] Code: c7 6c 6e 81 86 e8 d5 b0 a0 ff 90 0f 0b 90 90 c3 cc cc cc cc cc c6 05 83 7d 7f 01 01 90 48 c7 c7 e5 2c 84 86 e8 b6 b0 a0 ff 90 <0f> 0b 90 90 c3 cc cc cc cc cc 66 66 2e 0f 1f 84 00 00 00 00 00 90
+[    5.660901] RSP: 0018:ff6f779f0028be18 EFLAGS: 00000246
+[    5.661171] RAX: b99f8ec55c164900 RBX: ff6f779f00013c08 RCX: b99f8ec55c164900
+[    5.661239] RDX: 0000000000000002 RSI: 00000000ffffdfff RDI: ffffffff86c87b00
+[    5.661303] RBP: 0000000000000004 R08: 0000000000001fff R09: ffffffff86c57b00
+[    5.661365] R10: 0000000000005ffd R11: 0000000000000004 R12: 00000000c0000000
+[    5.661428] R13: 0000000000000010 R14: ff6f779f0028be3c R15: ff6f779f0028be38
+[    5.661492] FS:  0000000000000000(0000) GS:ff166b9a76618000(0000) knlGS:0000000000000000
+[    5.661564] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[    5.661616] CR2: 00fffffffffff000 CR3: 0000000011a2c000 CR4: 0000000000751ef0
+[    5.661676] PKRU: 55555554
+[    5.661706] Call Trace:
+[    5.661733]  <TASK>
+[    5.661756]  fvs_sweep_warn_saturate+0x75/0x240
+[    5.661816]  kunit_try_run_case+0x8f/0x190
+[    5.661880]  kunit_generic_run_threadfn_adapter+0x1d/0x40
+[    5.662122]  ? __pfx_kunit_generic_run_threadfn_adapter+0x10/0x10
+[    5.662194]  kthread+0x209/0x250
+[    5.662242]  ? __pfx_kthread+0x10/0x10
+[    5.662287]  ret_from_fork+0xbe/0x170
+[    5.662335]  ? __pfx_kthread+0x10/0x10
+[    5.662379]  ret_from_fork_asm+0x1a/0x30
+[    5.662433]  </TASK>
+[    5.662456] ---[ end trace 0000000000000000 ]---
+[    5.662533] rust_kernel: refcount_t: unknown saturation event!?.
+[    5.662632] ------------[ cut here ]------------
+[    5.662677] WARNING: CPU: 1 PID: 258 at /build/ferret/src/rust/kernel/sync/refcount.rs:199 _RNvMNtNtCshc5sK6KjdJJ_6kernel4sync8refcountNtB2_8Refcount13warn_saturate+0x33c/0x350
+[    5.662820] Modules linked in:
+[    5.662858] CPU: 1 UID: 0 PID: 258 Comm: kunit_try_catch Tainted: G        W        N  6.18.57-ferret-rust #20 PREEMPT(voluntary) 
+[    5.663044] Tainted: [W]=WARN, [N]=TEST
+[    5.663091] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.16.3-debian-1.16.3-2 04/01/2014
+[    5.663171] RIP: 0010:_RNvMNtNtCshc5sK6KjdJJ_6kernel4sync8refcountNtB2_8Refcount13warn_saturate+0x33c/0x350
+[    5.663267] Code: 00 48 c7 84 24 18 01 00 00 00 00 00 00 48 8d 94 24 00 01 00 00 48 c7 c7 d0 36 27 86 48 c7 c6 67 7a 87 86 31 c0 e8 94 17 a0 ff <0f> 0b 48 81 c4 30 01 00 00 5b c3 cc cc cc cc 0f 1f 44 00 00 90 90
+[    5.663416] RSP: 0018:ff6f779f0028bce0 EFLAGS: 00000246
+[    5.663470] RAX: 0000000000000034 RBX: 0000000000000063 RCX: b99f8ec55c164900
+[    5.663531] RDX: 0000000000000002 RSI: 00000000ffffdfff RDI: ffffffff86c87b00
+[    5.663591] RBP: 0000000000000004 R08: 0000000000001fff R09: ffffffff86c57b00
+[    5.663654] R10: 0000000000005ffd R11: 0000000000000004 R12: 00000000c0000000
+[    5.663717] R13: 0000000000000014 R14: ff6f779f0028be3c R15: ff6f779f0028be38
+[    5.663778] FS:  0000000000000000(0000) GS:ff166b9a76618000(0000) knlGS:0000000000000000
+[    5.663845] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[    5.663905] CR2: 00fffffffffff000 CR3: 0000000011a2c000 CR4: 0000000000751ef0
+[    5.664073] PKRU: 55555554
+[    5.664106] Call Trace:
+[    5.664133]  <TASK>
+[    5.664155]  ? nbcon_cpu_emergency_exit+0x9/0x40
+[    5.664210]  ? refcount_warn_saturate_c_ref+0x12b/0x140
+[    5.664268]  ? refcount_warn_saturate_c_ref+0x12d/0x140
+[    5.664327]  ? handle_bug+0x84/0x160
+[    5.664371]  ? exc_invalid_op+0x1a/0x50
+[    5.664424]  fvs_sweep_warn_saturate+0x149/0x240
+[    5.664481]  kunit_try_run_case+0x8f/0x190
+[    5.664533]  kunit_generic_run_threadfn_adapter+0x1d/0x40
+[    5.664596]  ? __pfx_kunit_generic_run_threadfn_adapter+0x10/0x10
+[    5.664661]  kthread+0x209/0x250
+[    5.664703]  ? __pfx_kthread+0x10/0x10
+[    5.664752]  ret_from_fork+0xbe/0x170
+[    5.664797]  ? __pfx_kthread+0x10/0x10
+[    5.664844]  ret_from_fork_asm+0x1a/0x30
+[    5.664991]  </TASK>
+[    5.665019] ---[ end trace 0000000000000000 ]---
+[    5.665079] ------------[ cut here ]------------
+[    5.665125] refcount_t: unknown saturation event!?.
+[    5.665208] WARNING: CPU: 1 PID: 258 at lib/refcount.c:34 refcount_warn_saturate_c_ref+0x10c/0x140
+[    5.665295] Modules linked in:
+[    5.665333] CPU: 1 UID: 0 PID: 258 Comm: kunit_try_catch Tainted: G        W        N  6.18.57-ferret-rust #20 PREEMPT(voluntary) 
+[    5.665434] Tainted: [W]=WARN, [N]=TEST
+[    5.665475] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.16.3-debian-1.16.3-2 04/01/2014
+[    5.665554] RIP: 0010:refcount_warn_saturate_c_ref+0x10c/0x140
+[    5.665619] Code: 90 90 c3 cc cc cc cc cc 80 3d b0 7d 7f 01 00 0f 85 38 ff ff ff c6 05 a3 7d 7f 01 01 90 48 c7 c7 6c 6e 81 86 e8 d5 b0 a0 ff 90 <0f> 0b 90 90 c3 cc cc cc cc cc c6 05 83 7d 7f 01 01 90 48 c7 c7 e5
+[    5.665772] RSP: 0018:ff6f779f0028be18 EFLAGS: 00000246
+[    5.665824] RAX: b99f8ec55c164900 RBX: ff6f779f00013c08 RCX: b99f8ec55c164900
+[    5.665898] RDX: 0000000000000002 RSI: 00000000ffffdfff RDI: ffffffff86c87b00
+[    5.666061] RBP: 0000000000000004 R08: 0000000000001fff R09: ffffffff86c57b00
+[    5.666129] R10: 0000000000005ffd R11: 0000000000000004 R12: 00000000c0000000
+[    5.666192] R13: 0000000000000014 R14: ff6f779f0028be3c R15: ff6f779f0028be38
+[    5.666256] FS:  0000000000000000(0000) GS:ff166b9a76618000(0000) knlGS:0000000000000000
+[    5.666348] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[    5.666409] CR2: 00fffffffffff000 CR3: 0000000011a2c000 CR4: 0000000000751ef0
+[    5.666470] PKRU: 55555554
+[    5.666498] Call Trace:
+[    5.666529]  <TASK>
+[    5.666552]  fvs_sweep_warn_saturate+0x158/0x240
+[    5.666609]  kunit_try_run_case+0x8f/0x190
+[    5.666663]  kunit_generic_run_threadfn_adapter+0x1d/0x40
+[    5.666721]  ? __pfx_kunit_generic_run_threadfn_adapter+0x10/0x10
+[    5.666789]  kthread+0x209/0x250
+[    5.666834]  ? __pfx_kthread+0x10/0x10
+[    5.666895]  ret_from_fork+0xbe/0x170
+[    5.666940]  ? __pfx_kthread+0x10/0x10
+[    5.667129]  ret_from_fork_asm+0x1a/0x30
+[    5.667194]  </TASK>
+[    5.667218] ---[ end trace 0000000000000000 ]---
+[    5.667422] kunit_try_catch (258) used greatest stack depth: 13200 bytes left
+[    5.667802]     ok 3 fvs_sweep_warn_saturate
+[    5.668715]     # fvs_sweep_dec_and_mutex_lock: EXPECTATION FAILED at lib/fvs_refcount_adversarial_kunit.c:244
+[    5.668715]     Expected mutex_is_locked(&rust_lock) == mutex_is_locked(&cref_lock), but
+[    5.668715]         mutex_is_locked(&rust_lock) == 1 (0x1)
+[    5.668715]         mutex_is_locked(&cref_lock) == 0 (0x0)
+[    5.669462]     # fvs_sweep_dec_and_mutex_lock: EXPECTATION FAILED at lib/fvs_refcount_adversarial_kunit.c:253
+[    5.669462]     Expected mutex_is_locked(&rust_lock) == fvs_counts[i] == 1, but
+[    5.669462]         mutex_is_locked(&rust_lock) == 1 (0x1)
+[    5.669462]         fvs_counts[i] == 1 == 0 (0x0)
+[    5.669760]     # fvs_sweep_dec_and_mutex_lock: EXPECTATION FAILED at lib/fvs_refcount_adversarial_kunit.c:244
+[    5.669760]     Expected mutex_is_locked(&rust_lock) == mutex_is_locked(&cref_lock), but
+[    5.669760]         mutex_is_locked(&rust_lock) == 1 (0x1)
+[    5.669760]         mutex_is_locked(&cref_lock) == 0 (0x0)
+[    5.670161]     # fvs_sweep_dec_and_mutex_lock: EXPECTATION FAILED at lib/fvs_refcount_adversarial_kunit.c:253
+[    5.670161]     Expected mutex_is_locked(&rust_lock) == fvs_counts[i] == 1, but
+[    5.670161]         mutex_is_locked(&rust_lock) == 1 (0x1)
+[    5.670161]         fvs_counts[i] == 1 == 0 (0x0)
+[    5.670447]     # fvs_sweep_dec_and_mutex_lock: EXPECTATION FAILED at lib/fvs_refcount_adversarial_kunit.c:244
+[    5.670447]     Expected mutex_is_locked(&rust_lock) == mutex_is_locked(&cref_lock), but
+[    5.670447]         mutex_is_locked(&rust_lock) == 1 (0x1)
+[    5.670447]         mutex_is_locked(&cref_lock) == 0 (0x0)
+[    5.670695]     # fvs_sweep_dec_and_mutex_lock: EXPECTATION FAILED at lib/fvs_refcount_adversarial_kunit.c:253
+[    5.670695]     Expected mutex_is_locked(&rust_lock) == fvs_counts[i] == 1, but
+[    5.670695]         mutex_is_locked(&rust_lock) == 1 (0x1)
+[    5.670695]         fvs_counts[i] == 1 == 0 (0x0)
+[    5.670964]     # fvs_sweep_dec_and_mutex_lock: EXPECTATION FAILED at lib/fvs_refcount_adversarial_kunit.c:244
+[    5.670964]     Expected mutex_is_locked(&rust_lock) == mutex_is_locked(&cref_lock), but
+[    5.670964]         mutex_is_locked(&rust_lock) == 1 (0x1)
+[    5.670964]         mutex_is_locked(&cref_lock) == 0 (0x0)
+[    5.671423]     # fvs_sweep_dec_and_mutex_lock: EXPECTATION FAILED at lib/fvs_refcount_adversarial_kunit.c:253
+[    5.671423]     Expected mutex_is_locked(&rust_lock) == fvs_counts[i] == 1, but
+[    5.671423]         mutex_is_locked(&rust_lock) == 1 (0x1)
+[    5.671423]         fvs_counts[i] == 1 == 0 (0x0)
+[    5.671680]     # fvs_sweep_dec_and_mutex_lock: EXPECTATION FAILED at lib/fvs_refcount_adversarial_kunit.c:244
+[    5.671680]     Expected mutex_is_locked(&rust_lock) == mutex_is_locked(&cref_lock), but
+[    5.671680]         mutex_is_locked(&rust_lock) == 1 (0x1)
+[    5.671680]         mutex_is_locked(&cref_lock) == 0 (0x0)
+[    5.672140]     # fvs_sweep_dec_and_mutex_lock: EXPECTATION FAILED at lib/fvs_refcount_adversarial_kunit.c:253
+[    5.672140]     Expected mutex_is_locked(&rust_lock) == fvs_counts[i] == 1, but
+[    5.672140]         mutex_is_locked(&rust_lock) == 1 (0x1)
+[    5.672140]         fvs_counts[i] == 1 == 0 (0x0)
+[    5.672411]     # fvs_sweep_dec_and_mutex_lock: EXPECTATION FAILED at lib/fvs_refcount_adversarial_kunit.c:244
+[    5.672411]     Expected mutex_is_locked(&rust_lock) == mutex_is_locked(&cref_lock), but
+[    5.672411]         mutex_is_locked(&rust_lock) == 1 (0x1)
+[    5.672411]         mutex_is_locked(&cref_lock) == 0 (0x0)
+[    5.672657]     # fvs_sweep_dec_and_mutex_lock: EXPECTATION FAILED at lib/fvs_refcount_adversarial_kunit.c:253
+[    5.672657]     Expected mutex_is_locked(&rust_lock) == fvs_counts[i] == 1, but
+[    5.672657]         mutex_is_locked(&rust_lock) == 1 (0x1)
+[    5.672657]         fvs_counts[i] == 1 == 0 (0x0)
+[    5.672921]     # fvs_sweep_dec_and_mutex_lock: EXPECTATION FAILED at lib/fvs_refcount_adversarial_kunit.c:244
+[    5.672921]     Expected mutex_is_locked(&rust_lock) == mutex_is_locked(&cref_lock), but
+[    5.672921]         mutex_is_locked(&rust_lock) == 1 (0x1)
+[    5.672921]         mutex_is_locked(&cref_lock) == 0 (0x0)
+[    5.673366]     # fvs_sweep_dec_and_mutex_lock: EXPECTATION FAILED at lib/fvs_refcount_adversarial_kunit.c:253
+[    5.673366]     Expected mutex_is_locked(&rust_lock) == fvs_counts[i] == 1, but
+[    5.673366]         mutex_is_locked(&rust_lock) == 1 (0x1)
+[    5.673366]         fvs_counts[i] == 1 == 0 (0x0)
+[    5.673630]     # fvs_sweep_dec_and_mutex_lock: EXPECTATION FAILED at lib/fvs_refcount_adversarial_kunit.c:244
+[    5.673630]     Expected mutex_is_locked(&rust_lock) == mutex_is_locked(&cref_lock), but
+[    5.673630]         mutex_is_locked(&rust_lock) == 1 (0x1)
+[    5.673630]         mutex_is_locked(&cref_lock) == 0 (0x0)
+[    5.673900]     # fvs_sweep_dec_and_mutex_lock: EXPECTATION FAILED at lib/fvs_refcount_adversarial_kunit.c:253
+[    5.673900]     Expected mutex_is_locked(&rust_lock) == fvs_counts[i] == 1, but
+[    5.673900]         mutex_is_locked(&rust_lock) == 1 (0x1)
+[    5.673900]         fvs_counts[i] == 1 == 0 (0x0)
+[    5.674449]     # fvs_sweep_dec_and_mutex_lock: EXPECTATION FAILED at lib/fvs_refcount_adversarial_kunit.c:244
+[    5.674449]     Expected mutex_is_locked(&rust_lock) == mutex_is_locked(&cref_lock), but
+[    5.674449]         mutex_is_locked(&rust_lock) == 1 (0x1)
+[    5.674449]         mutex_is_locked(&cref_lock) == 0 (0x0)
+[    5.674701]     # fvs_sweep_dec_and_mutex_lock: EXPECTATION FAILED at lib/fvs_refcount_adversarial_kunit.c:253
+[    5.674701]     Expected mutex_is_locked(&rust_lock) == fvs_counts[i] == 1, but
+[    5.674701]         mutex_is_locked(&rust_lock) == 1 (0x1)
+[    5.674701]         fvs_counts[i] == 1 == 0 (0x0)
+[    5.674989]     # fvs_sweep_dec_and_mutex_lock: EXPECTATION FAILED at lib/fvs_refcount_adversarial_kunit.c:244
+[    5.674989]     Expected mutex_is_locked(&rust_lock) == mutex_is_locked(&cref_lock), but
+[    5.674989]         mutex_is_locked(&rust_lock) == 1 (0x1)
+[    5.674989]         mutex_is_locked(&cref_lock) == 0 (0x0)
+[    5.675327]     # fvs_sweep_dec_and_mutex_lock: EXPECTATION FAILED at lib/fvs_refcount_adversarial_kunit.c:253
+[    5.675327]     Expected mutex_is_locked(&rust_lock) == fvs_counts[i] == 1, but
+[    5.675327]         mutex_is_locked(&rust_lock) == 1 (0x1)
+[    5.675327]         fvs_counts[i] == 1 == 0 (0x0)
+[    5.675667]     # fvs_sweep_dec_and_mutex_lock: EXPECTATION FAILED at lib/fvs_refcount_adversarial_kunit.c:244
+[    5.675667]     Expected mutex_is_locked(&rust_lock) == mutex_is_locked(&cref_lock), but
+[    5.675667]         mutex_is_locked(&rust_lock) == 1 (0x1)
+[    5.675667]         mutex_is_locked(&cref_lock) == 0 (0x0)
+[    5.676120]     # fvs_sweep_dec_and_mutex_lock: EXPECTATION FAILED at lib/fvs_refcount_adversarial_kunit.c:253
+[    5.676120]     Expected mutex_is_locked(&rust_lock) == fvs_counts[i] == 1, but
+[    5.676120]         mutex_is_locked(&rust_lock) == 1 (0x1)
+[    5.676120]         fvs_counts[i] == 1 == 0 (0x0)
+[    5.676389]     # fvs_sweep_dec_and_mutex_lock: EXPECTATION FAILED at lib/fvs_refcount_adversarial_kunit.c:244
+[    5.676389]     Expected mutex_is_locked(&rust_lock) == mutex_is_locked(&cref_lock), but
+[    5.676389]         mutex_is_locked(&rust_lock) == 1 (0x1)
+[    5.676389]         mutex_is_locked(&cref_lock) == 0 (0x0)
+[    5.676638]     # fvs_sweep_dec_and_mutex_lock: EXPECTATION FAILED at lib/fvs_refcount_adversarial_kunit.c:253
+[    5.676638]     Expected mutex_is_locked(&rust_lock) == fvs_counts[i] == 1, but
+[    5.676638]         mutex_is_locked(&rust_lock) == 1 (0x1)
+[    5.676638]         fvs_counts[i] == 1 == 0 (0x0)
+[    5.676929]     # fvs_sweep_dec_and_mutex_lock: EXPECTATION FAILED at lib/fvs_refcount_adversarial_kunit.c:244
+[    5.676929]     Expected mutex_is_locked(&rust_lock) == mutex_is_locked(&cref_lock), but
+[    5.676929]         mutex_is_locked(&rust_lock) == 1 (0x1)
+[    5.676929]         mutex_is_locked(&cref_lock) == 0 (0x0)
+[    5.677520]     # fvs_sweep_dec_and_mutex_lock: EXPECTATION FAILED at lib/fvs_refcount_adversarial_kunit.c:253
+[    5.677520]     Expected mutex_is_locked(&rust_lock) == fvs_counts[i] == 1, but
+[    5.677520]         mutex_is_locked(&rust_lock) == 1 (0x1)
+[    5.677520]         fvs_counts[i] == 1 == 0 (0x0)
+[    5.677850]     # fvs_sweep_dec_and_mutex_lock: EXPECTATION FAILED at lib/fvs_refcount_adversarial_kunit.c:244
+[    5.677850]     Expected mutex_is_locked(&rust_lock) == mutex_is_locked(&cref_lock), but
+[    5.677850]         mutex_is_locked(&rust_lock) == 1 (0x1)
+[    5.677850]         mutex_is_locked(&cref_lock) == 0 (0x0)
+[    5.678441]     # fvs_sweep_dec_and_mutex_lock: EXPECTATION FAILED at lib/fvs_refcount_adversarial_kunit.c:253
+[    5.678441]     Expected mutex_is_locked(&rust_lock) == fvs_counts[i] == 1, but
+[    5.678441]         mutex_is_locked(&rust_lock) == 1 (0x1)
+[    5.678441]         fvs_counts[i] == 1 == 0 (0x0)
+[    5.678730]     # fvs_sweep_dec_and_mutex_lock: EXPECTATION FAILED at lib/fvs_refcount_adversarial_kunit.c:244
+[    5.678730]     Expected mutex_is_locked(&rust_lock) == mutex_is_locked(&cref_lock), but
+[    5.678730]         mutex_is_locked(&rust_lock) == 1 (0x1)
+[    5.678730]         mutex_is_locked(&cref_lock) == 0 (0x0)
+[    5.679247]     # fvs_sweep_dec_and_mutex_lock: EXPECTATION FAILED at lib/fvs_refcount_adversarial_kunit.c:253
+[    5.679247]     Expected mutex_is_locked(&rust_lock) == fvs_counts[i] == 1, but
+[    5.679247]         mutex_is_locked(&rust_lock) == 1 (0x1)
+[    5.679247]         fvs_counts[i] == 1 == 0 (0x0)
+[    5.679540]     # fvs_sweep_dec_and_mutex_lock: EXPECTATION FAILED at lib/fvs_refcount_adversarial_kunit.c:244
+[    5.679540]     Expected mutex_is_locked(&rust_lock) == mutex_is_locked(&cref_lock), but
+[    5.679540]         mutex_is_locked(&rust_lock) == 1 (0x1)
+[    5.679540]         mutex_is_locked(&cref_lock) == 0 (0x0)
+[    5.679791]     # fvs_sweep_dec_and_mutex_lock: EXPECTATION FAILED at lib/fvs_refcount_adversarial_kunit.c:253
+[    5.679791]     Expected mutex_is_locked(&rust_lock) == fvs_counts[i] == 1, but
+[    5.679791]         mutex_is_locked(&rust_lock) == 1 (0x1)
+[    5.679791]         fvs_counts[i] == 1 == 0 (0x0)
+[    5.680061]     # fvs_sweep_dec_and_mutex_lock: EXPECTATION FAILED at lib/fvs_refcount_adversarial_kunit.c:244
+[    5.680061]     Expected mutex_is_locked(&rust_lock) == mutex_is_locked(&cref_lock), but
+[    5.680061]         mutex_is_locked(&rust_lock) == 1 (0x1)
+[    5.680061]         mutex_is_locked(&cref_lock) == 0 (0x0)
+[    5.680437]     # fvs_sweep_dec_and_mutex_lock: EXPECTATION FAILED at lib/fvs_refcount_adversarial_kunit.c:253
+[    5.680437]     Expected mutex_is_locked(&rust_lock) == fvs_counts[i] == 1, but
+[    5.680437]         mutex_is_locked(&rust_lock) == 1 (0x1)
+[    5.680437]         fvs_counts[i] == 1 == 0 (0x0)
+[    5.680713]     # fvs_sweep_dec_and_mutex_lock: EXPECTATION FAILED at lib/fvs_refcount_adversarial_kunit.c:244
+[    5.680713]     Expected mutex_is_locked(&rust_lock) == mutex_is_locked(&cref_lock), but
+[    5.680713]         mutex_is_locked(&rust_lock) == 1 (0x1)
+[    5.680713]         mutex_is_locked(&cref_lock) == 0 (0x0)
+[    5.681061]     # fvs_sweep_dec_and_mutex_lock: EXPECTATION FAILED at lib/fvs_refcount_adversarial_kunit.c:253
+[    5.681061]     Expected mutex_is_locked(&rust_lock) == fvs_counts[i] == 1, but
+[    5.681061]         mutex_is_locked(&rust_lock) == 1 (0x1)
+[    5.681061]         fvs_counts[i] == 1 == 0 (0x0)
+[    5.682042]     not ok 4 fvs_sweep_dec_and_mutex_lock
+[    5.683722]     ok 5 fvs_sweep_dec_and_lock
+[    5.684726]     ok 6 fvs_sweep_dec_and_lock_irqsave
+[    6.434660]     ok 7 fvs_lock_failure_path_spinlock
+[    7.174650]     ok 8 fvs_lock_failure_path_irqsave
+[    7.487027]     ok 9 fvs_lock_failure_path_mutex
+[    7.500053]     ok 10 fvs_random_differential
+[    7.500410] # fvs_refcount: pass:9 fail:1 skip:0 total:10
+[    7.500487] # Totals: pass:9 fail:1 skip:0 total:10
+[    7.500604] not ok 17 fvs_refcount
+[    7.501112]     KTAP version 1
+[    7.501214]     # Subtest: fvs_refcount_adv
+[    7.501297]     # speed: normal
+[    7.501337]     1..8
+[    7.504290]     # kref_new_does_not_take_a_reference.speed: normal
+[    7.504450]     ok 1 kref_new_does_not_take_a_reference
+[    7.506370]     # two_handles_over_one_reference_release_the_object_early.speed: normal
+[    7.506529]     ok 2 two_handles_over_one_reference_release_the_object_early
+[    7.508210]     # get_on_a_saturated_count_takes_no_reference.speed: normal
+[    7.508369]     ok 3 get_on_a_saturated_count_takes_no_reference
+[    7.510311]     # get_on_a_dead_count_takes_no_reference.speed: normal
+[    7.510441]     ok 4 get_on_a_dead_count_takes_no_reference
+[    7.511688]     # into_raw_then_c_kref_put_releases_once.speed: normal
+[    7.511800]     ok 5 into_raw_then_c_kref_put_releases_once
+[    7.512883]     # kref_is_send_and_sync.speed: normal
+[    7.512985]     ok 6 kref_is_send_and_sync
+[    7.514499]     # dec_helpers_match_the_contract_model_on_the_boundaries.speed: normal
+[    7.514592]     ok 7 dec_helpers_match_the_contract_model_on_the_boundaries
+[    7.520851]     # dec_helpers_match_the_contract_model_over_a_reaching_distribution.speed: normal
+[    7.521013]     ok 8 dec_helpers_match_the_contract_model_over_a_reaching_distribution
+[    7.521204] # fvs_refcount_adv: pass:8 fail:0 skip:0 total:8
+[    7.521298] # Totals: pass:8 fail:0 skip:0 total:8
+[    7.521366] ok 18 fvs_refcount_adv
+[    7.521620]     KTAP version 1
+[    7.521660]     # Subtest: refcount_diff
+[    7.521708]     # module: refcount_diff_kunit
+[    7.521738]     1..9
+[    7.523018]     ok 1 refcount_diff_dec_if_one
+[    7.523890]     ok 2 refcount_diff_dec_not_one
+[    7.524876]     ok 3 refcount_diff_warn_saturate
+[    7.525572]     # refcount_diff_dec_and_mutex_lock: EXPECTATION FAILED at lib/refcount_diff_kunit.c:168
+[    7.525572]     Expected mutex_is_locked(&rust_lock) == mutex_is_locked(&cref_lock), but
+[    7.525572]         mutex_is_locked(&rust_lock) == 1 (0x1)
+[    7.525572]         mutex_is_locked(&cref_lock) == 0 (0x0)
+[    7.525746]     # refcount_diff_dec_and_mutex_lock: EXPECTATION FAILED at lib/refcount_diff_kunit.c:168
+[    7.525746]     Expected mutex_is_locked(&rust_lock) == mutex_is_locked(&cref_lock), but
+[    7.525746]         mutex_is_locked(&rust_lock) == 1 (0x1)
+[    7.525746]         mutex_is_locked(&cref_lock) == 0 (0x0)
+[    7.526152]     # refcount_diff_dec_and_mutex_lock: EXPECTATION FAILED at lib/refcount_diff_kunit.c:168
+[    7.526152]     Expected mutex_is_locked(&rust_lock) == mutex_is_locked(&cref_lock), but
+[    7.526152]         mutex_is_locked(&rust_lock) == 1 (0x1)
+[    7.526152]         mutex_is_locked(&cref_lock) == 0 (0x0)
+[    7.526405]     # refcount_diff_dec_and_mutex_lock: EXPECTATION FAILED at lib/refcount_diff_kunit.c:168
+[    7.526405]     Expected mutex_is_locked(&rust_lock) == mutex_is_locked(&cref_lock), but
+[    7.526405]         mutex_is_locked(&rust_lock) == 1 (0x1)
+[    7.526405]         mutex_is_locked(&cref_lock) == 0 (0x0)
+[    7.526659]     # refcount_diff_dec_and_mutex_lock: EXPECTATION FAILED at lib/refcount_diff_kunit.c:168
+[    7.526659]     Expected mutex_is_locked(&rust_lock) == mutex_is_locked(&cref_lock), but
+[    7.526659]         mutex_is_locked(&rust_lock) == 1 (0x1)
+[    7.526659]         mutex_is_locked(&cref_lock) == 0 (0x0)
+[    7.526916]     # refcount_diff_dec_and_mutex_lock: EXPECTATION FAILED at lib/refcount_diff_kunit.c:168
+[    7.526916]     Expected mutex_is_locked(&rust_lock) == mutex_is_locked(&cref_lock), but
+[    7.526916]         mutex_is_locked(&rust_lock) == 1 (0x1)
+[    7.526916]         mutex_is_locked(&cref_lock) == 0 (0x0)
+[    7.527515]     # refcount_diff_dec_and_mutex_lock: EXPECTATION FAILED at lib/refcount_diff_kunit.c:168
+[    7.527515]     Expected mutex_is_locked(&rust_lock) == mutex_is_locked(&cref_lock), but
+[    7.527515]         mutex_is_locked(&rust_lock) == 1 (0x1)
+[    7.527515]         mutex_is_locked(&cref_lock) == 0 (0x0)
+[    7.527786]     # refcount_diff_dec_and_mutex_lock: EXPECTATION FAILED at lib/refcount_diff_kunit.c:168
+[    7.527786]     Expected mutex_is_locked(&rust_lock) == mutex_is_locked(&cref_lock), but
+[    7.527786]         mutex_is_locked(&rust_lock) == 1 (0x1)
+[    7.527786]         mutex_is_locked(&cref_lock) == 0 (0x0)
+[    7.528217]     # refcount_diff_dec_and_mutex_lock: EXPECTATION FAILED at lib/refcount_diff_kunit.c:168
+[    7.528217]     Expected mutex_is_locked(&rust_lock) == mutex_is_locked(&cref_lock), but
+[    7.528217]         mutex_is_locked(&rust_lock) == 1 (0x1)
+[    7.528217]         mutex_is_locked(&cref_lock) == 0 (0x0)
+[    7.528524]     # refcount_diff_dec_and_mutex_lock: EXPECTATION FAILED at lib/refcount_diff_kunit.c:168
+[    7.528524]     Expected mutex_is_locked(&rust_lock) == mutex_is_locked(&cref_lock), but
+[    7.528524]         mutex_is_locked(&rust_lock) == 1 (0x1)
+[    7.528524]         mutex_is_locked(&cref_lock) == 0 (0x0)
+[    7.528774]     # refcount_diff_dec_and_mutex_lock: EXPECTATION FAILED at lib/refcount_diff_kunit.c:168
+[    7.528774]     Expected mutex_is_locked(&rust_lock) == mutex_is_locked(&cref_lock), but
+[    7.528774]         mutex_is_locked(&rust_lock) == 1 (0x1)
+[    7.528774]         mutex_is_locked(&cref_lock) == 0 (0x0)
+[    7.529229]     # refcount_diff_dec_and_mutex_lock: EXPECTATION FAILED at lib/refcount_diff_kunit.c:168
+[    7.529229]     Expected mutex_is_locked(&rust_lock) == mutex_is_locked(&cref_lock), but
+[    7.529229]         mutex_is_locked(&rust_lock) == 1 (0x1)
+[    7.529229]         mutex_is_locked(&cref_lock) == 0 (0x0)
+[    7.529502]     # refcount_diff_dec_and_mutex_lock: EXPECTATION FAILED at lib/refcount_diff_kunit.c:168
+[    7.529502]     Expected mutex_is_locked(&rust_lock) == mutex_is_locked(&cref_lock), but
+[    7.529502]         mutex_is_locked(&rust_lock) == 1 (0x1)
+[    7.529502]         mutex_is_locked(&cref_lock) == 0 (0x0)
+[    7.530199]     not ok 4 refcount_diff_dec_and_mutex_lock
+[    7.531275]     ok 5 refcount_diff_dec_and_lock
+[    7.532150]     ok 6 refcount_diff_dec_and_lock_irqsave
+[    7.533197]     ok 7 refcount_diff_sequence
+[    7.535535] ferret refcount: rust phase 0: count 1 decrements 1000 refused 0 dropped 0
+[    7.537593] ferret refcount: c_ref phase 0: count 1 decrements 1000 refused 0 dropped 0
+[    7.540354] ferret refcount: rust phase 1: count 0 decrements 0 refused 0 dropped 1
+[    7.543227] ferret refcount: c_ref phase 1: count 0 decrements 0 refused 0 dropped 1
+[    7.543647]     ok 8 refcount_diff_concurrent
+[    7.544803] ferret refcount: property coverage: zero=65 one=78 two=76 saturated=71 int_max=68 if_one_success=14 not_one_refused=18 not_one_saturated=18 not_one_underflow=18 lock_taken=46
+[    7.545504]     ok 9 refcount_diff_property
+[    7.545526] # refcount_diff: pass:8 fail:1 skip:0 total:9
+[    7.545586] # Totals: pass:8 fail:1 skip:0 total:9
+[    7.545640] not ok 19 refcount_diff
+[    7.831192] Freeing unused kernel image (initmem) memory: 2916K
+[    7.831600] Write protecting the kernel read-only data: 30720k
+[    7.835879] Freeing unused kernel image (text/rodata gap) memory: 596K
+[    7.843390] Freeing unused kernel image (rodata/data gap) memory: 1748K
+[    8.014489] x86/mm: Checked W+X mappings: passed, no W+X pages found.
+[    8.014814] Run /init as init process
+FERRET-INIT: start
+FERRET-INIT: sysname=Linux release=6.18.57-ferret-rust machine=x86_64
+FERRET-INIT: proc-mounted
+FERRET-INIT: proc-version-prefix=Linux version 6.18.57-ferret-rust (root@3ea769cb049c) (Ubuntu clang version 18.1.3 (1ubuntu1), Ubuntu LLD 18.1.3) #20 SMP PREEMPT_DYNAMIC Thu Oct 22 06:36:49 UTC 2026
+FERRET-INIT: ok
+[    8.199581] ACPI: PM: Preparing to enter system sleep state S5
+[    8.200573] reboot: Power down

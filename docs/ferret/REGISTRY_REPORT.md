@@ -60,6 +60,7 @@ Baseline: `v6.18.57` (`2ff600d29ee478d0a8d46ef8a58afb5e038fe692`)
 | `refcount` | kunit-refcount-concurrency | concurrency-test | PASS | `docs/ferret/evidence/boot-x86_64-rust.txt` |
 | `refcount` | kunit-refcount-adversarial | adversarial-kunit | PASS | `docs/ferret/evidence/boot-x86_64-rust.txt` |
 | `refcount` | kunit-refcount-under-kasan-ubsan | sanitizer-kunit | PASS | `artifacts/audit/sanitizer-kasan-ubsan.txt` |
+| `refcount` | kunit-refcount-under-kcsan | sanitizer-kunit | PASS | `artifacts/audit/sanitizer-kcsan.txt` |
 | `refcount` | mutation-testing | mutation-testing | PASS | `artifacts/audit/mutation-test.txt` |
 | `refcount` | linkage-ownership | static-analysis | PASS | `docs/ferret/evidence/linkage-x86_64.txt` |
 | `refcount` | linkage-ownership-arm64 | static-analysis | PASS | `docs/ferret/evidence/linkage-arm64.txt` |

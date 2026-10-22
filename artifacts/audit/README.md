@@ -1,61 +1,130 @@
 # Audit evidence
 
 The raw evidence of the independent-verification gate
-([`AUDIT_PROTOCOL.md`](../../../AUDIT_PROTOCOL.md)) for checkpoint 005.
+([`AUDIT_PROTOCOL.md`](../../../AUDIT_PROTOCOL.md)) for checkpoint 005, as it
+stands after the FVS-AUDIT-001 review. The analysis is in
+[`docs/ferret/design/COMPONENT_005_AUDIT.md`](../../docs/ferret/design/COMPONENT_005_AUDIT.md);
+this directory holds the files that report claims are made from.
+
+Everything here was produced on the `ferret/005-refcount` branch, by the
+scripts in `tools/ferret/audit/`, inside the `ferret-build` container. The
+build trees are isolated per run (`OUTROOT`), so no artifact depends on a tree
+that another run left behind.
 
 ## `mutation-test.txt`
 
-The mutation testing injects a defect into the Rust implementation, in a
-disposable git worktree, rebuilds the kernel, boots it and checks that the
-suite notices.
+`tools/ferret/audit/mutation-test.sh` injects a defect into the Rust
+implementation in a disposable git worktree created from the **committed**
+head, rebuilds the kernel, boots it, and checks whether an audited suite
+notices. It is the evidence for the adversarial tests: a test that cannot
+distinguish a broken implementation from the correct one is not evidence.
 
-The file **accumulates the runs**, so the history is visible. Two entries
-need a word of explanation:
+The file **accumulates the runs**, so the history is visible, including the
+runs that were wrong. Each run starts with a header naming the time and the
+commit that was mutated.
 
-* **`INVALID  the mutation did not build`** — this is the first version of
-  the "the underflow also decrements the count" mutation. It removed the
-  warning together with the decrement, which made the "warn once" flag dead
-  code, and the kernel crate builds with `-D warnings`, so the mutation did
-  not compile. The mutation was corrected (the warning is kept, the
-  decrement is added) and re-run: the suite **detects** it. The `PASS` line
-  of the re-run is the last one in the file.
-* **`HOLE  the mutation was NOT detected`** — these are the three mutations
-  that are declared *not detectable* in the protocol, with the reason: a
-  memory-ordering defect is invisible to a functional test, and two of the
-  paths are only reachable under a race. (The wording of the message is
-  from the first version of the script; the script now says
-  `KNOWN LIMIT`.)
+The classification (`AUDIT_PROTOCOL.md` §5):
 
-Summary of the eight mutations:
+* **detected** — an audited suite reports `not ok`, the kernel panics after the
+  suites started, or the boot hangs while the suites are running;
+* **known limit** — declared not detectable, not detected, with the reason;
+  it does not fail the run;
+* **coverage hole** — declared detectable and not detected, or declared
+  invisible and detected; it fails the run;
+* **invalid** — the patch did not apply, the worktree could not be created,
+  the kernel did not build, or the boot never reached the suites. Nothing was
+  tested, so it is neither a detection nor a clearance, and it fails the run.
+
+The boot log of every mutated kernel is archived next to this file as
+`mutation-boot-<mutation>.log`, so each detection can be read, not just
+believed.
+
+### The final run
+
+`759645777c5f` — **10 mutations: 9 detected, 1 declared limit, 0 coverage
+holes, 0 invalid runs.** Summary:
 
 | Mutation | Declared | Result |
 | --- | --- | --- |
 | a count of one is reported as decremented | detectable | detected |
-| the underflow also decrements the count | detectable | detected (after the mutation was corrected) |
+| the underflow also decrements the count | detectable | detected |
 | the saturated count is decremented | detectable | detected |
+| the compare-and-exchange loop does not update the expected value on failure | detectable | detected |
 | the count is saturated to zero | detectable | detected |
 | the mutex is taken when it must not be | detectable | detected |
-| the spinlock is not released on the failure path | not detectable | not detected |
-| the interrupt state is not restored on the failure path | not detectable | not detected |
-| the compare-and-exchange is relaxed | not detectable | not detected |
+| the spinlock is not released on the failure path | detectable | detected |
+| the mutex is not released on the failure path | detectable | detected |
+| the interrupt state is not restored on the failure path | detectable | detected |
+| the compare-and-exchange is relaxed instead of release | not detectable | not detected, as declared |
 
-## `sanitizer-kasan-ubsan.txt`
+The three lock-failure mutations are detected **only** by `fvs_refcount` (the
+audit's deterministic failure-path tests); the retry-loop mutation only by
+`refcount_diff` (the concurrency invariant). The per-mutation attribution is
+in `COMPONENT_005_AUDIT.md` §7.1.
 
-The KASAN + UBSAN build and boot. The result of that run:
+### What the history contains, and why
 
-* the audited suites pass inside the sanitized kernel (`refcount_rust` 7/7,
-  `refcount_diff` 9/9);
-* **no sanitizer report points at the audited component**;
-* the boot of the sanitized kernel reports a KUnit failure, and the failure
-  is **not** in this component: two `shift-out-of-bounds` reports in
-  `include/linux/log2.h` are reached from the `kfifo_diff` suite of the
-  earlier checkpoint 003. They are recorded as issue #25.
+* The first campaign ran against an older head, **before the audit suites were
+  committed**, so it measured the old suite. It is superseded by the run
+  above; `COMPONENT_005_AUDIT.md` §7.2 says so.
+* A run reported `HOLE` for "the underflow also decrements the count" because
+  the patch still expected the pre-macro `warn_once( ... )` text and did not
+  apply. A patch that does not apply is now `INVALID`, and the corrected
+  mutation is detected.
+* The first campaign declared the lock-failure mutations undetectable. That was
+  wrong: the path is deterministically reachable, and the mutations are now
+  declared detectable and detected. This is finding F-03 of the review.
 
-The message of that run predates the current version of the script, which
-separates the two results; the separation is described in
-`docs/ferret/design/COMPONENT_005_AUDIT.md` §8.
+## `sanitizer-kasan-ubsan.txt`, `sanitizer-kcsan.txt`
 
-## KCSAN
+`tools/ferret/audit/sanitizer.sh` builds the kernel with the sanitizer
+switches, boots it, and reports three things separately: whether the sanitizer
+was actually enabled in the kernel that was built (`CONFIG_<switch>=y`), whether
+the audited suites passed inside it, and whether any *sanitizer report*
+implicates the component.
 
-**NOT RUN**: the build and the boot of a KCSAN kernel do not fit in the
-checkpoint's time budget. It is listed as NOT RUN, not as a pass.
+Both runs **PASS**:
+
+| Run | Switches | Result |
+| --- | --- | --- |
+| KASAN + UBSAN | `KASAN`, `KASAN_GENERIC`, `KASAN_INLINE`, `UBSAN`, `UBSAN_BOUNDS`, `UBSAN_SHIFT` | no component report, no external report; the four audited suites pass |
+| KCSAN | `KCSAN`, `KCSAN_EARLY_ENABLE` | no data-race report, no external report; the four audited suites pass |
+
+Rules that the artifacts apply, in both directions:
+
+* a report is parsed as a **whole block** (from `cut here` to `end trace`), so
+  its stack, not only its header, attributes it;
+* a report that cannot be attributed is **unclassified**, and an unclassified
+  report fails the run: it is not evidence of anything;
+* a report in another component is an **external finding**. It is printed with
+  its stack, it is never hidden, and it does not make this component fail;
+* a `WARNING: CPU` splat is **not** a sanitizer report. The warning-path tests
+  deliberately produce them — 14 of them in each run (7 from the Rust
+  implementation, 7 from the C reference) — so they are counted and reported
+  as the intentional tests they are.
+
+The boot log of each sanitized kernel is archived as
+`sanitizer-<name>-boot.log`. (Earlier runs of these scripts failed to find
+their own boot log because the host `ART` path was not translated into the
+container; that is defect 9 in `COMPONENT_005_AUDIT.md` §12.1, and the logs
+here are from the fixed script.)
+
+## `audit.txt`
+
+The summary of `tools/ferret/audit/audit.sh`, the gate itself: the clean build,
+the linkage and symbol-ownership check, the differential-symbol distinctness,
+the boot, the warning-behaviour comparison, the mutation and sanitizer
+artifacts, and the coverage report. The result of the last run is at the end of
+the file.
+
+## What is not here
+
+* **The arm64 boot.** The arm64 kernel is built and its linkage is checked, but
+  the host has no arm64 QEMU boot in this configuration; the gate reports that
+  phase as `NOT RUN`, not as a pass.
+* **Native performance.** The host has no KVM, so any timing would be QEMU TCG.
+  The component's cost is not measured, and no number is claimed.
+* **A proof of correctness.** Mutation testing shows that the suite notices an
+  enumerated set of defects. It does not show that the set is complete, and the
+  memory-ordering limit (no functional test can see it) is declared, not
+  solved.

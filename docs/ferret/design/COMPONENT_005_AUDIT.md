@@ -274,50 +274,133 @@ the model test and the mutation testing did not find one.
 ## 7. The mutation testing
 
 `tools/ferret/audit/mutation-test.sh` injects a defect into the Rust
-implementation, in a disposable git worktree, rebuilds, boots and checks
-that the suite notices. The raw results are in
-`artifacts/audit/mutation-test.txt`.
+implementation, in a disposable git worktree created from the **committed**
+head (so the campaign tests what the branch contains, not a developer's
+uncommitted edits), rebuilds the kernel, boots it and checks that the audited
+suites notice. The raw results are in `artifacts/audit/mutation-test.txt`, and
+the boot log of every mutated kernel is archived next to it as
+`artifacts/audit/mutation-boot-<mutation>.log`, so a claimed detection can be
+read, not just believed.
+
+The classification is the one of `AUDIT_PROTOCOL.md` §5:
+
+* **detected** — an audited suite reports `not ok`, or the kernel panics after
+  the suites started, or the boot hangs while the suites are running (a
+  mutation that never releases a lock is noticed by the hang; the archived log
+  shows where it stopped);
+* **known limit** — a mutation declared not detectable, not detected, with the
+  reason written down; it is listed in §9 and it does not fail the gate;
+* **coverage hole** — a mutation declared detectable that was not detected, or
+  a declared-invisible mutation that *was* detected (the declaration was
+  wrong); it fails the gate;
+* **invalid** — the mutated kernel did not boot far enough to run the suites;
+  neither detected nor cleared, and it fails the run. A boot that failed for an
+  infrastructure reason is not evidence that a suite noticed anything.
+
+### 7.1 The mutations
+
+The campaign of `artifacts/audit/mutation-test.txt` (the run against the
+committed head `759645777c5f`) executed all ten mutations: **nine detected, one
+declared limit, zero coverage holes, zero invalid runs.** The last column names
+the suite whose verdict failed in the mutated kernel, read from the archived
+boot log.
 
 | Mutation | Declared | Result |
 | --- | --- | --- |
-| a count of one is reported as decremented | detectable | **detected** |
-| the underflow also decrements the count | detectable | **detected** (the first version of the mutation did not build, because the "warn once" flag became dead code and the kernel crate builds with `-D warnings`; the mutation was corrected and re-run) |
-| the saturated count is decremented instead of being left alone | detectable | **detected** |
-| the count is saturated to zero instead of `REFCOUNT_SATURATED` | detectable | **detected** |
-| the mutex is taken even when the first step failed | detectable | **detected** |
-| the spinlock is not released on the failure path | not detectable | not detected, as declared: the failure path is only reachable under a race |
-| the interrupt state is not restored on the failure path | not detectable | not detected, as declared: same reason |
-| the compare-and-exchange is relaxed instead of release | not detectable | not detected, as declared: a functional test cannot see the ordering |
+| a count of one is reported as decremented | detectable | **detected** — `refcount_rust`, `refcount_diff`, `fvs_refcount`, `fvs_refcount_adv` |
+| the underflow also decrements the count | detectable | **detected** — `refcount_diff`, `fvs_refcount`, `fvs_refcount_adv` |
+| the saturated count is decremented instead of being left alone | detectable | **detected** — `refcount_rust`, `refcount_diff`, `fvs_refcount`, `fvs_refcount_adv` |
+| the compare-and-exchange loop does not update the expected value on failure | detectable | **detected** — `refcount_diff` (the concurrency invariant, not a single call) |
+| the count is saturated to zero instead of `REFCOUNT_SATURATED` | detectable | **detected** — `refcount_rust`, `refcount_diff`, `fvs_refcount`, `fvs_refcount_adv` |
+| the mutex is taken even when the first step failed | detectable | **detected** — `refcount_diff`, `fvs_refcount` |
+| the spinlock is not released on the failure path | detectable | **detected** — `fvs_refcount` (the deterministic failure-path test) |
+| the mutex is not released on the failure path | detectable | **detected** — `fvs_refcount` |
+| the interrupt state is not restored on the failure path | detectable | **detected** — `fvs_refcount` |
+| the compare-and-exchange is relaxed instead of release | not detectable | **not detected, as declared** — the known limit of the tests (§9, §10) |
 
-The three "not detectable" mutations are the *known limitations* of the
-tests, and they are the reason the coverage report of section 9 has to
-list them. They are not swept under the carpet: the mutation testing is
-what measures them.
+The three lock-failure mutations are detected **only** by the audit's
+deterministic failure-path tests: the spinlock, the mutex and the `irqsave`
+variants each fail `fvs_refcount` and nothing else. That is the direct
+measurement of F-03: the path is reachable without winning a race, and the
+tests do reach it.
 
-Five mutations of the eight are detected by the suite. The suite is not
-vacuous: it notices a wrong return value, a wrong underflow handling, a
-saturated count that is decremented, a wrong saturated value, and a lock
-that is taken when it must not be.
+The retry-loop mutation is detected only by the concurrency invariant of
+`refcount_diff`: the single-threaded tests cannot see a lost update. That is
+the direct measurement of F-21.
+
+### 7.2 What the campaign establishes, and what it does not
+
+The campaign shows that the suite *notices* a specific, enumerated set of
+defects. It does not show that the implementation is correct, and it does not
+show that the set is complete: a defect nobody thought of is not covered by
+inventing mutations. The one declared limit is the memory ordering (the last
+row), and §10 says what the mitigation is.
+
+The first version of this campaign had two defects of its own, and they are
+worth recording because both made the result look better than it was:
+
+* the "lock is not released" and "interrupt state is not restored" mutations
+  were declared *not detectable* on the argument that the failure path needs a
+  race. FVS-AUDIT-001 showed that the path is deterministically reachable, so
+  the mutations are now declared detectable — and detected (F-03);
+* the campaign did not build the working tree, it built `HEAD`. The audit
+  suites were uncommitted at the time, so the first runs measured the *old*
+  suite; they are re-run on the commit that contains the suites, and only those
+  results are reported here;
+* the "underflow also decrements" patch was written against the pre-macro
+  `warn_once( ... )` text and no longer applied after `warn_once` became a
+  macro. A patch that does not apply is now `INVALID` (nothing was tested), not
+  a coverage hole; the failed first run is kept in the artifact's history, and
+  the run quoted above contains the corrected patch.
+
+The artifact is append-only, so the history of the campaign — including the
+intermediate runs that were wrong for the reasons above — is readable next to
+the final result. Only the last run is claimed.
 
 ## 8. The sanitizers
 
 `tools/ferret/audit/sanitizer.sh` builds the kernel with the kernel
-sanitizers, boots it, and checks that the audited suites run inside it and
-that the log contains no sanitizer report. The results are in
-`artifacts/audit/sanitizer-*.txt`.
+sanitizers, boots it, and checks three things: that the audited suites ran
+*inside* the sanitized kernel, that no report implicates the audited
+component, and that every report which implicates another component is listed
+with its owner. The results are in `artifacts/audit/sanitizer-*.txt`, and each
+sanitized boot log is archived as
+`artifacts/audit/sanitizer-<name>-boot.log`, so the report can be read after
+the next boot overwrites `artifacts/audit/boot.log`.
+
+The report parsing is deliberately conservative:
+
+* a report is parsed as a **whole block**, from the `cut here` marker to the
+  matching `end trace`, so the stack is attributed, not just the header
+  (F-14);
+* a report that cannot be attributed to a component is **unclassified**, and
+  an unclassified report fails the phase: an unattributable report is not
+  evidence of anything;
+* a report in another component is an **external finding**. It is printed in
+  full with its stack, it is never hidden, and it does not make this component
+  fail. The two results are kept apart in the artifact, and the phase prints
+  `RESULT: PASS (with external findings: ...)` in that case;
+* a `WARNING: CPU` splat is **not** a sanitizer report. The warning-path tests
+  deliberately produce them (7 on the Rust side and 7 on the C reference side
+  in the KASAN boot), so they are counted and reported as the intentional
+  tests they are; only a block whose header is `BUG: KASAN`, `BUG: KCSAN`,
+  `KCSAN: data-race`, `UBSAN:` or `runtime error:` is a finding.
+
+A boot that produces no kernel output is reported as "the kernel did not
+boot", and never as "no sanitizer report": the script reads the boot log the
+boot actually wrote (`$ART/boot.log`, with `ART` exported to the boot), and it
+checks the KASAN banner, so a silent failure cannot pass for a clean run.
 
 | Sanitizer | Result |
 | --- | --- |
-| KASAN + UBSAN | the kernel builds, boots, and the audited suites pass inside it: `refcount_diff` 9/9 and `refcount_rust` 7/7. **No sanitizer report points at the audited component.** |
-| KCSAN | **NOT RUN** — the build and the boot of a KCSAN kernel do not fit in the checkpoint's time budget. |
+| KASAN + UBSAN | **PASS** — `CONFIG_KASAN{,,_GENERIC,_INLINE}` and `CONFIG_UBSAN{,_BOUNDS,_SHIFT}` are `=y` in the kernel that was built, the four audited suites pass inside it, no report implicates `refcount` and there is no external report. The 14 kernel WARN splats in the log are the warning-path tests (7 Rust, 7 C reference), not sanitizer findings. |
+| KCSAN | **PASS** — `CONFIG_KCSAN=y` and `CONFIG_KCSAN_EARLY_ENABLE=y` are set in the kernel that was built, the four audited suites pass inside it, no data-race report implicates `refcount` and there is no external report. The same 14 WARN splats are the warning-path tests (7 Rust, 7 C reference). |
 
-Two UBSAN reports *were* produced by the same kernel, and they are **not**
-in the audited component: they are `shift-out-of-bounds` in
-`include/linux/log2.h`, reached from the `kfifo_diff` suite of the earlier
-checkpoint 003 (`kfifo_diff_init` and `kfifo_diff_alloc`). The boot of the
-sanitized kernel therefore reports a KUnit failure and the boot check
-fails; the failure belongs to the FIFO port, and it is recorded here as a
-finding for that component rather than as a result of this one.
+The earlier checkpoint recorded two UBSAN reports in `include/linux/log2.h`,
+reached from the `kfifo_diff` suite (issue #25). That defect is fixed on this
+branch by the FIFO commit (`3835c75c906a`); the two reports are re-checked in
+this run, and if any report remains it is listed above as an external finding
+with its owning component.
 
 ## 9. The coverage: what is tested and what is not
 
@@ -394,7 +477,7 @@ taken into the tree, and the findings are disposed of here.
 | F-04 | `KRef::new()` does not take a reference, and its safety contract did not say so; a literal reading yields a premature free. | **FIXED** — the contract now states the adopted-reference precondition in full, the type documentation says that the handle *adopts* a reference, and the audit's two-handles test (which demonstrates the consequence) is in the tree. |
 | F-05 | The lifetime of `KRef<'a, T>` is not enforced: `new()` does not take it, so a `'static` handle can be built over a stack object. | **ACCEPTED RISK** — acknowledged before the audit and unchanged by it. The type system cannot enforce the lifetime of a C-owned object; the audit's compile-time proof is in the tree as a reminder. |
 | F-06 | `Refcount::from_ptr<'a>` has the same unbounded-lifetime property. | **ACCEPTED RISK** — the same, documented in the safety contract. |
-| F-07 | The saturation warning differs from the C in the log prefix (`rust_kernel: `) and in the reported location (one line for all five events, so the event can no longer be read off the warning). | **PARTIALLY FIXED** — the reported location is now the call site of each event (the warning is a macro, so each of the five events has its own location, as the C `REFCOUNT_WARN()` call sites do). The log prefix is the kernel crate's and cannot be changed without changing the crate's printing; **ACCEPTED RISK** for the prefix. |
+| F-07 | The saturation warning differs from the C in the log prefix (`rust_kernel: `) and in the reported location (one line for all five events, so the event can no longer be read off the warning). | **PARTIALLY FIXED** — the reported location is now the call site of each event: the boot log shows seven distinct sites, each reported once (`refcount.rs:182`, `:188`, `:191`, `:194`, `:197`, `:199` for the six saturation events and `:241` for the underflow in `try_dec_not_one`), as the C's `REFCOUNT_WARN()` call sites do. The log prefix is the kernel crate's and cannot be changed without changing the crate's printing; **ACCEPTED RISK** for the prefix. |
 | F-08 | The differential suite never compared the warning path: a Rust implementation that never warned would pass. | **FIXED** — the gate's phase 4b compares the warning from the boot log: the differential suite drives all five saturation events on both implementations, and the check requires each message to appear, with the **Rust count equal to the C count** and both non-zero. (The one-shot property itself is *not* claimed as a test result: the events are driven one at a time, so the C's racy flag and the Rust's atomic flag print the same number; that deviation remains a review argument.) |
 | F-09 | The audit report described the decrement-to-zero step as "the same C inline"; it is a call into a C object (`rust_helper_refcount_dec_and_test`). | **FIXED** — the wording is corrected in §3.4. |
 | F-12 | The gate as executed ended in `FAIL` (the recorded sanitizer run has no `RESULT: PASS`), and criterion 3 of the protocol was not met; KCSAN was never run. | **FIXED** — the gate is re-run with the revised scripts, the criterion now says what it has to say (no report implicates the audited component; the reports in other components are listed with their tracking issue), and the KCSAN phase is executed. |
@@ -402,7 +485,7 @@ taken into the tree, and the findings are disposed of here.
 | F-14 | The "points at the audited component" filter only inspected the report *headers*, not the stacks; and the committed evidence predated the committed script, so the script's assertions had never been machine-checked. | **FIXED** — the reports are now parsed as whole blocks (from the "cut here" marker to the "end trace" marker), and the evidence is produced by the current script. |
 | F-17 | The port adds lines to the **vendored upstream** Rust-for-Linux `kernel` crate, which every future upstream synchronisation will conflict with; the registry's `remaining_c_dependencies` mentioned only the export shim. | **FIXED** — the divergence is listed in the registry as a dependency, with the same reasoning as the other checkpoints that extended the crate. |
 | F-18 | `Refcount::read()` returned `i32` while the C `refcount_read()` returns `unsigned int`. | **FIXED** — it returns `u32`, so a saturated count reads back as `0xc000_0000`, exactly as in C. |
-| F-19 | The saturated and dead paths of `KRef`, the two-handle case and the "the release callback runs in another task" case were untested. | **FIXED** — the audit's tests for all of them are in the tree. |
+| F-19 | The saturated and dead paths of `KRef`, the two-handle case and the "the release callback runs in another task" case were untested. | **PARTIALLY FIXED** — the saturated count, the dead count, the two-handle case and the transfer back to C are covered by the audit's tests, which are in the tree. The **"release callback runs in another task" case is still not covered**: no test drops a handle from a second task, and it is listed as a limitation in §9. |
 | F-20 | The reference variant was not built by the audit, so the export CRC was not compared numerically. | **ACCEPTED RISK** — the CRC is preserved *by construction* (the upstream headers are untouched), and the project's clean cycle builds the reference variant. |
 | F-21 | The "concurrency phase" did not actually contend (the tasks were created one after the other, so the first one finished before the next started), so the compare-and-exchange **retry** path was never executed and a broken retry loop passed the whole suite. | **FIXED** — the tasks are released together through a start barrier, the invariant that a broken retry loop breaks (the count and the number of decrements must agree) is asserted, and the mutation that breaks the retry loop is in the campaign. |
 
@@ -423,7 +506,7 @@ about the *method* and not about the code:
 
 ### 12.1 Defects found in the harness while answering the audit
 
-Re-running the gate after these changes exposed five defects in the audit
+Re-running the gate after these changes exposed ten defects in the audit
 *scripts*, each of which could have produced a false result. They are listed
 here because the point of the exercise is that the evidence is checkable, and
 a harness that reports the wrong thing is a finding in its own right.
@@ -436,12 +519,29 @@ a harness that reports the wrong thing is a finding in its own right.
 | `audit/mutation-test.sh` treated any boot failure as a detection | an infrastructure failure (a boot that never reached the suites) would have been recorded as "the suite noticed the defect" | a detection is a `not ok` from an audited suite, or a panic after the suites started; a boot that never reaches them is `INVALID` and fails the run |
 | `audit/mutation-test.sh` counted a declared not-detectable mutation as a coverage hole | the run could never pass while the documented memory-ordering limit existed, contradicting `AUDIT_PROTOCOL.md` §5 | declared limits are counted separately and listed in the coverage report; only unexpected outcomes are holes |
 | `audit/audit.sh` phase 4b required each warning text exactly once | the underflow text has **two** sites on both sides (the saturation event and `dec_not_one`'s own underflow), so the check would have failed a correct port; it also omitted the "unknown event" message | the check is parity: each of the five messages must appear, with the Rust count equal to the C count and both non-zero |
+| `audit/mutation-test.sh` counted a mutation whose patch does not apply as a coverage hole | the "underflow also decrements" patch went stale when `warn_once` became a macro; the run reported a hole although nothing had been tested | a patch that does not apply, a worktree that cannot be created and a build failure are `INVALID` runs; only a booted mutation can be a hole |
+| `audit/sanitizer.sh` checked "the sanitizer is on" with a banner loop that could never match, and accepted `ok N refcount_diff` as a pass even when the verdict was `not ok` | the phase could report a sanitized kernel that was not sanitized, or a failing suite as passing | the sanitizer is read from `CONFIG_<switch>=y` of the kernel that was built, and the four audited suites must have a passing verdict line (`ok N <suite>`, not `not ok N <suite>`) |
+| `audit/sanitizer.sh` treated every `WARNING: CPU` splat as a sanitizer report | the 14 WARN splats that the warning-path tests deliberately produce (7 Rust, 7 C reference) were parsed as component findings, so a clean sanitized kernel failed | only blocks whose header is a sanitizer report are findings; the WARN splats are counted and reported as the intentional tests they are |
+| `docker/run.sh` passed the host `ART` path into the container unchanged | the boot wrote `$ART/boot.log` into the *container's* filesystem, and the host-side script, reading the same path on the host, found nothing: a sanitized kernel that booted and passed every suite was reported as "the kernel did not boot" (this happened twice before it was diagnosed) | a path under `$HOST_PROJECTS` is translated to `/mnt/projects/...`, an already-container path is accepted, and any other path is refused with an error instead of being silently unusable |
 
 ## 11. The state of the component
 
 The registry records the component as `migrated`: the clean cycle passed
 16/16 on the branch that contains this audit, and the gate in
 [`AUDIT_PROTOCOL.md`](../../../AUDIT_PROTOCOL.md) passed on the same branch.
+
+The evidence, in the order it was produced (all of it on the branch that
+contains this audit and its answers):
+
+| What | Command | Result |
+| --- | --- | --- |
+| the adversarial tests are in the tree | `lib/fvs_refcount_adversarial_kunit.c`, `lib/fvs_refcount_adversarial.rs` | 10 C cases + 8 Rust cases, under `CONFIG_FVS_REFCOUNT_ADVERSARIAL_KUNIT_TEST` |
+| the mutation campaign | `tools/ferret/audit/mutation-test.sh` | 10 mutations: 9 detected, 1 declared limit, 0 holes, 0 invalid |
+| the sanitized kernels | `tools/ferret/audit/sanitizer.sh kasan-ubsan ...`, `... kcsan ...` | both PASS: the four audited suites pass inside, no report implicates the component, no external report |
+| the clean cycle | `CLEAN=1 tools/ferret/test.sh` | 16/16 steps |
+| the gate | `tools/ferret/audit/audit.sh --skip-done` | PASS (phases 5 and 6 were skipped: their artifacts already ended in `RESULT: PASS` from the runs above) |
+| the arm64 boot | — | **NOT RUN**: the arm64 kernel is built and its linkage is checked, but the host has no arm64 boot in this configuration |
+| the performance | — | **NOT TESTED**: the host has no KVM, so any timing would be QEMU TCG |
 (An earlier revision of this document said `partial`, which contradicted the
 registry; the independent audit FVS-AUDIT-001 called the contradiction out,
 and it is fixed here.) The pull request stays open until the gate has been
