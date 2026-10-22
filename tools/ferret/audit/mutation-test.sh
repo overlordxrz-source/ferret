@@ -147,11 +147,26 @@ elif name == "lock-taken-when-it-must-not-be":
     unsafe { bindings::mutex_lock(lock) };
 """
 elif name == "dec-not-one-retry-broken":
-	old = """                // The C updates the expected value on failure and retries.
-                Err(current) => val = current as u32,
+	old = """                Err(current) => {
+                    // The count changed between the read and the
+                    // compare-and-exchange: update the expected value and
+                    // retry, exactly as the C loop does.
+                    #[cfg(CONFIG_KUNIT)]
+                    retry_stats::record();
+                    val = current as u32;
+                }
 """
-	new = """                // MUTATION: the expected value is not updated on failure.
-                Err(_current) => val = 0,
+	new = """                Err(current) => {
+                    // The count changed between the read and the
+                    // compare-and-exchange: update the expected value and
+                    // retry, exactly as the C loop does.
+                    #[cfg(CONFIG_KUNIT)]
+                    retry_stats::record();
+                    // MUTATION: the expected value is not updated on
+                    // failure, so the loop keeps retrying with a stale
+                    // value.
+                    let _ = current;
+                }
 """
 elif name == "mutex-not-released":
 	old = """    if !r.dec_and_test() {
