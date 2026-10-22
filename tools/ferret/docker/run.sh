@@ -32,4 +32,25 @@ elif [ "$(docker inspect -f '{{.State.Running}}' "$NAME")" != "true" ]; then
 	docker start "$NAME" >/dev/null
 fi
 
+# The caller names artifacts by their host path; the container sees the
+# project tree under /mnt/projects. Passing the host path through unchanged
+# makes the boot write into the container's own filesystem, where the host
+# script then cannot read it (and reports "the kernel did not boot").
+if [ -n "${ART:-}" ]; then
+	case "$ART" in
+	"$HOST_PROJECTS"/*)
+		ART="/mnt/projects/${ART#"$HOST_PROJECTS"/}"
+		;;
+	/mnt/*)
+		# Already a container path.
+		;;
+	*)
+		echo "run.sh: ART=$ART is not under $HOST_PROJECTS, so the" >&2
+		echo "        container cannot write to it. Use a path under the" >&2
+		echo "        project tree (or /mnt/... as a container path)." >&2
+		exit 2
+		;;
+	esac
+fi
+
 exec docker exec -i -e CLEAN -e JOBS -e ARCH -e OUTROOT -e SRC_MOUNT -e EXTRA_CONFIG -e ART "$NAME" "$@"
