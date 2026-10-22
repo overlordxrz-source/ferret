@@ -57,9 +57,22 @@ LOG="$ART/sanitizer-$NAME.txt"
 
 say() { echo "$*" | tee -a "$LOG"; }
 
+# The artifact is evidence for one revision of the tree and one version of the
+# harness; an artifact from a dirty tree cannot be bound to either.
+. "$ROOT/tools/ferret/lib/provenance.sh"
+if [ "$(prov_dirty)" = 1 ]; then
+	say "FAIL  the build-relevant tree is dirty: an artifact has to name an"
+	say "      exact source revision. Commit the tree and run again."
+	say "      (git status of the build paths:)"
+	git -C "$ROOT" status --porcelain --untracked-files=normal -- $(prov_paths) |
+		sed 's/^/      /' | tee -a "$LOG"
+	exit 1
+fi
+
 say "== sanitizer build: $NAME"
 say "   switches: $*"
 say "   component under audit: $COMPONENT"
+say "   source: $(prov_commit_short), scripts: $(prov_scripts_hash | cut -c1-16)"
 
 # The sanitizers need the debug options; the debug info is not needed for
 # the reports and makes the build much slower.
@@ -72,6 +85,38 @@ if ! EXTRA_CONFIG="$EXTRA_SWITCHES" "$ROOT/tools/ferret/build.sh" rust \
 	exit 1
 fi
 
+# The build wrote the provenance stamp of this run. Copy it into the artifact:
+# the artifact has to name the revision, the harness and the configuration it
+# was produced from, and the configuration itself is archived next to it.
+if ! prov_check "$ART/provenance.txt" >>"$LOG" 2>&1; then
+	say "FAIL  the build artifact is not bound to this tree:"
+	prov_check "$ART/provenance.txt" 2>&1 | sed 's/^/      /' | tee -a "$LOG"
+	exit 1
+fi
+prov_line=$(grep -a '^provenance: ' "$ART/provenance.txt" | tail -1)
+prov_cfg=$(prov_field "$prov_line" config)
+say "$prov_line"
+if [ -n "$prov_cfg" ] && [ -f "$ART/config-$prov_cfg.txt" ]; then
+	say "   configuration $prov_cfg archived as config-$prov_cfg.txt"
+else
+	say "FAIL  the configuration of this build is not archived"
+	exit 1
+fi
+
+# KCSAN in its default (non-strict) mode is not a memory-ordering proof.
+case "$NAME" in
+*kcsan*)
+	if ! printf '%s' "$*" | grep -qw KCSAN_STRICT; then
+		say "NOTE  KCSAN runs in its default, non-strict mode. It reports races"
+		say "      between instrumented accesses, but it does not model every"
+		say "      weak memory ordering: a clean run is not evidence that the"
+		say "      ordering is correct. The ordering is argued by the code review"
+		say "      and the disassembly, and the mutation campaign records the"
+		say "      ordering mutation as a declared limit, not as a pass."
+	fi
+	;;
+esac
+
 say "==> booting"
 "$ROOT/tools/ferret/boot.sh" rust >>"$LOG" 2>&1
 boot_rc=$?
@@ -80,6 +125,20 @@ BLOG="$ART/boot.log"
 # Keep the boot log of this sanitized kernel: the next sanitizer boot would
 # overwrite $ART/boot.log, and the evidence of a report has to be readable.
 cp -f "$BLOG" "$ART/sanitizer-$NAME-boot.log" 2>/dev/null || true
+
+# The boot must be the kernel this run built, not one left in the tree.
+if ! prov_check "$ART/boot-provenance.txt" >>"$LOG" 2>&1; then
+	say "FAIL  the boot is not bound to this tree:"
+	prov_check "$ART/boot-provenance.txt" 2>&1 | sed 's/^/      /' | tee -a "$LOG"
+	exit 1
+fi
+built_image=$(prov_field "$prov_line" image)
+booted_image=$(prov_field "$(grep -a '^booted-image: ' "$ART/boot-provenance.txt" | tail -1)" booted-image)
+if [ "$built_image" != "$booted_image" ] || [ -z "$built_image" ]; then
+	say "FAIL  the booted image ($booted_image) is not the one this run built ($built_image)"
+	exit 1
+fi
+say "   the booted image is the one this run built: $booted_image"
 
 # ---------------------------------------------------------------------------
 # Parsing the reports

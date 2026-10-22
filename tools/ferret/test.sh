@@ -144,4 +144,13 @@ for pair in \
 	record "$1" "$2"
 	[ "$2" = PASS ] || rc=1
 done
+
+# Bind the cycle summary to the source, the harness and the configuration it
+# was run from: the published results are refused by evidence.sh if the tree
+# or the scripts changed afterwards.
+. "$HERE/lib/provenance.sh"
+prov_stamp "$(prov_config_hash rust x86_64)" "$(prov_image_hash rust x86_64)" \
+	>"$ROOT/artifacts/results-provenance.txt"
+echo "provenance: wrote artifacts/results-provenance.txt" | tee -a "$RESULTS"
+
 exit "$rc"

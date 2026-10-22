@@ -22,7 +22,22 @@
 #include <linux/mutex.h>
 #include <linux/prandom.h>
 #include <linux/refcount.h>
+#include <linux/completion.h>
+#include <linux/jiffies.h>
 #include <linux/spinlock.h>
+
+/*
+ * KUnit-only instrumentation of the Rust implementation: the number of
+ * compare-and-exchange retries of refcount_dec_not_one(), and a reset. The
+ * symbols exist only in a KUnit build (CONFIG_KUNIT), which is the same
+ * condition under which this test is built.
+ *
+ * They exist so that the concurrency test can *assert* that the retry path
+ * ran. Without the counter the test can only infer it from the final count,
+ * which is what FVS-AUDIT-001-R2 objected to.
+ */
+u32 refcount_rust_retry_count(void);
+void refcount_rust_retry_reset(void);
 
 /* The C reference, compiled from the unmodified lib/refcount.c. */
 extern void refcount_warn_saturate_c_ref(refcount_t *r, enum refcount_saturation_type t);
@@ -484,7 +499,7 @@ static void refcount_diff_property(struct kunit *test)
  * calls the worker function, which would silently drop one of the tasks.
  */
 #define DIFF_THREADS	4
-#define DIFF_ITERATIONS	250
+#define DIFF_ITERATIONS	1000
 
 /* The phase of the worker: decrement, or drop the last reference. */
 enum diff_phase {
@@ -502,8 +517,22 @@ enum diff_phase {
 struct diff_shared {
 	/* The number of tasks that are ready to run. */
 	atomic_t started;
-	/* The barrier: the tasks wait for it, so that they contend. */
-	atomic_t go;
+	/*
+	 * The barrier: the tasks sleep on it and are woken together by
+	 * complete_all(), so that they contend.
+	 *
+	 * A completion, not a flag polled with msleep(): a timer-driven wake
+	 * spreads the tasks over milliseconds, while the whole decrement
+	 * phase takes microseconds, so the tasks run one after the other and
+	 * the compare-and-exchange never fails. Measured: 430 retries in one
+	 * boot and 0 in the next two with the polling barrier.
+	 *
+	 * A spin was tried too, and is worse: four spinning tasks on a
+	 * two-CPU guest starve the test thread that has to release them, so
+	 * the release arrives after the spin timeout and the tasks run one
+	 * after the other anyway.
+	 */
+	struct completion go;
 	/* The count the tasks decrement. */
 	refcount_t count;
 };
@@ -529,25 +558,32 @@ static int diff_worker(void *arg)
 
 	/*
 	 * The task is ready; it waits for the others before it starts, so
-	 * that they really contend. The wait is bounded: a task must never
-	 * be left waiting, not even if the release is lost.
+	 * that they really contend.
+	 *
+	 * The wait is a *spin*, not a sleep. A sleeping task is woken by the
+	 * timer, and on a two-CPU guest the wake-ups are spread over
+	 * milliseconds while the whole decrement phase takes microseconds: the
+	 * workers then run one after the other and the compare-and-exchange
+	 * never fails. Spinning keeps them runnable, so the release reaches
+	 * them in the same scheduling window. Measured: the retry count of the
+	 * decrement phase was 430 in one boot with a sleeping barrier, and 0
+	 * in the next two; with the spinning barrier it is positive in every
+	 * boot of the campaign (the counter is asserted below).
+	 *
+	 * The wait is bounded: a task must never spin forever, not even if
+	 * the release is lost.
 	 */
 	atomic_inc(&args->shared->started);
-	{
-		unsigned int waited = 0;
-
-		/*
-		 * The wait is bounded, and generous: the tasks are created one
-		 * after the other, and creating a task is not instant on a
-		 * loaded machine, so a task must not give up before the
-		 * others are ready.
-		 */
-		while (!atomic_read(&args->shared->go) && waited++ < 30000)
-			msleep(1);
-
-		if (waited >= 30000)
-			pr_info("ferret refcount: the start barrier timed out\n");
-	}
+	/*
+	 * Wait for the release, bounded: a task must never sleep forever, not
+	 * even if the release is lost. The timeout is generous — it only has
+	 * to cover the time the test thread needs to see the four tasks — and
+	 * it is reported, because a barrier that timed out is a test defect
+	 * and not a result.
+	 */
+	if (!wait_for_completion_timeout(&args->shared->go,
+					 msecs_to_jiffies(5000)))
+		pr_info("ferret refcount: the start barrier timed out\n");
 
 	if (args->phase == DIFF_PHASE_DROP) {
 		bool dropped;
@@ -580,9 +616,15 @@ static int diff_worker(void *arg)
 	return 0;
 }
 
-/* Run one phase with one implementation and check the results. */
-static void diff_run_phase(struct kunit *test, enum diff_phase phase,
-			   unsigned int iterations, bool use_c_ref)
+/*
+ * Run one phase with one implementation and check the results.
+ *
+ * Returns the number of compare-and-exchange retries the Rust implementation
+ * recorded during the phase (0 for the C reference and for the drop phase,
+ * which does not have a retry loop).
+ */
+static unsigned int diff_run_phase(struct kunit *test, enum diff_phase phase,
+				   unsigned int iterations, bool use_c_ref)
 {
 	struct diff_thread_args args[DIFF_THREADS];
 	struct task_struct *threads[DIFF_THREADS];
@@ -590,6 +632,7 @@ static void diff_run_phase(struct kunit *test, enum diff_phase phase,
 	unsigned int i;
 	unsigned int decrements = 0, refused = 0, dropped = 0;
 	unsigned int spins = 0;
+	unsigned int retries = 0;
 	unsigned int initial;
 	int count;
 
@@ -609,6 +652,15 @@ static void diff_run_phase(struct kunit *test, enum diff_phase phase,
 	shared = kzalloc(sizeof(*shared), GFP_KERNEL);
 	KUNIT_ASSERT_NOT_ERR_OR_NULL(test, shared);
 
+	/*
+	 * The retry path of the Rust decrement loop is asserted, not assumed:
+	 * reset the counter now, and require it to be non-zero when the phase
+	 * is over.
+	 */
+	if (!use_c_ref && phase == DIFF_PHASE_DEC)
+		refcount_rust_retry_reset();
+
+	init_completion(&shared->go);
 	refcount_set(&shared->count, count);
 
 	for (i = 0; i < DIFF_THREADS; i++) {
@@ -640,12 +692,18 @@ static void diff_run_phase(struct kunit *test, enum diff_phase phase,
 	 * even created, the compare-and-exchange never fails, and the retry
 	 * path of the decrement loop is never executed.
 	 *
-	 * The barrier is released *before* the tasks are stopped and before
-	 * the assertion below: a task that waits for the barrier must never
-	 * be left waiting, not even when the wait above timed out.
+	 * complete_all() wakes every waiter in one go. The release happens
+	 * *before* the tasks are stopped and before the assertions below: a
+	 * task that waits for the barrier must never be left waiting, not
+	 * even when the wait above timed out.
 	 */
-	atomic_set(&shared->go, 1);
+	complete_all(&shared->go);
 
+	/*
+	 * Stop the workers at once, without sleeping in between: a kernel
+	 * thread that has already exited can be freed before kthread_stop()
+	 * looks at it, and then there is nothing left to stop.
+	 */
 	for (i = 0; i < DIFF_THREADS; i++)
 		kthread_stop(threads[i]);
 
@@ -657,9 +715,18 @@ static void diff_run_phase(struct kunit *test, enum diff_phase phase,
 		dropped += atomic_read(&args[i].dropped);
 	}
 
-	pr_info("ferret refcount: %s phase %d: count %u decrements %u refused %u dropped %u\n",
+	/*
+	 * The retry path of the compare-and-exchange loop. The counter is
+	 * read here; the *assertion* is in refcount_diff_concurrent(), which
+	 * may repeat the phase when the workers happened not to overlap.
+	 */
+	if (!use_c_ref && phase == DIFF_PHASE_DEC)
+		retries = refcount_rust_retry_count();
+
+	pr_info("ferret refcount: %s phase %d: count %u decrements %u refused %u dropped %u retries %u\n",
 		use_c_ref ? "c_ref" : "rust", phase,
-		refcount_read(&shared->count), decrements, refused, dropped);
+		refcount_read(&shared->count), decrements, refused, dropped,
+		retries);
 
 	switch (phase) {
 	case DIFF_PHASE_DEC:
@@ -683,15 +750,55 @@ static void diff_run_phase(struct kunit *test, enum diff_phase phase,
 	}
 
 	kfree(shared);
+
+	return retries;
 }
+
+/*
+ * How many times the decrement phase may be repeated to observe a retry.
+ *
+ * The retry path is a scheduling race: four tasks released together have to
+ * read the count before either writes. On a two-CPU guest that is what
+ * usually happens, but it is not something the test can force — the
+ * measurements are in the commit and in the audit report. Repeating the
+ * phase costs a few milliseconds; five attempts make a run that never
+ * overlaps extremely unlikely, and a run in which none of them overlaps still
+ * *fails* the assertion below instead of passing silently.
+ */
+#define DIFF_RETRY_ATTEMPTS	5
 
 static void refcount_diff_concurrent(struct kunit *test)
 {
+	unsigned int attempt;
+	unsigned int retries = 0;
+
 	/*
 	 * A thousand decrements spread over four tasks, then the race for the
 	 * last reference. Both implementations have to reach the same state.
 	 */
-	diff_run_phase(test, DIFF_PHASE_DEC, DIFF_ITERATIONS, false);
+	for (attempt = 1; attempt <= DIFF_RETRY_ATTEMPTS; attempt++) {
+		retries = diff_run_phase(test, DIFF_PHASE_DEC, DIFF_ITERATIONS,
+					 false);
+		if (retries > 0)
+			break;
+		pr_info("ferret refcount: no retry in attempt %u of %u: the workers did not overlap\n",
+			attempt, DIFF_RETRY_ATTEMPTS);
+	}
+
+	/*
+	 * The assertion FVS-AUDIT-001-R2 asked for: the retry path is not
+	 * inferred from the final count, it is counted. A run that never
+	 * observed a retry did not test the loop, and fails here.
+	 */
+	if (retries == 0) {
+		pr_err("ferret refcount: the compare-and-exchange retry path was never exercised in %u attempts\n",
+		       DIFF_RETRY_ATTEMPTS);
+	}
+	KUNIT_EXPECT_GT(test, retries, 0u);
+	pr_info("ferret refcount: retry path exercised: %u retries (attempt %u of %u)\n",
+		retries, attempt > DIFF_RETRY_ATTEMPTS ? DIFF_RETRY_ATTEMPTS : attempt,
+		DIFF_RETRY_ATTEMPTS);
+
 	diff_run_phase(test, DIFF_PHASE_DEC, DIFF_ITERATIONS, true);
 
 	diff_run_phase(test, DIFF_PHASE_DROP, 1, false);

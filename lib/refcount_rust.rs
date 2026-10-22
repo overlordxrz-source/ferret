@@ -210,6 +210,25 @@ pub unsafe extern "C" fn refcount_dec_and_lock_irqsave(
     true
 }
 
+/// The number of compare-and-exchange retries of `try_dec_not_one()`.
+///
+/// This symbol exists only in a KUnit build, and exists so that the
+/// concurrency test can *assert* that the retry path ran instead of inferring
+/// it from the final count. It is instrumentation of an existing branch, not
+/// a change to the algorithm.
+#[cfg(CONFIG_KUNIT)]
+#[no_mangle]
+pub extern "C" fn refcount_rust_retry_count() -> u32 {
+    kernel::sync::try_dec_not_one_retries()
+}
+
+/// Reset the retry counter of `try_dec_not_one()` (KUnit builds only).
+#[cfg(CONFIG_KUNIT)]
+#[no_mangle]
+pub extern "C" fn refcount_rust_retry_reset() {
+    kernel::sync::reset_try_dec_not_one_retries()
+}
+
 #[cfg(CONFIG_KUNIT)]
 #[kunit_tests(refcount_rust)]
 mod tests {

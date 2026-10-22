@@ -31,6 +31,8 @@ pub use lock::mutex::{new_mutex, Mutex, MutexGuard};
 pub use lock::spinlock::{new_spinlock, SpinLock, SpinLockGuard};
 pub use locked_by::LockedBy;
 pub use refcount::{Refcount, REFCOUNT_SATURATED};
+#[cfg(CONFIG_KUNIT)]
+pub use refcount::{reset_try_dec_not_one_retries, try_dec_not_one_retries};
 
 /// Represents a lockdep class. It's a wrapper around C's `lock_class_key`.
 #[repr(transparent)]

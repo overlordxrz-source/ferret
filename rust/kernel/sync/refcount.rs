@@ -54,6 +54,44 @@ macro_rules! warn_once {
     };
 }
 
+/// The compare-and-exchange retries of `try_dec_not_one()` (KUnit builds only).
+///
+/// This is instrumentation, not a behaviour: the branch it counts is the one
+/// the C original has, and a production build (no `CONFIG_KUNIT`) contains
+/// neither the counter nor the update. It exists because a test that claims
+/// to exercise the retry path has to be able to *assert* that it did, instead
+/// of inferring it from the final count.
+#[cfg(CONFIG_KUNIT)]
+mod retry_stats {
+    use core::sync::atomic::{AtomicU32, Ordering};
+
+    static TRY_DEC_NOT_ONE_RETRIES: AtomicU32 = AtomicU32::new(0);
+
+    pub(crate) fn record() {
+        TRY_DEC_NOT_ONE_RETRIES.fetch_add(1, Ordering::Relaxed);
+    }
+
+    pub(crate) fn get() -> u32 {
+        TRY_DEC_NOT_ONE_RETRIES.load(Ordering::Relaxed)
+    }
+
+    pub(crate) fn reset() {
+        TRY_DEC_NOT_ONE_RETRIES.store(0, Ordering::Relaxed);
+    }
+}
+
+/// The number of retries recorded by `try_dec_not_one()` (KUnit builds only).
+#[cfg(CONFIG_KUNIT)]
+pub fn try_dec_not_one_retries() -> u32 {
+    retry_stats::get()
+}
+
+/// Reset the `try_dec_not_one()` retry counter (KUnit builds only).
+#[cfg(CONFIG_KUNIT)]
+pub fn reset_try_dec_not_one_retries() {
+    retry_stats::reset()
+}
+
 /// Atomic reference counter.
 ///
 /// This type is conceptually an atomic integer, but provides saturation semantics compared to
@@ -248,7 +286,14 @@ impl Refcount {
             match self.as_atomic().cmpxchg(val as i32, new as i32, Release) {
                 Ok(_) => return true,
                 // The C updates the expected value on failure and retries.
-                Err(current) => val = current as u32,
+                Err(current) => {
+                    // The count changed between the read and the
+                    // compare-and-exchange: update the expected value and
+                    // retry, exactly as the C loop does.
+                    #[cfg(CONFIG_KUNIT)]
+                    retry_stats::record();
+                    val = current as u32;
+                }
             }
         }
     }

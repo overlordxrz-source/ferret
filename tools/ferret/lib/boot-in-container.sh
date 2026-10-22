@@ -103,7 +103,8 @@ fi
 if [ "$VARIANT" = rust ]; then
 	for suite in crc16_rust crc16_diff crc_ccitt_rust crc_ccitt_diff \
 		     kfifo_rust kfifo_diff kfifo bitmap_diff refcount_rust refcount_diff fvs_refcount fvs_refcount_adv; do
-		if grep -qE "ok [0-9]+ $suite" "$LOG"; then
+		if grep -qE "ok [0-9]+ $suite[[:space:]]*$" "$LOG" &&
+		! grep -qE "not ok [0-9]+ $suite[[:space:]]*$" "$LOG"; then
 			echo "PASS  KUnit $suite"
 		else
 			echo "FAIL  KUnit $suite"

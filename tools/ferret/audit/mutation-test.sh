@@ -28,11 +28,27 @@ mkdir -p "$ART"
 
 say() { echo "$*" | tee -a "$LOG"; }
 
+. "$ROOT/tools/ferret/lib/provenance.sh"
+
 say "=============================================================="
 say "mutation testing run: $(date -u +%Y-%m-%dT%H:%M:%SZ)"
 say "tree:   $ROOT"
-say "commit: $(git -C "$ROOT" rev-parse --short=12 HEAD)"
+say "commit: $(prov_commit_short)"
+say "source: $(prov_source_hash)"
+say "scripts: $(prov_scripts_hash)"
 say "=============================================================="
+
+# The campaign builds the committed head in disposable worktrees. If the
+# build-relevant tree is dirty, the commit named above is not the tree the
+# script was run from: the artifact could not be bound to either.
+if [ "$(prov_dirty)" = 1 ]; then
+	say "FAIL  the build-relevant tree is dirty: the campaign has to name an"
+	say "      exact source revision and an exact harness version."
+	git -C "$ROOT" status --porcelain --untracked-files=normal -- $(prov_paths) |
+		sed 's/^/      /' | tee -a "$LOG"
+	say "RESULT: FAIL (dirty tree: no provenance)"
+	exit 1
+fi
 
 
 # The mutations. Each one is a Python patch applied to the worktree, and the
@@ -370,6 +386,11 @@ say "declared not detectable: $limits"
 say "invalid (did not boot):  $invalid"
 say "coverage holes: $holes"
 
+# The campaign's own provenance: the baseline source and harness, and (after
+# the pristine restore) the configuration and image the restored tree has.
+# `prov_check` reads the last stamp of the artifact.
+prov_cfg=-
+prov_img=-
 if [ "${MUTATION_BUILD:-0}" != "1" ]; then
 	say ""
 	say "==> restoring the pristine build tree"
@@ -382,7 +403,10 @@ if [ "${MUTATION_BUILD:-0}" != "1" ]; then
 	done
 	"$ROOT/tools/ferret/build.sh" rust >>"$LOG" 2>&1
 	say "==> pristine build restored"
+	prov_cfg=$(prov_config_hash rust x86_64)
+	prov_img=$(prov_image_hash rust x86_64)
 fi
+say "$(prov_stamp "$prov_cfg" "$prov_img")"
 
 if [ "$holes" -ne 0 ]; then
 	say "RESULT: FAIL ($holes coverage holes)"
