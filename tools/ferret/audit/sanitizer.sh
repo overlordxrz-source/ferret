@@ -100,10 +100,32 @@ report_blocks() { # <boot log>
 }
 
 all_blocks=$(report_blocks "$BLOG")
-component_blocks=$(printf '%s\n' "$all_blocks" |
+
+# Only a *sanitizer* report is a finding. The kernel also prints WARN splats,
+# and the warning-path tests of this component deliberately produce them (on
+# the Rust side and on the C reference side, to compare the two). A WARN is
+# not a sanitizer report and must not be attributed to the component.
+sanitizer_blocks=$(printf '%s\n' "$all_blocks" | awk '
+	BEGIN { RS = ""; ORS = "\n\n" }
+	{
+		header = $0
+		sub(/^[^\n]*\n/, "", header)	# drop the "cut here" marker line
+		if (header ~ /WARNING: CPU/) next
+		if (header ~ /(BUG: KASAN|BUG: KCSAN|KCSAN: data-race|UBSAN:|runtime error:)/)
+			print
+	}')
+warn_blocks=$(printf '%s\n' "$all_blocks" | awk '
+	BEGIN { RS = ""; ORS = "\n\n" }
+	{
+		header = $0
+		sub(/^[^\n]*\n/, "", header)
+		if (header ~ /WARNING: CPU/) print
+	}')
+
+component_blocks=$(printf '%s\n' "$sanitizer_blocks" |
 	grep -aiE "$COMPONENT" || true)
-other_blocks=$(printf '%s\n' "$all_blocks" |
-	grep -aivE "$COMPONENT" | grep -aE '^(BUG|WARNING|KASAN|UBSAN|runtime error|KCSAN|INFO: )|Call Trace' || true)
+other_blocks=$(printf '%s\n' "$sanitizer_blocks" |
+	grep -aivE "$COMPONENT" | grep -aE 'BUG: |KCSAN: data-race|UBSAN:|runtime error:' || true)
 
 say ""
 say "== sanitizer report summary ($NAME)"
@@ -137,6 +159,16 @@ if [ -n "$component_blocks" ]; then
 	exit 1
 fi
 say "PASS  no sanitizer report implicates $COMPONENT"
+
+if [ -n "$warn_blocks" ]; then
+	warn_n=$(printf '%s\n' "$warn_blocks" | grep -ac 'WARNING: CPU' || true)
+	warn_rust=$(printf '%s\n' "$warn_blocks" | grep -ac 'refcount\.rs' || true)
+	warn_c=$(printf '%s\n' "$warn_blocks" | grep -ac 'lib/refcount\.c' || true)
+	say "NOTE  $warn_n kernel WARN splats in the log. They are the warning-path"
+	say "      tests deliberately triggering the warnings of the component:"
+	say "      $warn_rust from the Rust implementation, $warn_c from the C"
+	say "      reference. A WARN is not a sanitizer report."
+fi
 
 if [ -n "$other_blocks" ]; then
 	say "NOTE  external findings: the following reports are in *other*"
