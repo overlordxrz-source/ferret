@@ -1,7 +1,13 @@
 Ferret verification evidence
-Source commit: f281ebf3b2e6
-Extracted: 2026-10-21T22:15:25Z (UTC)
-Raw logs: artifacts/ (not published; reproduced by tools/ferret/test.sh)
+Source commit: 058e0ca1ddce
+Source tree:   3514db64c8616b1f774ecd70f56ce221be2b6c849f7f49c794c81d44543ec320
+Harness:       ee80b7dcedf58bf3070ce0cde2dc70104e06e0264be3a2d1557bb022591afa17
+Configuration: 9e7e2143a3e7f2c90a6244dabe175aa6f315380475cd4fdbb6e9e72e1cf5cb0f
+Extracted:     2026-10-22T22:48:01Z (UTC)
+Binding:       every input artifact carries a provenance stamp naming
+               this source tree, this harness and its configuration;
+               an artifact from another revision is refused.
+Raw logs:      artifacts/ (not published; reproduced by tools/ferret/test.sh)
 ----------------------------------------------------------------------
 Variant: rust (x86_64)
 Result: PASS (see the checks below)
@@ -9,8 +15,8 @@ Result: PASS (see the checks below)
 
 == kernel variant ==
 variant:  rust
-vmlinux:  /build/linux-rust/vmlinux
-git:      01ab4372971c
+vmlinux:  /build/ferret/linux-rust/vmlinux
+git:      058e0ca1ddce
 config:   CONFIG_RUST=y CONFIG_CRC16=y CONFIG_CRC16_RUST=y CONFIG_CRC16_DIFF_KUNIT_TEST=y CONFIG_CRC_CCITT=y CONFIG_CRC_CCITT_RUST=y CONFIG_CRC_CCITT_DIFF_KUNIT_TEST=y CONFIG_KFIFO_RUST=y CONFIG_BITMAP_RUST=y CONFIG_BITMAP_DIFF_KUNIT_TEST=y CONFIG_KFIFO_DIFF_KUNIT_TEST=y CONFIG_REFCOUNT_RUST=y CONFIG_REFCOUNT_DIFF_KUNIT_TEST=y CONFIG_KUNIT=y 
 
 == build tree object ownership ==
@@ -248,22 +254,22 @@ PASS  refcount_dec_and_lock_irqsave is defined by lib/refcount_rust.o
 PASS  linked refcount_dec_and_lock_irqsave has the size of the function in the Rust object
 PASS  export shim for refcount_dec_and_lock_irqsave only references it (no definition)
 PASS  the C reference refcount_warn_saturate_c_ref is defined by lib/refcount_ref.o
-PASS  refcount_warn_saturate: the Rust and the C reference are distinct objects (0xffffffff81892dc0 vs 0xffffffff81894180)
+PASS  refcount_warn_saturate: the Rust and the C reference are distinct objects (0xffffffff81892fc0 vs 0xffffffff81898ee0)
 PASS  the C reference refcount_warn_saturate_c_ref is exported under its test-only name (differential build)
 PASS  the C reference refcount_dec_if_one_c_ref is defined by lib/refcount_ref.o
-PASS  refcount_dec_if_one: the Rust and the C reference are distinct objects (0xffffffff81892de0 vs 0xffffffff818942d0)
+PASS  refcount_dec_if_one: the Rust and the C reference are distinct objects (0xffffffff81892fe0 vs 0xffffffff81899030)
 PASS  the C reference refcount_dec_if_one_c_ref is exported under its test-only name (differential build)
 PASS  the C reference refcount_dec_not_one_c_ref is defined by lib/refcount_ref.o
-PASS  refcount_dec_not_one: the Rust and the C reference are distinct objects (0xffffffff81892e10 vs 0xffffffff81894300)
+PASS  refcount_dec_not_one: the Rust and the C reference are distinct objects (0xffffffff81893010 vs 0xffffffff81899060)
 PASS  the C reference refcount_dec_not_one_c_ref is exported under its test-only name (differential build)
 PASS  the C reference refcount_dec_and_mutex_lock_c_ref is defined by lib/refcount_ref.o
-PASS  refcount_dec_and_mutex_lock: the Rust and the C reference are distinct objects (0xffffffff81892e30 vs 0xffffffff81894370)
+PASS  refcount_dec_and_mutex_lock: the Rust and the C reference are distinct objects (0xffffffff81893030 vs 0xffffffff818990d0)
 PASS  the C reference refcount_dec_and_mutex_lock_c_ref is exported under its test-only name (differential build)
 PASS  the C reference refcount_dec_and_lock_c_ref is defined by lib/refcount_ref.o
-PASS  refcount_dec_and_lock: the Rust and the C reference are distinct objects (0xffffffff81892e90 vs 0xffffffff81894410)
+PASS  refcount_dec_and_lock: the Rust and the C reference are distinct objects (0xffffffff81893090 vs 0xffffffff81899170)
 PASS  the C reference refcount_dec_and_lock_c_ref is exported under its test-only name (differential build)
 PASS  the C reference refcount_dec_and_lock_irqsave_c_ref is defined by lib/refcount_ref.o
-PASS  refcount_dec_and_lock_irqsave: the Rust and the C reference are distinct objects (0xffffffff81892ef0 vs 0xffffffff818944b0)
+PASS  refcount_dec_and_lock_irqsave: the Rust and the C reference are distinct objects (0xffffffff818930f0 vs 0xffffffff81899210)
 PASS  the C reference refcount_dec_and_lock_irqsave_c_ref is exported under its test-only name (differential build)
 PASS  __kfifo_alloc is defined by lib/kfifo_rust.o
       size __kfifo_alloc: object=0x00000000000000fe vmlinux=0x00000000000000fe bytes
@@ -547,49 +553,49 @@ PASS  __ksymtab_refcount_dec_and_lock_irqsave exists (module ABI preserved)
 PASS  refcount_dec_and_lock_irqsave exported as EXPORT_SYMBOL
 
 == disassembly fingerprint ==
-      ffffffff81830860 <crc16>:
-      ffffffff81830860:      	endbr64
-      ffffffff81830864:      	movl	%edi, %eax
-      ffffffff81830866:      	testq	%rdx, %rdx
-      ffffffff81830869:      	je	0xffffffff818308ee <crc16+0x8e>
-      ffffffff8183086f:      	testb	$0x1, %dl
-      ffffffff81830872:      	jne	0xffffffff8183087f <crc16+0x1f>
-      ffffffff818311a0 <crc_ccitt>:
-      ffffffff818311a0:      	endbr64
-      ffffffff818311a4:      	movl	%edi, %eax
-      ffffffff818311a6:      	testq	%rdx, %rdx
-      ffffffff818311a9:      	je	0xffffffff81831225 <crc_ccitt+0x85>
-      ffffffff818311ab:      	testb	$0x1, %dl
-      ffffffff818311ae:      	jne	0xffffffff818311bb <crc_ccitt+0x1b>
-      ffffffff81820e60 <__kfifo_in>:
-      ffffffff81820e60:      	endbr64
-      ffffffff81820e64:      	pushq	%rbp
-      ffffffff81820e65:      	pushq	%r15
-      ffffffff81820e67:      	pushq	%r14
-      ffffffff81820e69:      	pushq	%r13
-      ffffffff81820e6b:      	pushq	%r12
-      ffffffff81820e6d:      	pushq	%rbx
-      ffffffff81820e6e:      	pushq	%rax
-      ffffffff81820e6f:      	movq	%rsi, %r15
-      ffffffff81820e72:      	movq	%rdi, %rbx
-      ffffffff81820e75:      	movl	(%rdi), %r8d
-      ffffffff81820e78:      	movl	0x4(%rdi), %ecx
-      ffffffff81820e7b:      	movl	0x8(%rdi), %eax
-      ffffffff81820e7e:      	subl	%r8d, %ecx
-      ffffffff81820e81:      	movl	%r8d, 0x4(%rsp)
-      ffffffff81820e86:      	leal	(%rcx,%rax), %r14d
-      ffffffff81820e8a:      	incl	%r14d
-      ffffffff81820e8d:      	cmpl	%r14d, %edx
-      ffffffff81820e90:      	cmovbl	%edx, %r14d
-      ffffffff81820e94:      	movl	0xc(%rdi), %ecx
-      ffffffff81820e97:      	testq	%rcx, %rcx
-      ffffffff81820e9a:      	sete	%dl
-      ffffffff81820e9d:      	movq	%r14, %r12
-      ffffffff81820ea0:      	imulq	%rcx, %r12
-      ffffffff81820ea4:      	movl	%eax, %edi
-      ffffffff81820ea6:      	andl	%r8d, %edi
-      ffffffff81820ea9:      	imulq	%rcx, %rdi
-      ffffffff81820ead:      	incq	%rax
+      ffffffff81830a10 <crc16>:
+      ffffffff81830a10:      	endbr64
+      ffffffff81830a14:      	movl	%edi, %eax
+      ffffffff81830a16:      	testq	%rdx, %rdx
+      ffffffff81830a19:      	je	0xffffffff81830a9e <crc16+0x8e>
+      ffffffff81830a1f:      	testb	$0x1, %dl
+      ffffffff81830a22:      	jne	0xffffffff81830a2f <crc16+0x1f>
+      ffffffff81831350 <crc_ccitt>:
+      ffffffff81831350:      	endbr64
+      ffffffff81831354:      	movl	%edi, %eax
+      ffffffff81831356:      	testq	%rdx, %rdx
+      ffffffff81831359:      	je	0xffffffff818313d5 <crc_ccitt+0x85>
+      ffffffff8183135b:      	testb	$0x1, %dl
+      ffffffff8183135e:      	jne	0xffffffff8183136b <crc_ccitt+0x1b>
+      ffffffff81820de0 <__kfifo_in>:
+      ffffffff81820de0:      	endbr64
+      ffffffff81820de4:      	pushq	%rbp
+      ffffffff81820de5:      	pushq	%r15
+      ffffffff81820de7:      	pushq	%r14
+      ffffffff81820de9:      	pushq	%r13
+      ffffffff81820deb:      	pushq	%r12
+      ffffffff81820ded:      	pushq	%rbx
+      ffffffff81820dee:      	pushq	%rax
+      ffffffff81820def:      	movq	%rsi, %r15
+      ffffffff81820df2:      	movq	%rdi, %rbx
+      ffffffff81820df5:      	movl	(%rdi), %r8d
+      ffffffff81820df8:      	movl	0x4(%rdi), %ecx
+      ffffffff81820dfb:      	movl	0x8(%rdi), %eax
+      ffffffff81820dfe:      	subl	%r8d, %ecx
+      ffffffff81820e01:      	movl	%r8d, 0x4(%rsp)
+      ffffffff81820e06:      	leal	(%rcx,%rax), %r14d
+      ffffffff81820e0a:      	incl	%r14d
+      ffffffff81820e0d:      	cmpl	%r14d, %edx
+      ffffffff81820e10:      	cmovbl	%edx, %r14d
+      ffffffff81820e14:      	movl	0xc(%rdi), %ecx
+      ffffffff81820e17:      	testq	%rcx, %rcx
+      ffffffff81820e1a:      	sete	%dl
+      ffffffff81820e1d:      	movq	%r14, %r12
+      ffffffff81820e20:      	imulq	%rcx, %r12
+      ffffffff81820e24:      	movl	%eax, %edi
+      ffffffff81820e26:      	andl	%r8d, %edi
+      ffffffff81820e29:      	imulq	%rcx, %rdi
+      ffffffff81820e2d:      	incq	%rax
 PASS  disassembly fingerprints captured above
 
 RESULT: PASS

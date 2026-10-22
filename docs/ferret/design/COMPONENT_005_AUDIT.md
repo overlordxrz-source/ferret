@@ -300,7 +300,7 @@ The classification is the one of `AUDIT_PROTOCOL.md` §5:
 ### 7.1 The mutations
 
 The campaign of `artifacts/audit/mutation-test.txt` (the run against the
-committed head `759645777c5f`) executed all ten mutations: **nine detected, one
+committed head `058e0ca1ddce`) executed all ten mutations: **nine detected, one
 declared limit, zero coverage holes, zero invalid runs.** The last column names
 the suite whose verdict failed in the mutated kernel, read from the archived
 boot log.
@@ -310,7 +310,7 @@ boot log.
 | a count of one is reported as decremented | detectable | **detected** — `refcount_rust`, `refcount_diff`, `fvs_refcount`, `fvs_refcount_adv` |
 | the underflow also decrements the count | detectable | **detected** — `refcount_diff`, `fvs_refcount`, `fvs_refcount_adv` |
 | the saturated count is decremented instead of being left alone | detectable | **detected** — `refcount_rust`, `refcount_diff`, `fvs_refcount`, `fvs_refcount_adv` |
-| the compare-and-exchange loop does not update the expected value on failure | detectable | **detected** — `refcount_diff` (the concurrency invariant, not a single call) |
+| the loop gives up after a failed compare-and-exchange instead of retrying | detectable | **detected** — `refcount_diff`: the decrement phase starts one above the total, so no refusal is legitimate, and the test asserts `refused == 0`; giving up is caught there (and the retry counter would have stopped growing) |
 | the count is saturated to zero instead of `REFCOUNT_SATURATED` | detectable | **detected** — `refcount_rust`, `refcount_diff`, `fvs_refcount`, `fvs_refcount_adv` |
 | the mutex is taken even when the first step failed | detectable | **detected** — `refcount_diff`, `fvs_refcount` |
 | the spinlock is not released on the failure path | detectable | **detected** — `fvs_refcount` (the deterministic failure-path test) |
@@ -394,7 +394,7 @@ checks the KASAN banner, so a silent failure cannot pass for a clean run.
 | Sanitizer | Result |
 | --- | --- |
 | KASAN + UBSAN | **PASS** — `CONFIG_KASAN{,,_GENERIC,_INLINE}` and `CONFIG_UBSAN{,_BOUNDS,_SHIFT}` are `=y` in the kernel that was built, the four audited suites pass inside it, no report implicates `refcount` and there is no external report. The 14 kernel WARN splats in the log are the warning-path tests (7 Rust, 7 C reference), not sanitizer findings. |
-| KCSAN | **PASS** — `CONFIG_KCSAN=y` and `CONFIG_KCSAN_EARLY_ENABLE=y` are set in the kernel that was built, the four audited suites pass inside it, no data-race report implicates `refcount` and there is no external report. The same 14 WARN splats are the warning-path tests (7 Rust, 7 C reference). |
+| KCSAN | **PASS, non-strict** — `CONFIG_KCSAN=y` and `CONFIG_KCSAN_EARLY_ENABLE=y` are set in the kernel that was built, the four audited suites pass inside it, no data-race report implicates `refcount` and there is no external report. The same 14 WARN splats are the warning-path tests (7 Rust, 7 C reference). KCSAN runs in its **default, non-strict mode**: it reports races between instrumented accesses, it does not model every weak memory ordering, and a clean run is *not* evidence that the ordering is correct (see §10). |
 
 The earlier checkpoint recorded two UBSAN reports in `include/linux/log2.h`,
 reached from the `kfifo_diff` suite (issue #25). That defect is fixed on this
@@ -417,8 +417,8 @@ with its owning component.
 | The specification model | `fvs_refcount_adv_dec_helpers_match_the_contract_model_on_the_boundaries` and `..._over_a_reaching_distribution` — the contract model of the independent audit, not a transliteration of the implementation |
 | The boundaries of the count space | `fvs_refcount`'s six sweeps: every helper over 19 boundary counts, with the contract spelled out per state |
 | The failure path of the three lock helpers | `fvs_refcount`'s three deterministic tests: the lock is made contended, so the helper blocks between its two steps while the count changes underneath it; the lock must be released and the interrupt state must be restored |
-| The concurrent behaviour | `refcount_diff_concurrent` (4 tasks): released together through a start barrier, so the compare-and-exchange loop actually retries; the test asserts `refcount_read == initial - decrements` and `decrements + refused == total`, and reports the distribution in the boot log |
-| The compare-and-exchange **retry** path of `try_dec_not_one()` | `refcount_diff_concurrent` (the contention is real: the successful decrements are spread over the workers) and the `dec-not-one-retry-broken` mutation |
+| The concurrent behaviour | `refcount_diff_concurrent` (4 tasks): released together through a completion, so the compare-and-exchange loop actually retries; the test asserts `refcount_read == initial - decrements`, `decrements + refused == total` and `refused == 0` (the count starts above the total, so a refusal means the loop gave up), and reports the distribution in the boot log |
+| The compare-and-exchange **retry** path of `try_dec_not_one()` | `refcount_diff_concurrent`: the workers are released through a completion, the Rust implementation counts the retries in a KUnit-only counter, and the test **asserts** that the count is non-zero (it repeats the phase at most 5 times, prints the count and the attempt, and fails if no retry was observed). Measured across 22 boots (during development and on the final revision): 1208–3640 retries, every one on the first attempt. The `dec-not-one-retry-broken` mutation is detected by the same invariant |
 | The warning **location**: one reported line per saturation event | the boot log: each event reports its own `rust/kernel/sync/refcount.rs:<line>` — six distinct sites for the six saturation events, plus a seventh for the underflow in `try_dec_not_one`, each reported once — as the C's `REFCOUNT_WARN()` call sites do; phase 4b checks the texts and the counts |
 | The `KRef` lifetime, the release callback, the reference transfer | `fvs_refcount_adv_kref_new_does_not_take_a_reference` (the drop releases the adopted reference) and `..._into_raw_then_c_kref_put_releases_once` |
 | The `KRef` with two handles over one reference | `fvs_refcount_adv_two_handles_over_one_reference_release_the_object_early` |
@@ -442,7 +442,10 @@ with its owning component.
   compare-and-exchange and a release one are the same instruction
   (`lock cmpxchg`), so no functional test *can* see the difference; the
   mutation testing records that as a declared, documented limit of the
-  tests, not as a pass.
+  tests, not as a pass. **KCSAN does not change this**: it runs in its
+  default, non-strict mode, so it reports races between instrumented
+  accesses but does not model every weak memory ordering. The KCSAN result is
+  "no report", not "the ordering is correct".
 * The failure path of the lock helpers, after the lock has been taken, is
   covered deterministically (not by winning a race): the holder contends the
   lock, the helper blocks between its two steps, and the count is changed
@@ -458,6 +461,42 @@ with its owning component.
   requirement on the caller.
 * The saturation warning path of the *kernel* (the C inline operations) is
   not exercised by a test, only the exported function is.
+
+## 11. The state of the component
+
+The registry records the component as `migrated`: the clean cycle passed
+16/16 on the branch that contains this audit, and the gate in
+[`AUDIT_PROTOCOL.md`](../../../AUDIT_PROTOCOL.md) passed on the same branch.
+
+The evidence, in the order it was produced (all of it on the branch that
+contains this audit and its answers):
+
+| What | Command | Result |
+| --- | --- | --- |
+| the adversarial tests are in the tree | `lib/fvs_refcount_adversarial_kunit.c`, `lib/fvs_refcount_adversarial.rs` | 10 C cases + 8 Rust cases, under `CONFIG_FVS_REFCOUNT_ADVERSARIAL_KUNIT_TEST` |
+| the mutation campaign | `tools/ferret/audit/mutation-test.sh` | 10 mutations: 9 detected, 1 declared limit, 0 holes, 0 invalid |
+| the retry path, focused | `artifacts/audit/retry-coverage.txt` | 5 boots on the final revision, 2119–3404 retries, always on the first attempt (22 boots in total on the branch: 1208–3640) |
+| the sanitized kernels | `tools/ferret/audit/sanitizer.sh kasan-ubsan ...`, `... kcsan ...` | both PASS: the four audited suites pass inside, no report implicates the component, no external report |
+| the clean cycle | `CLEAN=1 tools/ferret/test.sh` | 16/16 steps |
+| the gate | `tools/ferret/audit/audit.sh --skip-done` | PASS (phases 5 and 6 were skipped: their artifacts already ended in `RESULT: PASS` from the runs above) |
+| the arm64 boot | — | **NOT RUN**: the arm64 kernel is built and its linkage is checked, but the host has no arm64 boot in this configuration |
+| the performance | — | **NOT TESTED**: the host has no KVM, so any timing would be QEMU TCG |
+(An earlier revision of this document said `partial`, which contradicted the
+registry; the independent audit FVS-AUDIT-001 called the contradiction out,
+and it is fixed here.)
+
+Every row of that table is bound to the tree: each artifact carries a
+`provenance:` stamp with the hash of the build-relevant source, the hash of
+the harness (`tools/ferret` + `AUDIT_PROTOCOL.md`), the hash of the kernel
+configuration (with the `.config` archived next to the artifact) and the hash
+of the image, and the gate refuses a dirty tree or an artifact whose stamp
+does not match the current tree (`tools/ferret/lib/provenance.sh`). The
+published evidence in `docs/ferret/evidence/` is regenerated by
+`tools/ferret/evidence.sh` from those artifacts, and it refuses a stale
+input.
+
+The pull request stays open until the gate has been re-run on the revision
+that answers the audit.
 
 ## 12. The independent audit FVS-AUDIT-001 and the disposition of its findings
 
@@ -487,7 +526,9 @@ taken into the tree, and the findings are disposed of here.
 | F-18 | `Refcount::read()` returned `i32` while the C `refcount_read()` returns `unsigned int`. | **FIXED** — it returns `u32`, so a saturated count reads back as `0xc000_0000`, exactly as in C. |
 | F-19 | The saturated and dead paths of `KRef`, the two-handle case and the "the release callback runs in another task" case were untested. | **PARTIALLY FIXED** — the saturated count, the dead count, the two-handle case and the transfer back to C are covered by the audit's tests, which are in the tree. The **"release callback runs in another task" case is still not covered**: no test drops a handle from a second task, and it is listed as a limitation in §9. |
 | F-20 | The reference variant was not built by the audit, so the export CRC was not compared numerically. | **ACCEPTED RISK** — the CRC is preserved *by construction* (the upstream headers are untouched), and the project's clean cycle builds the reference variant. |
-| F-21 | The "concurrency phase" did not actually contend (the tasks were created one after the other, so the first one finished before the next started), so the compare-and-exchange **retry** path was never executed and a broken retry loop passed the whole suite. | **FIXED** — the tasks are released together through a start barrier, the invariant that a broken retry loop breaks (the count and the number of decrements must agree) is asserted, and the mutation that breaks the retry loop is in the campaign. |
+| F-21 | The "concurrency phase" did not actually contend (the tasks were created one after the other, so the first one finished before the next started), so the compare-and-exchange **retry** path was never executed and a broken retry loop passed the whole suite. | **FIXED** — the workers are released together through a completion, the Rust implementation counts the retries of the loop in a KUnit-only counter, the test **asserts** the count (repeating the phase at most 5 times, printing the count and the attempt, and failing if it never sees a retry), and the gate checks the count in the boot log. Measured after placing the workers on the CPUs while they sleep on the completion: 22 boots (during development and on the final revision), 1208–3640 retries, every one on the first attempt. The `dec-not-one-retry-broken` mutation (give up after a failed compare-and-exchange) is detected by the `refused == 0` assertion. |
+| F-22 | The published evidence (`docs/ferret/evidence/*`) was extracted from an older revision (`f281ebf3b2e6`), and its boot log did not show the adversarial suites at all. | **FIXED** — the evidence is regenerated from the current tree; every published file carries the source, harness and configuration hashes, and the boot evidence lists every suite verdict explicitly and refuses to publish if `fvs_refcount` or `fvs_refcount_adv` did not run or did not pass. |
+| F-23 | No artifact and no `--skip-done` result was bound to the revision, configuration and harness version that produced it, so a stale `PASS` could be read as current. | **FIXED** — `tools/ferret/lib/provenance.sh` stamps every artifact with the build-relevant source-tree hash, the harness hash (`tools/ferret` + `AUDIT_PROTOCOL.md`), the configuration hash (with a copy of the `.config` archived next to the artifact) and the image hash; the gate refuses to run from a dirty tree, checks the stamp before skipping a phase and prints why an artifact is stale; `evidence.sh` refuses a stale input. |
 
 Two findings of the audit are worth keeping in the report, because they are
 about the *method* and not about the code:
@@ -524,25 +565,47 @@ a harness that reports the wrong thing is a finding in its own right.
 | `audit/sanitizer.sh` treated every `WARNING: CPU` splat as a sanitizer report | the 14 WARN splats that the warning-path tests deliberately produce (7 Rust, 7 C reference) were parsed as component findings, so a clean sanitized kernel failed | only blocks whose header is a sanitizer report are findings; the WARN splats are counted and reported as the intentional tests they are |
 | `docker/run.sh` passed the host `ART` path into the container unchanged | the boot wrote `$ART/boot.log` into the *container's* filesystem, and the host-side script, reading the same path on the host, found nothing: a sanitized kernel that booted and passed every suite was reported as "the kernel did not boot" (this happened twice before it was diagnosed) | a path under `$HOST_PROJECTS` is translated to `/mnt/projects/...`, an already-container path is accepted, and any other path is refused with an error instead of being silently unusable |
 
-## 11. The state of the component
+### 12.2 The second audit (FVS-AUDIT-001-R2) and what it changed
 
-The registry records the component as `migrated`: the clean cycle passed
-16/16 on the branch that contains this audit, and the gate in
-[`AUDIT_PROTOCOL.md`](../../../AUDIT_PROTOCOL.md) passed on the same branch.
+The second pass found no defect in the port either. It found three ways in
+which the evidence could still mislead a reader, and answering them exposed
+two more defects of the harness:
 
-The evidence, in the order it was produced (all of it on the branch that
-contains this audit and its answers):
+* **F-21 — the retry path was inferred, not asserted.** The concurrency test
+  argued from the final count and from the spread of the successful
+  decrements; it never showed that the compare-and-exchange loop retried.
+  The first barrier was a `msleep(1)` poll, and the measurement was blunt: of
+  three boots, one had 430 retries and two had none. A busy-wait barrier was
+  worse (four spinning tasks on a two-CPU guest starve the test thread that
+  has to release them: the release arrived after the spin timeout in every
+  boot). The design that works is a completion barrier, a KUnit-only retry
+  counter in the implementation, an explicit assertion, and a bounded repeat
+  of the phase when the workers happen not to overlap. Placement was the
+  missing piece: with the completion barrier alone, 1 boot in 5 never
+  overlapped its workers even after five attempts, and the assertion failed
+  loudly (which is the honest outcome, but a flaky test is not evidence
+  either). Placing the sleeping workers round-robin on the online CPUs makes
+  the release land one worker per CPU; measured after the change: 22 boots
+  (during development and on the final revision), 1208–3640 retries, every one on the first attempt, and still a failure —
+  not a silent pass — if a future boot never retries.
+* **F-22 — the published evidence was older than the tree.** The files in
+  `docs/ferret/evidence/` were extracted from `f281ebf3b2e6`, before the
+  adversarial suites existed; their boot log did not contain a single `fvs_`
+  line. `tools/ferret/evidence.sh` now requires the source, harness and
+  configuration hashes in every input, lists every suite verdict explicitly,
+  and refuses to publish if `fvs_refcount` or `fvs_refcount_adv` did not run
+  or did not pass.
+* **F-23 — nothing bound an artifact to the tree that produced it.** Every
+  artifact now carries a stamp (see §11) and every consumer checks it. The
+  gate refuses a dirty tree, does not skip a phase whose stamp is stale, and
+  prints the reason. Two consequences of the check are visible in this
+  campaign: the artifacts of the first campaign are *rejected* as stale, and
+  the second campaign had to be run after the harness commit rather than
+  before it.
 
-| What | Command | Result |
+The two harness defects found while answering R2:
+
+| Defect | Consequence | Fix |
 | --- | --- | --- |
-| the adversarial tests are in the tree | `lib/fvs_refcount_adversarial_kunit.c`, `lib/fvs_refcount_adversarial.rs` | 10 C cases + 8 Rust cases, under `CONFIG_FVS_REFCOUNT_ADVERSARIAL_KUNIT_TEST` |
-| the mutation campaign | `tools/ferret/audit/mutation-test.sh` | 10 mutations: 9 detected, 1 declared limit, 0 holes, 0 invalid |
-| the sanitized kernels | `tools/ferret/audit/sanitizer.sh kasan-ubsan ...`, `... kcsan ...` | both PASS: the four audited suites pass inside, no report implicates the component, no external report |
-| the clean cycle | `CLEAN=1 tools/ferret/test.sh` | 16/16 steps |
-| the gate | `tools/ferret/audit/audit.sh --skip-done` | PASS (phases 5 and 6 were skipped: their artifacts already ended in `RESULT: PASS` from the runs above) |
-| the arm64 boot | — | **NOT RUN**: the arm64 kernel is built and its linkage is checked, but the host has no arm64 boot in this configuration |
-| the performance | — | **NOT TESTED**: the host has no KVM, so any timing would be QEMU TCG |
-(An earlier revision of this document said `partial`, which contradicted the
-registry; the independent audit FVS-AUDIT-001 called the contradiction out,
-and it is fixed here.) The pull request stays open until the gate has been
-re-run on the revision that answers the audit.
+| The per-suite checks in `boot-in-container.sh` and in the gate's phase 7 matched `ok [0-9]+ <suite>` as a substring | `not ok 17 refcount_diff` contains `ok 17 refcount_diff`, so a failing suite could be reported as passing in the per-suite line (the global `not ok` check still failed the boot, so the two could contradict each other) | the verdict is matched against the whole line, and a passing line must not be a `not ok` line: `suite_passed()` in the gate and the anchored pattern in the boot script |
+| The retry coverage was written down as "the contention is real: the successful decrements are spread over the workers" | an inference presented as a measurement; it was also wrong in boots where the workers did not overlap | the count is measured, printed, asserted, and repeated up to five times; the report says "measured", never "inferred" |

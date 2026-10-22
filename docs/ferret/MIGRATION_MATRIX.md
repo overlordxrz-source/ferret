@@ -108,8 +108,12 @@ Reference counting migration details (checkpoint 005):
 * Independent verification: the component went through the gate in
   [`AUDIT_PROTOCOL.md`](../../AUDIT_PROTOCOL.md) — the clean 16-step cycle
   (16/16), the mutation testing, the KASAN+UBSAN and the KCSAN builds (the
-  audited suites pass inside them, with no report pointing at the component),
-  the property and contract-model tests, and the Rust soundness review. The
+  audited suites pass inside them, with no report pointing at the component;
+  KCSAN runs in its default, non-strict mode and is not a proof of the memory
+  ordering), the property and contract-model tests with the retry path of the
+  compare-and-exchange loop counted and asserted, and the Rust soundness
+  review. Every artifact is bound to the source, harness and configuration
+  that produced it, and the gate rejects a stale one. The
   report is [`design/COMPONENT_005_AUDIT.md`](design/COMPONENT_005_AUDIT.md).
 * Independent audit: the component was audited by FVS-AUDIT-001, which found
   no defect in the port but found that the evidence of the self-audit was

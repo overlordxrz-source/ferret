@@ -1,29 +1,34 @@
 Ferret verification evidence
-Source commit: f281ebf3b2e6
-Extracted: 2026-10-21T22:15:25Z (UTC)
-Raw logs: artifacts/ (not published; reproduced by tools/ferret/test.sh)
+Source commit: 058e0ca1ddce
+Source tree:   3514db64c8616b1f774ecd70f56ce221be2b6c849f7f49c794c81d44543ec320
+Harness:       ee80b7dcedf58bf3070ce0cde2dc70104e06e0264be3a2d1557bb022591afa17
+Configuration: 9e7e2143a3e7f2c90a6244dabe175aa6f315380475cd4fdbb6e9e72e1cf5cb0f
+Extracted:     2026-10-22T22:48:01Z (UTC)
+Binding:       every input artifact carries a provenance stamp naming
+               this source tree, this harness and its configuration;
+               an artifact from another revision is refused.
+Raw logs:      artifacts/ (not published; reproduced by tools/ferret/test.sh)
 ----------------------------------------------------------------------
 Guest: Ubuntu 24.04 root filesystem, amd64
 Mode: init=/sbin/ferret-init probe
 Architecture: amd64
 Result: PASS (required marker found)
 
-[    0.000000] Linux version 6.18.57-ferret-rust (root@3ea769cb049c) (Ubuntu clang version 18.1.3 (1ubuntu1), Ubuntu LLD 18.1.3) #1 SMP PREEMPT_DYNAMIC Wed Oct 21 21:56:31 UTC 2026
-[    5.852998] Call Trace:
-[    5.908731] Call Trace:
-[    6.029051] Call Trace:
-[    6.073095] Call Trace:
-[    6.120925] Call Trace:
-[    6.167664] Call Trace:
-[    6.232643] Call Trace:
-[    6.279072] Call Trace:
-[    6.322083] Call Trace:
-[    6.371843] Call Trace:
-[    6.415772] Call Trace:
-[    6.456260] Call Trace:
-[    6.500697] Call Trace:
-[    6.542253] Call Trace:
-[    6.913995] Call Trace:
-[    7.282319] EXT4-fs (vda): mounted filesystem b2dd246e-7763-49e4-9811-b05307e30736 r/w with ordered data mode. Quota mode: none.
+[    0.000000] Linux version 6.18.57-ferret-rust (root@3ea769cb049c) (Ubuntu clang version 18.1.3 (1ubuntu1), Ubuntu LLD 18.1.3) #1 SMP PREEMPT_DYNAMIC Thu Oct 22 22:39:30 UTC 2026
+[    5.767797] Call Trace:
+[    5.812695] Call Trace:
+[    5.963445] Call Trace:
+[    6.009612] Call Trace:
+[    6.057240] Call Trace:
+[    6.108042] Call Trace:
+[    6.174720] Call Trace:
+[    6.229961] Call Trace:
+[    6.273655] Call Trace:
+[    6.326031] Call Trace:
+[    6.399399] Call Trace:
+[    6.461958] Call Trace:
+[    6.508638] Call Trace:
+[    6.558051] Call Trace:
+[   10.816041] EXT4-fs (vda): mounted filesystem 674e9254-334d-4103-8873-7bc9733f439d r/w with ordered data mode. Quota mode: none.
 UBUNTU-PROC: Linux version 6.18.57-ferret-rust (root@
 UBUNTU-CHECK: ok

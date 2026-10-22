@@ -2,7 +2,7 @@
 == kernel variant ==
 variant:  rust
 vmlinux:  /build/ferret/linux-rust-arm64/vmlinux
-git:      42b8e7b7e92d
+git:      058e0ca1ddce
 config:   CONFIG_RUST=y CONFIG_CRC16=y CONFIG_CRC16_RUST=y CONFIG_CRC16_DIFF_KUNIT_TEST=y CONFIG_CRC_CCITT=y CONFIG_CRC_CCITT_RUST=y CONFIG_CRC_CCITT_DIFF_KUNIT_TEST=y CONFIG_KFIFO_RUST=y CONFIG_BITMAP_RUST=y CONFIG_BITMAP_DIFF_KUNIT_TEST=y CONFIG_KFIFO_DIFF_KUNIT_TEST=y CONFIG_REFCOUNT_RUST=y CONFIG_REFCOUNT_DIFF_KUNIT_TEST=y CONFIG_KUNIT=y 
 
 == build tree object ownership ==
@@ -240,22 +240,22 @@ PASS  refcount_dec_and_lock_irqsave is defined by lib/refcount_rust.o
 PASS  linked refcount_dec_and_lock_irqsave has the size of the function in the Rust object
 PASS  export shim for refcount_dec_and_lock_irqsave only references it (no definition)
 PASS  the C reference refcount_warn_saturate_c_ref is defined by lib/refcount_ref.o
-PASS  refcount_warn_saturate: the Rust and the C reference are distinct objects (0xffff80008067f720 vs 0xffff8000806844a8)
+PASS  refcount_warn_saturate: the Rust and the C reference are distinct objects (0xffff80008067f790 vs 0xffff800080684518)
 PASS  the C reference refcount_warn_saturate_c_ref is exported under its test-only name (differential build)
 PASS  the C reference refcount_dec_if_one_c_ref is defined by lib/refcount_ref.o
-PASS  refcount_dec_if_one: the Rust and the C reference are distinct objects (0xffff80008067f738 vs 0xffff8000806845e4)
+PASS  refcount_dec_if_one: the Rust and the C reference are distinct objects (0xffff80008067f7a8 vs 0xffff800080684654)
 PASS  the C reference refcount_dec_if_one_c_ref is exported under its test-only name (differential build)
 PASS  the C reference refcount_dec_not_one_c_ref is defined by lib/refcount_ref.o
-PASS  refcount_dec_not_one: the Rust and the C reference are distinct objects (0xffff80008067f76c vs 0xffff800080684628)
+PASS  refcount_dec_not_one: the Rust and the C reference are distinct objects (0xffff80008067f7dc vs 0xffff800080684698)
 PASS  the C reference refcount_dec_not_one_c_ref is exported under its test-only name (differential build)
 PASS  the C reference refcount_dec_and_mutex_lock_c_ref is defined by lib/refcount_ref.o
-PASS  refcount_dec_and_mutex_lock: the Rust and the C reference are distinct objects (0xffff80008067f784 vs 0xffff8000806846d8)
+PASS  refcount_dec_and_mutex_lock: the Rust and the C reference are distinct objects (0xffff80008067f7f4 vs 0xffff800080684748)
 PASS  the C reference refcount_dec_and_mutex_lock_c_ref is exported under its test-only name (differential build)
 PASS  the C reference refcount_dec_and_lock_c_ref is defined by lib/refcount_ref.o
-PASS  refcount_dec_and_lock: the Rust and the C reference are distinct objects (0xffff80008067f7dc vs 0xffff800080684818)
+PASS  refcount_dec_and_lock: the Rust and the C reference are distinct objects (0xffff80008067f84c vs 0xffff800080684888)
 PASS  the C reference refcount_dec_and_lock_c_ref is exported under its test-only name (differential build)
 PASS  the C reference refcount_dec_and_lock_irqsave_c_ref is defined by lib/refcount_ref.o
-PASS  refcount_dec_and_lock_irqsave: the Rust and the C reference are distinct objects (0xffff80008067f834 vs 0xffff800080684958)
+PASS  refcount_dec_and_lock_irqsave: the Rust and the C reference are distinct objects (0xffff80008067f8a4 vs 0xffff8000806849c8)
 PASS  the C reference refcount_dec_and_lock_irqsave_c_ref is exported under its test-only name (differential build)
 PASS  __kfifo_alloc is defined by lib/kfifo_rust.o
       size __kfifo_alloc: object=0x00000000000000e4 vmlinux=0x00000000000000e4 bytes
@@ -351,7 +351,7 @@ PASS  linked __kfifo_dma_out_prepare_r has the size of the function in the Rust 
 PASS  export shim for __kfifo_dma_out_prepare_r only references it (no definition)
 
 == debug-info provenance ==
-      crc16 address: 0xffff80008063f054
+      crc16 address: 0xffff80008063f0b4
       origin:  crc16 /build/ferret/src/lib/crc/crc16_rust.rs:76 
 PASS  crc16 maps to Rust source (crc16_rust.rs)
 
@@ -541,49 +541,49 @@ PASS  __ksymtab_refcount_dec_and_lock_irqsave exists (module ABI preserved)
 PASS  refcount_dec_and_lock_irqsave exported as EXPORT_SYMBOL
 
 == disassembly fingerprint ==
-      ffff80008063f054 <crc16>:
-      ffff80008063f054:      	bti	c
-      ffff80008063f058:      	cbz	x2, 0xffff80008063f098 <crc16+0x44>
-      ffff80008063f05c:      	paciasp
-      ffff80008063f060:      	stp	x29, x30, [sp, #-0x10]!
-      ffff80008063f064:      	mov	x29, sp
-      ffff80008063f068:      	adrp	x8, 0xffff8000812fc000 <crc7_be_syndrome_table+0x18>
-      ffff80008063f7c0 <crc_ccitt>:
-      ffff80008063f7c0:      	bti	c
-      ffff80008063f7c4:      	cbz	x2, 0xffff80008063f804 <crc_ccitt+0x44>
-      ffff80008063f7c8:      	paciasp
-      ffff80008063f7cc:      	stp	x29, x30, [sp, #-0x10]!
-      ffff80008063f7d0:      	mov	x29, sp
-      ffff80008063f7d4:      	adrp	x8, 0xffff8000812fc000 <crc7_be_syndrome_table+0x18>
-      ffff8000806305a0 <__kfifo_in>:
-      ffff8000806305a0:      	paciasp
-      ffff8000806305a4:      	stp	x29, x30, [sp, #-0x50]!
-      ffff8000806305a8:      	str	x25, [sp, #0x10]
-      ffff8000806305ac:      	stp	x24, x23, [sp, #0x20]
-      ffff8000806305b0:      	stp	x22, x21, [sp, #0x30]
-      ffff8000806305b4:      	stp	x20, x19, [sp, #0x40]
-      ffff8000806305b8:      	mov	x29, sp
-      ffff8000806305bc:      	ldp	w25, w8, [x0]
-      ffff8000806305c0:      	ldp	w9, w10, [x0, #0x8]
-      ffff8000806305c4:      	ldr	x12, [x0, #0x10]
-      ffff8000806305c8:      	mov	x20, x0
-      ffff8000806305cc:      	mov	x19, x1
-      ffff8000806305d0:      	sub	w8, w8, w25
-      ffff8000806305d4:      	add	w8, w8, w9
-      ffff8000806305d8:      	add	w11, w8, #0x1
-      ffff8000806305dc:      	cmp	w2, w11
-      ffff8000806305e0:      	and	w11, w9, w25
-      ffff8000806305e4:      	umaddl	x9, w10, w9, x10
-      ffff8000806305e8:      	csinc	w21, w2, w8, lo
-      ffff8000806305ec:      	cmp	x10, #0x0
-      ffff8000806305f0:      	umull	x8, w10, w11
-      ffff8000806305f4:      	ccmp	x12, #0x0, #0x4, ne
-      ffff8000806305f8:      	umull	x10, w10, w21
-      ffff8000806305fc:      	csel	x9, xzr, x9, eq
-      ffff800080630600:      	csinc	x22, x12, xzr, ne
-      ffff800080630604:      	cmp	x9, x8
-      ffff800080630608:      	csel	x8, x9, x8, lo
-      ffff80008063060c:      	sub	x11, x9, x8
+      ffff80008063f0b4 <crc16>:
+      ffff80008063f0b4:      	bti	c
+      ffff80008063f0b8:      	cbz	x2, 0xffff80008063f0f8 <crc16+0x44>
+      ffff80008063f0bc:      	paciasp
+      ffff80008063f0c0:      	stp	x29, x30, [sp, #-0x10]!
+      ffff80008063f0c4:      	mov	x29, sp
+      ffff80008063f0c8:      	adrp	x8, 0xffff8000812fc000 <crc7_be_syndrome_table+0x18>
+      ffff80008063f820 <crc_ccitt>:
+      ffff80008063f820:      	bti	c
+      ffff80008063f824:      	cbz	x2, 0xffff80008063f864 <crc_ccitt+0x44>
+      ffff80008063f828:      	paciasp
+      ffff80008063f82c:      	stp	x29, x30, [sp, #-0x10]!
+      ffff80008063f830:      	mov	x29, sp
+      ffff80008063f834:      	adrp	x8, 0xffff8000812fc000 <crc7_be_syndrome_table+0x18>
+      ffff800080630600 <__kfifo_in>:
+      ffff800080630600:      	paciasp
+      ffff800080630604:      	stp	x29, x30, [sp, #-0x50]!
+      ffff800080630608:      	str	x25, [sp, #0x10]
+      ffff80008063060c:      	stp	x24, x23, [sp, #0x20]
+      ffff800080630610:      	stp	x22, x21, [sp, #0x30]
+      ffff800080630614:      	stp	x20, x19, [sp, #0x40]
+      ffff800080630618:      	mov	x29, sp
+      ffff80008063061c:      	ldp	w25, w8, [x0]
+      ffff800080630620:      	ldp	w9, w10, [x0, #0x8]
+      ffff800080630624:      	ldr	x12, [x0, #0x10]
+      ffff800080630628:      	mov	x20, x0
+      ffff80008063062c:      	mov	x19, x1
+      ffff800080630630:      	sub	w8, w8, w25
+      ffff800080630634:      	add	w8, w8, w9
+      ffff800080630638:      	add	w11, w8, #0x1
+      ffff80008063063c:      	cmp	w2, w11
+      ffff800080630640:      	and	w11, w9, w25
+      ffff800080630644:      	umaddl	x9, w10, w9, x10
+      ffff800080630648:      	csinc	w21, w2, w8, lo
+      ffff80008063064c:      	cmp	x10, #0x0
+      ffff800080630650:      	umull	x8, w10, w11
+      ffff800080630654:      	ccmp	x12, #0x0, #0x4, ne
+      ffff800080630658:      	umull	x10, w10, w21
+      ffff80008063065c:      	csel	x9, xzr, x9, eq
+      ffff800080630660:      	csinc	x22, x12, xzr, ne
+      ffff800080630664:      	cmp	x9, x8
+      ffff800080630668:      	csel	x8, x9, x8, lo
+      ffff80008063066c:      	sub	x11, x9, x8
 PASS  disassembly fingerprints captured above
 
 RESULT: PASS

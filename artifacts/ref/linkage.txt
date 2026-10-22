@@ -2,7 +2,7 @@
 == kernel variant ==
 variant:  ref
 vmlinux:  /build/ferret/linux-ref/vmlinux
-git:      42b8e7b7e92d
+git:      058e0ca1ddce
 config:   CONFIG_CRC16=y CONFIG_CRC_CCITT=y CONFIG_KUNIT=y 
 
 == build tree object ownership ==
