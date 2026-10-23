@@ -124,7 +124,9 @@ Rust. The kernel crate gained the smallest sound extensions
 `kernel::sync::KRef` for C-owned objects). The audit of the component is
 [`design/COMPONENT_005_AUDIT.md`](design/COMPONENT_005_AUDIT.md), and it is
 the first component to go through the independent-verification gate
-([`AUDIT_PROTOCOL.md`](../../AUDIT_PROTOCOL.md)).
+([`AUDIT_PROTOCOL.md`](../../AUDIT_PROTOCOL.md)). The independent audit
+FVS-AUDIT-001-R3 approved the head `c49a7437aa18`, and the checkpoint was
+merged in PR #24 (merge commit `33629bd547af`).
 
 ### Phase 3 — Synchronization and per-CPU state
 

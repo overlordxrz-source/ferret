@@ -609,3 +609,30 @@ The two harness defects found while answering R2:
 | --- | --- | --- |
 | The per-suite checks in `boot-in-container.sh` and in the gate's phase 7 matched `ok [0-9]+ <suite>` as a substring | `not ok 17 refcount_diff` contains `ok 17 refcount_diff`, so a failing suite could be reported as passing in the per-suite line (the global `not ok` check still failed the boot, so the two could contradict each other) | the verdict is matched against the whole line, and a passing line must not be a `not ok` line: `suite_passed()` in the gate and the anchored pattern in the boot script |
 | The retry coverage was written down as "the contention is real: the successful decrements are spread over the workers" | an inference presented as a measurement; it was also wrong in boots where the workers did not overlap | the count is measured, printed, asserted, and repeated up to five times; the report says "measured", never "inferred" |
+
+### 12.3 The third round (R3): the approval and the merge
+
+The third pass returned **APPROVE** for the head
+`c49a7437aa1892503360c7b4f87df7cbe7ab9ba6`. The pull request was merged as
+PR #24 in the merge commit
+`33629bd547af0a3894b0fd9604ece469cc14091c`; the merged tree is identical to
+the approved head (main was an ancestor, and the two trees hash the same), so
+the merge added no content to what was audited. The record is
+[`../evidence/fvs-audit-001-r3-approval.md`](../evidence/fvs-audit-001-r3-approval.md).
+
+The evidence the approval rests on is the evidence in §11; the parts that are
+declared rather than demonstrated are listed in §10 and repeated, with the
+operational consequences, in the approval record. In summary:
+
+* the memory ordering is not verified by a functional test, and KCSAN — which
+  runs non-strict — does not verify it either;
+* the arm64 test kernel is built and linked but not booted;
+* native performance is not measured (no KVM);
+* `KRef` cannot enforce a C-owned object's lifetime, and no test drops a
+  handle from a second task;
+* two harness follow-ups are tracked in issue #27: archiving the kernel
+  configuration next to the `test.sh` and `mutation-test.sh` stamps, and the
+  stale concurrency-test comment (the constants are 4 tasks × 1 000
+  decrements, not "a thousand decrements" in total).
+
+The checkpoint is closed. The next checkpoint is not started.
