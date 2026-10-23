@@ -1072,6 +1072,17 @@
         "audit": "docs/ferret/design/COMPONENT_005_AUDIT.md",
         "verdict": "implemented in checkpoint 005; audited by the independent audit FVS-AUDIT-001 and re-verified against its findings, whose adversarial test suites are part of the tree; the mutation campaign detects 9 of 10 mutations (the 10th, the memory ordering, is a declared limit), the KASAN+UBSAN and KCSAN kernels run the audited suites without a report, and the clean cycle passes 16/16",
         "prerequisites": "the borrowed refcount view, the saturation-aware operations and the KRef handle in the kernel crate, all added in this checkpoint"
+      },
+      "audit": {
+        "report": "docs/ferret/design/COMPONENT_005_AUDIT.md",
+        "final_round": "FVS-AUDIT-001-R3",
+        "final_verdict": "APPROVE",
+        "audited_commit": "c49a7437aa1892503360c7b4f87df7cbe7ab9ba6",
+        "pr": 24,
+        "merge_commit": "33629bd547af0a3894b0fd9604ece469cc14091c",
+        "merged_at": "2026-10-23T01:22:33Z",
+        "approval_record": "docs/ferret/evidence/fvs-audit-001-r3-approval.md",
+        "follow_up": "https://github.com/overlordxrz-source/ferret/issues/27"
       }
     }
   ],

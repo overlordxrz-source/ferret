@@ -3,7 +3,7 @@
 State vocabulary: **VERIFIED** (evidence produced and committed), **PARTIAL**,
 **FAILED**, **NOT TESTED**.
 
-Last updated: checkpoint 005 (2026-10-21).
+Last updated: checkpoint 005 closed (2026-10-23).
 
 ## 0. Checkpoint 005 — the out-of-line reference counting helpers in Rust
 
@@ -21,6 +21,12 @@ pull request stays open until the gate passes; the component was audited
 against the gate, and the two defects the audit found (the `KRef` aliasing
 promise and a race in the concurrency test) are fixed.
 
+**Closed.** The independent audit FVS-AUDIT-001-R3 returned **APPROVE** for
+the head `c49a7437aa18`, and the pull request was merged as PR #24 in the
+merge commit `33629bd547af`; the merged tree is identical to the approved
+head. The approval and the accepted limitations are recorded in
+[`evidence/fvs-audit-001-r3-approval.md`](evidence/fvs-audit-001-r3-approval.md).
+
 | Item | State | Result |
 | --- | --- | --- |
 | Rust implementation | done | `lib/refcount_rust.rs`, all 6 exported symbols |
@@ -29,7 +35,7 @@ promise and a race in the concurrency test) are fixed.
 | Rust unit tests (`refcount_rust`) | PASS | 4 cases: `dec_if_one` on a saturated count, `dec_not_one` on a count of one, on a larger count, and on a saturated count |
 | Differential KUnit (`refcount_diff`) | PASS | 9 cases against the unmodified C, including a randomised property test whose coverage is asserted, and a concurrency phase with a completion barrier that **counts and asserts the compare-and-exchange retries** (measured: 1208–3640 retries per boot across 22 boots, always on the first attempt) |
 | Adversarial KUnit (`fvs_refcount`, `fvs_refcount_adv`) | PASS | 18 cases contributed by the independent audit FVS-AUDIT-001 and taken into the tree: the boundary sweeps, the deterministic failure path of the three lock helpers, the randomised differential test, and the contract model |
-| Concurrency | PASS | 4 tasks × 250 decrements: 1 000 successful decrements, the count ends at exactly 1; the race for the last reference has exactly one winner, in both implementations |
+| Concurrency | PASS | 4 tasks × 1 000 decrements: 4 000 successful decrements, the count ends at exactly 1; the race for the last reference has exactly one winner, in both implementations |
 | Linkage evidence | PASS | one definition per symbol, size match, ksymtab, export class, in both variants |
 | arm64 build | PASS | the arm64 Ferret kernel builds and the arm64 linkage report is green |
 | Clean cycle | PASS | 16/16 steps, exit status 0 (x86_64 and arm64 builds, the linkage checks, the KUnit suites, the four Ubuntu boots) |
@@ -38,6 +44,9 @@ promise and a race in the concurrency test) are fixed.
 | Mutation testing | PASS | 10 mutations: 9 detected, 1 declared not detectable (the memory ordering, which no functional test can observe), 0 coverage holes, 0 invalid runs |
 | KASAN + UBSAN | PASS | the audited suites pass inside a kernel with `CONFIG_KASAN{,_GENERIC,_INLINE}` and `CONFIG_UBSAN{,_BOUNDS,_SHIFT}`; no report implicates the component and there is no external report; the 14 WARN splats are the warning-path tests (7 Rust, 7 C) |
 | KCSAN | PASS (non-strict) | `CONFIG_KCSAN=y` and `CONFIG_KCSAN_EARLY_ENABLE=y`; the audited suites pass inside the sanitized kernel, no data-race report implicates the component and there is no external report. KCSAN runs in its default, non-strict mode: it reports races, it does not model every weak memory ordering, and a clean run is not evidence that the ordering is correct |
+| Independent audit (FVS-AUDIT-001-R3) | **APPROVE** | approved the head `c49a7437aa18`; record in [`evidence/fvs-audit-001-r3-approval.md`](evidence/fvs-audit-001-r3-approval.md) |
+| Merge | PR #24 | merge commit `33629bd547af0a3894b0fd9604ece469cc14091c`; the merged tree equals the approved head |
+| Follow-ups | open | issue #27: archive the kernel config next to every artifact stamp (`test.sh`, `mutation-test.sh`) and refresh the stale concurrency-test comment |
 | Native performance | NOT TESTED | the host has no KVM; all measurements would be QEMU TCG |
 
 What the port covers:
