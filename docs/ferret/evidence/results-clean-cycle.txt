@@ -1,7 +1,13 @@
 Ferret verification evidence
-Source commit: 48fed460f7cf
-Extracted: 2026-10-21T19:25:59Z (UTC)
-Raw logs: artifacts/ (not published; reproduced by tools/ferret/test.sh)
+Source commit: 058e0ca1ddce
+Source tree:   3514db64c8616b1f774ecd70f56ce221be2b6c849f7f49c794c81d44543ec320
+Harness:       ee80b7dcedf58bf3070ce0cde2dc70104e06e0264be3a2d1557bb022591afa17
+Configuration: 9e7e2143a3e7f2c90a6244dabe175aa6f315380475cd4fdbb6e9e72e1cf5cb0f
+Extracted:     2026-10-22T22:48:01Z (UTC)
+Binding:       every input artifact carries a provenance stamp naming
+               this source tree, this harness and its configuration;
+               an artifact from another revision is refused.
+Raw logs:      artifacts/ (not published; reproduced by tools/ferret/test.sh)
 ----------------------------------------------------------------------
 Cycle: CLEAN=1 tools/ferret/test.sh
 

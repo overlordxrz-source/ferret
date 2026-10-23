@@ -213,6 +213,55 @@ config KFIFO_DIFF_KUNIT_TEST
 
 	  This is test-only code; it is never part of a production kernel.
 
+config REFCOUNT_RUST
+	bool "Rust implementation of the out-of-line reference counting helpers (Ferret)"
+	depends on RUST
+	help
+	  Build the out-of-line reference counting helpers from the Rust
+	  implementation in lib/refcount_rust.rs instead of the C
+	  implementation in lib/refcount.c.
+
+	  The refcount_t primitive itself stays in C: it is a header type that
+	  the C code embeds in its own structures, and its inline operations
+	  are what the kernel's own code calls. Only the exported helpers move
+	  to Rust.
+
+	  This is a Ferret migration experiment. The C implementation is kept
+	  in the tree as the reference used by the differential KUnit test, and
+	  the exported symbols keep their original (non-GPL) visibility.
+
+	  If unsure, say N.
+
+config FVS_REFCOUNT_ADVERSARIAL_KUNIT_TEST
+	bool "FVS-AUDIT-001: independent adversarial tests for the reference counting port"
+	depends on REFCOUNT_DIFF_KUNIT_TEST
+	depends on KUNIT
+	help
+	  The adversarial tests written by the independent audit FVS-AUDIT-001
+	  for the reference counting port: a sweep over the boundaries of the
+	  count space, a deterministic test of the failure path of the three
+	  lock helpers, and a randomised differential test whose distribution
+	  reaches the boundary states.
+
+	  They are kept in the tree because they are the reference for the
+	  coverage claims of the port, and because they are what detects the
+	  mutations of the lock helpers' failure path.
+
+	  This is test-only code; it is never part of a production kernel.
+
+config REFCOUNT_DIFF_KUNIT_TEST
+	bool "Differential KUnit test: reference counting C reference vs Rust"
+	depends on REFCOUNT_RUST
+	depends on KUNIT
+	help
+	  Compile the original C implementation of the out-of-line reference
+	  counting helpers under test-only symbol names and compare it against
+	  the Rust implementation: the saturation warning, the decrement-if-one
+	  and decrement-if-not-one helpers, the underflow and saturation
+	  behaviour, and the three lock helpers.
+
+	  This is test-only code; it is never part of a production kernel.
+
 #
 # compression support is select'ed if needed
 #

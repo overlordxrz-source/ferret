@@ -1,0 +1,19 @@
+Ferret refcount: focused verification of the compare-and-exchange retry path
+Source commit: 058e0ca1ddce5aa401c3bfb4992ad00010cd1c81
+Source tree:   3514db64c8616b1f774ecd70f56ce221be2b6c849f7f49c794c81d44543ec320
+Harness:       ee80b7dcedf58bf3070ce0cde2dc70104e06e0264be3a2d1557bb022591afa17
+Kernel: the standard rust variant (KUnit), built by tools/ferret/build.sh rust
+Guest:  QEMU TCG, -smp 2, 2048 MiB; 4 workers released through a completion,
+        placed round-robin on the online CPUs while they sleep
+Test:   refcount_diff_concurrent; the Rust loop counts its retries in a
+        KUnit-only counter; the test asserts retries > 0 and refused == 0,
+        repeats the phase up to 5 times if the workers do not overlap, and
+        fails if no retry is ever observed
+-------------------------------------------------------------------------------
+boot 1: result=PASS attempts_without_retry=0  retry path exercised: 2987 retries (attempt 1 of 5)
+boot 2: result=PASS attempts_without_retry=0  retry path exercised: 3404 retries (attempt 1 of 5)
+boot 3: result=PASS attempts_without_retry=0  retry path exercised: 3370 retries (attempt 1 of 5)
+boot 4: result=PASS attempts_without_retry=0  retry path exercised: 2119 retries (attempt 1 of 5)
+boot 5: result=PASS attempts_without_retry=0  retry path exercised: 3170 retries (attempt 1 of 5)
+-------------------------------------------------------------------------------
+Result: 5 of 5 boots exercised the retry path.

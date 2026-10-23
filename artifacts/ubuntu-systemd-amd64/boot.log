@@ -1,4 +1,4 @@
-[    0.000000] Linux version 6.18.57-ferret-rust (root@3ea769cb049c) (Ubuntu clang version 18.1.3 (1ubuntu1), Ubuntu LLD 18.1.3) #1 SMP PREEMPT_DYNAMIC Wed Oct 21 18:56:12 UTC 2026
+[    0.000000] Linux version 6.18.57-ferret-rust (root@3ea769cb049c) (Ubuntu clang version 18.1.3 (1ubuntu1), Ubuntu LLD 18.1.3) #1 SMP PREEMPT_DYNAMIC Thu Oct 22 22:39:30 UTC 2026
 [    0.000000] Command line: console=ttyS0 root=/dev/vda rw rootwait rootfstype=ext4 panic=-1 loglevel=7 systemd.unit=multi-user.target systemd.firstboot=no fsck.mode=skip
 [    0.000000] BIOS-provided physical RAM map:
 [    0.000000] BIOS-e820: [mem 0x0000000000000000-0x000000000009fbff] usable
@@ -14,724 +14,1291 @@
 [    0.000000] DMI: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.16.3-debian-1.16.3-2 04/01/2014
 [    0.000000] DMI: Memory slots populated: 1/1
 [    0.000000] tsc: Fast TSC calibration using PIT
-[    0.000000] tsc: Detected 999.993 MHz processor
-[    0.006012] last_pfn = 0x7ffdd max_arch_pfn = 0x10000000000
-[    0.006313] MTRR map: 4 entries (3 fixed + 1 variable; max 19), built from 8 variable MTRRs
-[    0.006453] x86/PAT: Configuration [0-7]: WB  WC  UC- UC  WB  WP  UC- WT  
-[    0.014840] found SMP MP-table at [mem 0x000f5470-0x000f547f]
-[    0.015652] Using GB pages for direct mapping
-[    0.017569] ACPI: Early table checksum verification disabled
-[    0.017754] ACPI: RSDP 0x00000000000F52A0 000014 (v00 BOCHS )
-[    0.017946] ACPI: RSDT 0x000000007FFE1CB3 000034 (v01 BOCHS  BXPC     00000001 BXPC 00000001)
-[    0.018261] ACPI: FACP 0x000000007FFE1B5F 000074 (v01 BOCHS  BXPC     00000001 BXPC 00000001)
-[    0.018541] ACPI: DSDT 0x000000007FFE0040 001B1F (v01 BOCHS  BXPC     00000001 BXPC 00000001)
-[    0.018578] ACPI: FACS 0x000000007FFE0000 000040
-[    0.018600] ACPI: APIC 0x000000007FFE1BD3 000080 (v03 BOCHS  BXPC     00000001 BXPC 00000001)
-[    0.018611] ACPI: HPET 0x000000007FFE1C53 000038 (v01 BOCHS  BXPC     00000001 BXPC 00000001)
-[    0.018621] ACPI: WAET 0x000000007FFE1C8B 000028 (v01 BOCHS  BXPC     00000001 BXPC 00000001)
-[    0.018663] ACPI: Reserving FACP table memory at [mem 0x7ffe1b5f-0x7ffe1bd2]
-[    0.018675] ACPI: Reserving DSDT table memory at [mem 0x7ffe0040-0x7ffe1b5e]
-[    0.018678] ACPI: Reserving FACS table memory at [mem 0x7ffe0000-0x7ffe003f]
-[    0.018682] ACPI: Reserving APIC table memory at [mem 0x7ffe1bd3-0x7ffe1c52]
-[    0.018685] ACPI: Reserving HPET table memory at [mem 0x7ffe1c53-0x7ffe1c8a]
-[    0.018689] ACPI: Reserving WAET table memory at [mem 0x7ffe1c8b-0x7ffe1cb2]
-[    0.019597] No NUMA configuration found
-[    0.019605] Faking a node at [mem 0x0000000000000000-0x000000007ffdcfff]
-[    0.019915] NODE_DATA(0) allocated [mem 0x7ffd9900-0x7ffdcfff]
-[    0.021267] Zone ranges:
-[    0.021272]   DMA      [mem 0x0000000000001000-0x0000000000ffffff]
-[    0.021323]   DMA32    [mem 0x0000000001000000-0x000000007ffdcfff]
-[    0.021328]   Normal   empty
-[    0.021336] Movable zone start for each node
-[    0.021350] Early memory node ranges
-[    0.021363]   node   0: [mem 0x0000000000001000-0x000000000009efff]
-[    0.021469]   node   0: [mem 0x0000000000100000-0x000000007ffdcfff]
-[    0.021526] Initmem setup node 0 [mem 0x0000000000001000-0x000000007ffdcfff]
-[    0.022335] On node 0, zone DMA: 1 pages in unavailable ranges
-[    0.022555] On node 0, zone DMA: 97 pages in unavailable ranges
-[    0.076930] On node 0, zone DMA32: 35 pages in unavailable ranges
-[    0.077261] ACPI: PM-Timer IO Port: 0x608
-[    0.077525] ACPI: LAPIC_NMI (acpi_id[0xff] dfl dfl lint[0x1])
-[    0.077737] IOAPIC[0]: apic_id 0, version 32, address 0xfec00000, GSI 0-23
-[    0.077792] ACPI: INT_SRC_OVR (bus 0 bus_irq 0 global_irq 2 dfl dfl)
-[    0.077906] ACPI: INT_SRC_OVR (bus 0 bus_irq 5 global_irq 5 high level)
-[    0.077925] ACPI: INT_SRC_OVR (bus 0 bus_irq 9 global_irq 9 high level)
-[    0.077966] ACPI: INT_SRC_OVR (bus 0 bus_irq 10 global_irq 10 high level)
-[    0.077971] ACPI: INT_SRC_OVR (bus 0 bus_irq 11 global_irq 11 high level)
-[    0.078077] ACPI: Using ACPI (MADT) for SMP configuration information
-[    0.078095] ACPI: HPET id: 0x8086a201 base: 0xfed00000
-[    0.078305] CPU topo: Max. logical packages:   1
-[    0.078310] CPU topo: Max. logical dies:       1
-[    0.078315] CPU topo: Max. dies per package:   1
-[    0.078357] CPU topo: Max. threads per core:   1
-[    0.078434] CPU topo: Num. cores per package:     2
-[    0.078441] CPU topo: Num. threads per package:   2
-[    0.078446] CPU topo: Allowing 2 present CPUs plus 0 hotplug CPUs
-[    0.078861] PM: hibernation: Registered nosave memory: [mem 0x00000000-0x00000fff]
-[    0.078877] PM: hibernation: Registered nosave memory: [mem 0x0009f000-0x000fffff]
-[    0.078945] [mem 0x80000000-0xfffbffff] available for PCI devices
-[    0.078976] Booting paravirtualized kernel on bare hardware
-[    0.079102] clocksource: refined-jiffies: mask: 0xffffffff max_cycles: 0xffffffff, max_idle_ns: 1910969940391419 ns
-[    0.086958] setup_percpu: NR_CPUS:64 nr_cpumask_bits:2 nr_cpu_ids:2 nr_node_ids:1
-[    0.099817] percpu: Embedded 52 pages/cpu s172184 r8192 d32616 u1048576
-[    0.100679] Kernel command line: console=ttyS0 root=/dev/vda rw rootwait rootfstype=ext4 panic=-1 loglevel=7 systemd.unit=multi-user.target systemd.firstboot=no fsck.mode=skip
-[    0.101555] random: crng init done
-[    0.101608] printk: log buffer data + meta data: 262144 + 917504 = 1179648 bytes
-[    0.104996] Dentry cache hash table entries: 262144 (order: 9, 2097152 bytes, linear)
-[    0.108865] Inode-cache hash table entries: 131072 (order: 8, 1048576 bytes, linear)
-[    0.110386] Fallback order for Node 0: 0 
-[    0.110512] Built 1 zonelists, mobility grouping on.  Total pages: 524155
-[    0.110520] Policy zone: DMA32
-[    0.110636] mem auto-init: stack:all(zero), heap alloc:off, heap free:off
-[    0.129806] SLUB: HWalign=64, Order=0-3, MinObjects=0, CPUs=2, Nodes=1
-[    0.136350] Dynamic Preempt: voluntary
-[    0.138796] rcu: Preemptible hierarchical RCU implementation.
-[    0.138803] rcu: 	RCU event tracing is enabled.
-[    0.138816] rcu: 	RCU restricting CPUs from NR_CPUS=64 to nr_cpu_ids=2.
-[    0.138894] 	Trampoline variant of Tasks RCU enabled.
-[    0.138898] 	Tracing variant of Tasks RCU enabled.
-[    0.138938] rcu: RCU calculated value of scheduler-enlistment delay is 100 jiffies.
-[    0.138951] rcu: Adjusting geometry for rcu_fanout_leaf=16, nr_cpu_ids=2
-[    0.139556] RCU Tasks: Setting shift to 1 and lim to 1 rcu_task_cb_adjust=1 rcu_task_cpu_ids=2.
-[    0.139568] RCU Tasks Trace: Setting shift to 1 and lim to 1 rcu_task_cb_adjust=1 rcu_task_cpu_ids=2.
-[    0.152022] NR_IRQS: 4352, nr_irqs: 440, preallocated irqs: 16
-[    0.156658] rcu: srcu_init: Setting srcu_struct sizes based on contention.
-[    0.156963] clocksource: jiffies: mask: 0xffffffff max_cycles: 0xffffffff, max_idle_ns: 1911260446275000 ns
-[    0.166023] Console: colour VGA+ 80x25
-[    0.166994] printk: legacy console [ttyS0] enabled
-[    0.300226] ACPI: Core revision 20250807
-[    0.303590] clocksource: hpet: mask: 0xffffffff max_cycles: 0xffffffff, max_idle_ns: 19112604467 ns
-[    0.307528] APIC: Switch to symmetric I/O mode setup
-[    0.310866] ..TIMER: vector=0x30 apic1=0 pin1=2 apic2=-1 pin2=-1
-[    0.317252] clocksource: tsc-early: mask: 0xffffffffffffffff max_cycles: 0x1cd420e9bab, max_idle_ns: 881590482973 ns
-[    0.319485] Calibrating delay loop (skipped), value calculated using timer frequency.. 1999.98 BogoMIPS (lpj=999993)
-[    0.321160] x86/cpu: User Mode Instruction Prevention (UMIP) activated
-[    0.326186] Last level iTLB entries: 4KB 0, 2MB 0, 4MB 0
-[    0.327182] Last level dTLB entries: 4KB 0, 2MB 0, 4MB 0, 1GB 0
-[    0.328639] mitigations: Enabled attack vectors: user_kernel, user_user, SMT mitigations: auto
-[    0.329459] Speculative Store Bypass: Vulnerable
-[    0.330504] Spectre V2 : Mitigation: Retpolines
-[    0.331282] Spectre V1 : Mitigation: usercopy/swapgs barriers and __user pointer sanitization
-[    0.331436] Spectre V2 : Spectre v2 / SpectreRSB: Filling RSB on context switch and VMEXIT
-[    0.333177] x86/fpu: Supporting XSAVE feature 0x001: 'x87 floating point registers'
-[    0.336545] x86/fpu: Supporting XSAVE feature 0x002: 'SSE registers'
-[    0.337379] x86/fpu: Supporting XSAVE feature 0x004: 'AVX registers'
-[    0.337379] x86/fpu: Supporting XSAVE feature 0x008: 'MPX bounds registers'
-[    0.338379] x86/fpu: Supporting XSAVE feature 0x010: 'MPX CSR'
-[    0.339234] x86/fpu: Supporting XSAVE feature 0x200: 'Protection Keys User registers'
-[    0.339446] x86/fpu: xstate_offset[2]:  576, xstate_sizes[2]:  256
-[    0.340379] x86/fpu: xstate_offset[3]:  960, xstate_sizes[3]:   64
-[    0.340379] x86/fpu: xstate_offset[4]: 1024, xstate_sizes[4]:   64
-[    0.341379] x86/fpu: xstate_offset[9]: 2688, xstate_sizes[9]:    8
-[    0.342354] x86/fpu: Enabled xstate features 0x21f, context size is 2696 bytes, using 'standard' format.
-[    0.426571] Freeing SMP alternatives memory: 60K
-[    0.427486] pid_max: default: 32768 minimum: 301
-[    0.432981] LSM: initializing lsm=capability,selinux
-[    0.433878] SELinux:  Initializing.
-[    0.436574] Mount-cache hash table entries: 4096 (order: 3, 32768 bytes, linear)
-[    0.437500] Mountpoint-cache hash table entries: 4096 (order: 3, 32768 bytes, linear)
-[    0.556379] smpboot: CPU0: AMD QEMU TCG CPU version 2.5+ (family: 0x6, model: 0x6, stepping: 0x3)
-[    0.561163] Performance Events: PMU not available due to virtualization, using software events only.
-[    0.561749] signal: max sigframe size: 3632
-[    0.563379] rcu: Hierarchical SRCU implementation.
-[    0.563394] rcu: 	Max phase no-delay instances is 400.
-[    0.564379] Timer migration: 1 hierarchy levels; 8 children per group; 1 crossnode level
-[    0.567324] smp: Bringing up secondary CPUs ...
-[    0.569379] smpboot: x86: Booting SMP configuration:
-[    0.569379] .... node  #0, CPUs:      #1
-[    0.153468] calibrate_delay_direct() dropping max bogoMips estimate 4 = 2599333
-[    0.153468] calibrate_delay_direct() dropping max bogoMips estimate 3 = 2471675
-[    0.153468] calibrate_delay_direct() dropping max bogoMips estimate 2 = 2199450
-[    0.645668] smp: Brought up 1 node, 2 CPUs
-[    0.646405] smpboot: Total of 2 processors activated (5857.97 BogoMIPS)
-[    0.651750] Memory: 2011940K/2096620K available (19849K kernel code, 2789K rwdata, 8456K rodata, 2916K init, 896K bss, 80988K reserved, 0K cma-reserved)
-[    0.658388] devtmpfs: initialized
-[    0.671429] posixtimers hash table entries: 1024 (order: 2, 16384 bytes, linear)
-[    0.672507] futex hash table entries: 512 (32768 bytes on 1 NUMA nodes, total 32 KiB, linear).
-[    0.674379] PM: RTC time: 19:13:26, date: 2026-10-21
-[    0.676379] NET: Registered PF_NETLINK/PF_ROUTE protocol family
-[    0.677429] audit: initializing netlink subsys (disabled)
-[    0.682210] thermal_sys: Registered thermal governor 'step_wise'
-[    0.683483] cpuidle: using governor menu
-[    0.685395] audit: type=2000 audit(1792610005.370:1): state=initialized audit_enabled=0 res=1
-[    0.686612] PCI: Using configuration type 1 for base access
-[    0.688616] mtrr: your CPUs had inconsistent fixed MTRR settings
-[    0.689387] mtrr: your CPUs had inconsistent variable MTRR settings
-[    0.690379] mtrr: your CPUs had inconsistent MTRRdefType settings
-[    0.691337] mtrr: probably your BIOS does not setup all CPUs.
-[    0.691379] mtrr: corrected configuration.
-[    0.693359] kprobes: kprobe jump-optimization is enabled. All kprobes are optimized if possible.
-[    0.698324] HugeTLB: registered 2.00 MiB page size, pre-allocated 0 pages
-[    0.701405] HugeTLB: 28 KiB vmemmap can be freed for a 2.00 MiB page
-[    0.727867] ACPI: Added _OSI(Module Device)
-[    0.727867] ACPI: Added _OSI(Processor Device)
-[    0.729388] ACPI: Added _OSI(Processor Aggregator Device)
-[    0.745798] ACPI: 1 ACPI AML tables successfully acquired and loaded
-[    0.786989] ACPI: Interpreter enabled
-[    0.791795] ACPI: PM: (supports S0 S3 S4 S5)
-[    0.791795] ACPI: Using IOAPIC for interrupt routing
-[    0.792625] PCI: Using host bridge windows from ACPI; if necessary, use "pci=nocrs" and report a bug
-[    0.794400] PCI: Using E820 reservations for host bridge windows
-[    0.796386] ACPI: Enabled 2 GPEs in block 00 to 0F
-[    0.819189] ACPI: PCI Root Bridge [PCI0] (domain 0000 [bus 00-ff])
-[    0.820379] acpi PNP0A03:00: _OSC: OS supports [ASPM ClockPM Segments MSI HPX-Type3]
-[    0.820423] acpi PNP0A03:00: _OSC: not requesting OS control; OS requires [ExtendedConfig ASPM ClockPM MSI]
-[    0.821692] acpi PNP0A03:00: fail to add MMCONFIG information, can't access extended configuration space under this bridge
-[    0.833139] PCI host bridge to bus 0000:00
-[    0.834497] pci_bus 0000:00: root bus resource [io  0x0000-0x0cf7 window]
-[    0.835384] pci_bus 0000:00: root bus resource [io  0x0d00-0xffff window]
-[    0.836379] pci_bus 0000:00: root bus resource [mem 0x000a0000-0x000bffff window]
-[    0.837379] pci_bus 0000:00: root bus resource [mem 0x80000000-0xfebfffff window]
-[    0.837379] pci_bus 0000:00: root bus resource [mem 0x100000000-0x17fffffff window]
-[    0.873467] pci_bus 0000:00: root bus resource [bus 00-ff]
-[    0.874628] pci 0000:00:00.0: [8086:1237] type 00 class 0x060000 conventional PCI endpoint
-[    0.875411] pci 0000:00:01.0: [8086:7000] type 00 class 0x060100 conventional PCI endpoint
-[    0.881844] pci 0000:00:01.1: [8086:7010] type 00 class 0x010180 conventional PCI endpoint
-[    0.882655] pci 0000:00:01.1: BAR 4 [io  0xc0c0-0xc0cf]
-[    0.883405] pci 0000:00:01.1: BAR 0 [io  0x01f0-0x01f7]: legacy IDE quirk
-[    0.884386] pci 0000:00:01.1: BAR 1 [io  0x03f6]: legacy IDE quirk
-[    0.886389] pci 0000:00:01.1: BAR 2 [io  0x0170-0x0177]: legacy IDE quirk
-[    0.886389] pci 0000:00:01.1: BAR 3 [io  0x0376]: legacy IDE quirk
-[    0.888823] pci 0000:00:01.3: [8086:7113] type 00 class 0x068000 conventional PCI endpoint
-[    0.892574] pci 0000:00:01.3: quirk: [io  0x0600-0x063f] claimed by PIIX4 ACPI
-[    0.892574] pci 0000:00:01.3: quirk: [io  0x0700-0x070f] claimed by PIIX4 SMB
-[    0.895742] pci 0000:00:02.0: [1234:1111] type 00 class 0x030000 conventional PCI endpoint
-[    0.902393] pci 0000:00:02.0: BAR 0 [mem 0xfd000000-0xfdffffff pref]
-[    0.906386] pci 0000:00:02.0: BAR 2 [mem 0xfebb0000-0xfebb0fff]
-[    0.929425] pci 0000:00:02.0: ROM [mem 0xfeba0000-0xfebaffff pref]
-[    0.932526] pci 0000:00:02.0: Video device with shadowed ROM at [mem 0x000c0000-0x000dffff]
-[    0.933388] pci 0000:00:03.0: [8086:100e] type 00 class 0x020000 conventional PCI endpoint
-[    0.933656] pci 0000:00:03.0: BAR 0 [mem 0xfeb80000-0xfeb9ffff]
-[    0.935389] pci 0000:00:03.0: BAR 1 [io  0xc080-0xc0bf]
-[    0.936379] pci 0000:00:03.0: ROM [mem 0xfeb00000-0xfeb7ffff pref]
-[    0.939271] pci 0000:00:04.0: [1af4:1001] type 00 class 0x010000 conventional PCI endpoint
-[    0.940391] pci 0000:00:04.0: BAR 0 [io  0xc000-0xc07f]
-[    0.947393] pci 0000:00:04.0: BAR 1 [mem 0xfebb1000-0xfebb1fff]
-[    0.948379] pci 0000:00:04.0: BAR 4 [mem 0xfe000000-0xfe003fff 64bit pref]
-[    0.951620] ACPI: PCI: Interrupt link LNKA configured for IRQ 10
-[    0.954485] ACPI: PCI: Interrupt link LNKB configured for IRQ 10
-[    0.958773] ACPI: PCI: Interrupt link LNKC configured for IRQ 11
-[    0.962755] ACPI: PCI: Interrupt link LNKD configured for IRQ 11
-[    0.969560] ACPI: PCI: Interrupt link LNKS configured for IRQ 9
-[    0.970136] iommu: Default domain type: Translated
-[    0.973394] iommu: DMA domain TLB invalidation policy: lazy mode
-[    0.976856] SCSI subsystem initialized
-[    0.978978] ACPI: bus type USB registered
-[    0.979695] usbcore: registered new interface driver usbfs
-[    0.980597] usbcore: registered new interface driver hub
-[    0.980597] usbcore: registered new device driver usb
-[    0.981479] pps_core: LinuxPPS API ver. 1 registered
-[    0.986389] pps_core: Software ver. 5.3.6 - Copyright 2005-2007 Rodolfo Giometti <giometti@linux.it>
-[    0.986426] PTP clock support registered
-[    0.992948] Advanced Linux Sound Architecture Driver Initialized.
-[    0.997257] NetLabel: Initializing
-[    0.997379] NetLabel:  domain hash size = 128
-[    0.998381] NetLabel:  protocols = UNLABELED CIPSOv4 CALIPSO
-[    1.000737] NetLabel:  unlabeled traffic allowed by default
-[    1.025327] PCI: Using ACPI for IRQ routing
-[    1.028379] pci 0000:00:02.0: vgaarb: setting as boot VGA device
-[    1.028379] pci 0000:00:02.0: vgaarb: bridge control possible
-[    1.028379] pci 0000:00:02.0: vgaarb: VGA device added: decodes=io+mem,owns=io+mem,locks=none
-[    1.059410] vgaarb: loaded
-[    1.059947] hpet0: at MMIO 0xfed00000, IRQs 2, 8, 0
-[    1.061387] hpet0: 3 comparators, 64-bit 100.000000 MHz counter
-[    1.065619] clocksource: Switched to clocksource tsc-early
-[    1.068646] VFS: Disk quotas dquot_6.6.0
-[    1.072521] VFS: Dquot-cache hash table entries: 512 (order 0, 4096 bytes)
-[    1.076050] pnp: PnP ACPI init
-[    1.080014] pnp: PnP ACPI: found 5 devices
-[    1.100048] clocksource: acpi_pm: mask: 0xffffff max_cycles: 0xffffff, max_idle_ns: 2085701024 ns
-[    1.102141] NET: Registered PF_INET protocol family
-[    1.113104] IP idents hash table entries: 32768 (order: 6, 262144 bytes, linear)
-[    1.126999] tcp_listen_portaddr_hash hash table entries: 1024 (order: 2, 16384 bytes, linear)
-[    1.128680] Table-perturb hash table entries: 65536 (order: 6, 262144 bytes, linear)
-[    1.130378] TCP established hash table entries: 16384 (order: 5, 131072 bytes, linear)
-[    1.131828] TCP bind hash table entries: 16384 (order: 7, 524288 bytes, linear)
-[    1.133425] TCP: Hash tables configured (established 16384 bind 16384)
-[    1.135184] UDP hash table entries: 1024 (order: 4, 65536 bytes, linear)
-[    1.136773] UDP-Lite hash table entries: 1024 (order: 4, 65536 bytes, linear)
-[    1.138874] NET: Registered PF_UNIX/PF_LOCAL protocol family
-[    1.144858] RPC: Registered named UNIX socket transport module.
-[    1.146111] RPC: Registered udp transport module.
-[    1.146818] RPC: Registered tcp transport module.
-[    1.147096] RPC: Registered tcp-with-tls transport module.
-[    1.147096] RPC: Registered tcp NFSv4.1 backchannel transport module.
-[    1.152821] pci_bus 0000:00: resource 4 [io  0x0000-0x0cf7 window]
-[    1.153487] pci_bus 0000:00: resource 5 [io  0x0d00-0xffff window]
-[    1.154994] pci_bus 0000:00: resource 6 [mem 0x000a0000-0x000bffff window]
-[    1.155067] pci_bus 0000:00: resource 7 [mem 0x80000000-0xfebfffff window]
-[    1.157363] pci_bus 0000:00: resource 8 [mem 0x100000000-0x17fffffff window]
-[    1.159540] pci 0000:00:01.0: PIIX3: Enabling Passive Release
-[    1.160197] pci 0000:00:00.0: Limiting direct PCI/PCI transfers
-[    1.162165] PCI: CLS 0 bytes, default 64
-[    1.185049] Initialise system trusted keyrings
-[    1.193569] workingset: timestamp_bits=56 max_order=19 bucket_order=0
-[    1.197722] NFS: Registering the id_resolver key type
-[    1.198702] Key type id_resolver registered
-[    1.199362] Key type id_legacy registered
-[    1.200587] 9p: Installing v9fs 9p2000 file system support
-[    1.323396] Key type asymmetric registered
-[    1.324645] Asymmetric key parser 'x509' registered
-[    1.325585] Block layer SCSI generic (bsg) driver version 0.4 loaded (major 251)
-[    1.327183] io scheduler mq-deadline registered
-[    1.327904] io scheduler kyber registered
-[    1.328623] test_bitmap: loaded.
-[    1.331553] test_bitmap: parselist: 14: input is '0-2047:128/256' OK, Time: 1583
-[    1.332974] test_bitmap: bitmap_print_to_pagebuf: input is '0-32767
-[    1.332974] ', Time: 12500
-[    1.428673] test_bitmap: Time spent in test_bitmap_read_perf:	2562351
-[    1.435900] test_bitmap: Time spent in test_bitmap_write_perf:	5777415
-[    1.440668] test_bitmap: all 390447 tests passed
-[    1.595842] ACPI: \_SB_.LNKD: Enabled at IRQ 11
-[    1.598432] Serial: 8250/16550 driver, 4 ports, IRQ sharing enabled
-[    1.602766] 00:04: ttyS0 at I/O 0x3f8 (irq = 4, base_baud = 115200) is a 16550A
-[    1.621958] Non-volatile memory driver v1.3
-[    1.622762] Linux agpgart interface v0.103
-[    1.623722] ACPI: bus type drm_connector registered
-[    1.640708] loop: module loaded
-[    1.642112] virtio_blk virtio0: 2/0/0 default/read/poll queues
-[    1.648424] virtio_blk virtio0: [vda] 8388608 512-byte logical blocks (4.29 GB/4.00 GiB)
-[    1.669808] scsi host0: ata_piix
-[    1.673817] scsi host1: ata_piix
-[    1.674657] ata1: PATA max MWDMA2 cmd 0x1f0 ctl 0x3f6 bmdma 0xc0c0 irq 14 lpm-pol 0
-[    1.676033] ata2: PATA max MWDMA2 cmd 0x170 ctl 0x376 bmdma 0xc0c8 irq 15 lpm-pol 0
-[    1.679729] e100: Intel(R) PRO/100 Network Driver
-[    1.680695] e100: Copyright(c) 1999-2006 Intel Corporation
-[    1.684733] e1000: Intel(R) PRO/1000 Network Driver
-[    1.687008] e1000: Copyright (c) 1999-2006 Intel Corporation.
-[    1.835547] ACPI: \_SB_.LNKC: Enabled at IRQ 10
-[    1.846669] ata2: found unknown device (class 0)
-[    1.848969] ata2.00: ATAPI: QEMU DVD-ROM, 2.5+, max UDMA/100
-[    1.876278] scsi 1:0:0:0: CD-ROM            QEMU     QEMU DVD-ROM     2.5+ PQ: 0 ANSI: 5
-[    1.950472] sr 1:0:0:0: [sr0] scsi3-mmc drive: 4x/4x cd/rw xa/form2 tray
-[    1.997880] cdrom: Uniform CD-ROM driver Revision: 3.20
-[    2.040429] sr 1:0:0:0: Attached scsi generic sg0 type 5
-[    2.136521] tsc: Refined TSC clocksource calibration: 999.995 MHz
-[    2.137760] clocksource: tsc: mask: 0xffffffffffffffff max_cycles: 0x1cd424c4a68, max_idle_ns: 881590510633 ns
-[    2.144353] e1000 0000:00:03.0 eth0: (PCI:33MHz:32-bit) 52:54:00:12:34:56
-[    2.305401] e1000 0000:00:03.0 eth0: Intel(R) PRO/1000 Network Connection
-[    2.341370] clocksource: Switched to clocksource tsc
-[    2.341648] e1000e: Intel(R) PRO/1000 Network Driver
-[    2.412272] e1000e: Copyright(c) 1999 - 2015 Intel Corporation.
-[    2.414047] sky2: driver version 1.30
-[    2.416025] usbcore: registered new interface driver usblp
-[    2.416577] usbcore: registered new interface driver usb-storage
-[    2.418665] i8042: PNP: PS/2 Controller [PNP0303:KBD,PNP0f13:MOU] at 0x60,0x64 irq 1,12
-[    2.422299] serio: i8042 KBD port at 0x60,0x64 irq 1
-[    2.422555] serio: i8042 AUX port at 0x60,0x64 irq 12
-[    2.425494] rtc_cmos PNP0B00:00: RTC can wake from S4
-[    2.430585] rtc_cmos PNP0B00:00: registered as rtc0
-[    2.433959] rtc_cmos PNP0B00:00: alarms up to one day, y3k, 242 bytes nvram, hpet irqs
-[    2.439818] device-mapper: ioctl: 4.50.0-ioctl (2025-04-28) initialised: dm-devel@lists.linux.dev
-[    2.441788] amd_pstate: the _CPC object is not present in SBIOS or ACPI disabled
-[    2.442632] hid: raw HID events driver (C) Jiri Kosina
-[    2.445545] usbcore: registered new interface driver usbhid
-[    2.445516] input: AT Translated Set 2 keyboard as /devices/platform/i8042/serio0/input/input0
-[    2.523300] usbhid: USB HID core driver
-[    2.523391] hpet: Lost 4 RTC interrupts
-[    2.539649] Initializing XFRM netlink socket
-[    2.542793] NET: Registered PF_INET6 protocol family
-[    2.552498] Segment Routing with IPv6
-[    2.552816] In-situ OAM (IOAM) with IPv6
-[    2.555570] sit: IPv6, IPv4 and MPLS over IPv4 tunneling driver
-[    2.557672] NET: Registered PF_PACKET protocol family
-[    2.560003] 9pnet: Installing 9P2000 support
-[    2.560997] Key type dns_resolver registered
-[    2.562988] IPI shorthand broadcast: enabled
-[    2.598711] sched_clock: Marking stable (2445242773, 152468889)->(3073385259, -475673597)
-[    2.602945] registered taskstats version 1
-[    2.603843] Loading compiled-in X.509 certificates
-[    2.617784] Demotion targets for Node 0: null
-[    2.622306] PM:   Magic number: 14:786:243
-[    2.623081] netconsole: network logging started
-[    2.624585] cfg80211: Loading compiled-in X.509 certificates for regulatory database
-[    2.633914] kworker/u8:1 (58) used greatest stack depth: 14416 bytes left
-[    2.677957] Loaded X.509 cert 'sforshee: 00b28ddf47aef9cea7'
-[    2.680024] Loaded X.509 cert 'wens: 61c038651aabdcf94bd0ac7ff06c7248db18c600'
-[    2.682036] faux_driver regulatory: Direct firmware load for regulatory.db failed with error -2
-[    2.682486] ALSA device list:
-[    2.805963] cfg80211: failed to load regulatory.db
-[    2.841305]   No soundcards found.
-[    2.841411] KTAP version 1
-[    2.841448] 1..15
-[    2.877726]     KTAP version 1
-[    2.918204]     # Subtest: rust_allocator
-[    2.919509]     # speed: normal
-[    2.919682]     1..1
-[    2.923514]     # test_alignment.speed: normal
-[    2.923568]     ok 1 test_alignment
-[    2.924328] ok 1 rust_allocator
-[    2.927344]     KTAP version 1
-[    2.928053]     # Subtest: rust_kvec
-[    2.928721]     # speed: normal
-[    2.928734]     1..1
-[    2.935353]     # test_kvec_retain.speed: normal
-[    2.935366]     ok 1 test_kvec_retain
-[    2.936614] ok 2 rust_kvec
-[    2.937795]     KTAP version 1
-[    2.938298]     # Subtest: rust_kernel_bitmap
-[    2.939198]     # speed: normal
-[    2.939310]     1..6
-[    2.942265]     # bitmap_borrow.speed: normal
-[    2.942279]     ok 1 bitmap_borrow
-[    2.946775]     # bitmap_copy.speed: normal
-[    2.947374]     ok 2 bitmap_copy
-[    2.955269]     # bitmap_vec_new.speed: normal
-[    2.955798]     ok 3 bitmap_vec_new
-[    2.961445]     # bitmap_set_clear_find.speed: normal
-[    2.962150]     ok 4 bitmap_set_clear_find
-[    2.965286] rust_kernel: Bit `index` must be < 128, was 2048
-[    2.966594] rust_kernel: Bit `index` must be < 128, was 2048
-[    2.967553] rust_kernel: Bit `index` must be < 128, was 2048
-[    2.968543] rust_kernel: Bit `index` must be < 128, was 2048
-[    2.975324]     # owned_bitmap_out_of_bounds.speed: normal
-[    2.976658]     ok 5 owned_bitmap_out_of_bounds
-[    2.982750]     # bitmap_copy_and_extend.speed: normal
-[    2.983595]     ok 6 bitmap_copy_and_extend
-[    2.984458] # rust_kernel_bitmap: pass:6 fail:0 skip:0 total:6
-[    2.985616] # Totals: pass:6 fail:0 skip:0 total:6
-[    2.986502] ok 3 rust_kernel_bitmap
-[    2.987878]     KTAP version 1
-[    2.988402]     # Subtest: rust_kernel_kunit
-[    2.989016]     # speed: normal
-[    2.989023]     1..3
-[    2.993789]     # rust_test_kunit_example_test.speed: normal
-[    2.993799]     ok 1 rust_test_kunit_example_test
-[    3.002264]     # rust_test_kunit_in_kunit_test.speed: normal
-[    3.003068]     ok 2 rust_test_kunit_in_kunit_test
-[    3.007398]     # rust_test_kunit_always_disabled_test.speed: normal
-[    3.008181]     ok 3 rust_test_kunit_always_disabled_test # SKIP 
-[    3.009897] # rust_kernel_kunit: pass:2 fail:0 skip:1 total:3
-[    3.010910] # Totals: pass:2 fail:0 skip:1 total:3
-[    3.012078] ok 4 rust_kernel_kunit
-[    3.013332]     KTAP version 1
-[    3.014017]     # Subtest: rust_kernel_str
-[    3.015243]     # speed: normal
-[    3.015302]     1..8
-[    3.022310]     # test_cstr_to_str.speed: normal
-[    3.022319]     ok 1 test_cstr_to_str
-[    3.035328]     # test_cstr_to_str_invalid_utf8.speed: normal
-[    3.035923]     ok 2 test_cstr_to_str_invalid_utf8
-[    3.044700]     # test_cstr_as_str_unchecked.speed: normal
-[    3.045605]     ok 3 test_cstr_as_str_unchecked
-[    3.051339] input: ImExPS/2 Generic Explorer Mouse as /devices/platform/i8042/serio1/input/input2
-[    3.052727]     # test_cstr_display.speed: normal
-[    3.124190]     ok 4 test_cstr_display
-[    3.127333]     # test_cstr_display_all_bytes.speed: normal
-[    3.128713]     ok 5 test_cstr_display_all_bytes
-[    3.136938]     # test_cstr_debug.speed: normal
-[    3.138476]     ok 6 test_cstr_debug
-[    3.144041]     # test_bstr_display.speed: normal
-[    3.145090]     ok 7 test_bstr_display
-[    3.152287]     # test_bstr_debug.speed: normal
-[    3.153110]     ok 8 test_bstr_debug
-[    3.153967] # rust_kernel_str: pass:8 fail:0 skip:0 total:8
-[    3.154640] # Totals: pass:8 fail:0 skip:0 total:8
-[    3.155492] ok 5 rust_kernel_str
-[    3.157493]     KTAP version 1
-[    3.159060]     # Subtest: rust_atomics
-[    3.160253]     # speed: normal
-[    3.160274]     1..4
-[    3.163842]     # atomic_basic_tests.speed: normal
-[    3.163861]     ok 1 atomic_basic_tests
-[    3.167476]     # atomic_xchg_tests.speed: normal
-[    3.168171]     ok 2 atomic_xchg_tests
-[    3.171786]     # atomic_cmpxchg_tests.speed: normal
-[    3.172436]     ok 3 atomic_cmpxchg_tests
-[    3.178269]     # atomic_arithmetic_tests.speed: normal
-[    3.178938]     ok 4 atomic_arithmetic_tests
-[    3.179786] # rust_atomics: pass:4 fail:0 skip:0 total:4
-[    3.180560] # Totals: pass:4 fail:0 skip:0 total:4
-[    3.181459] ok 6 rust_atomics
-[    3.183178]     KTAP version 1
-[    3.183653]     # Subtest: kfifo_rust
-[    3.184214]     # speed: normal
-[    3.184223]     1..13
-[    3.188323]     # kfifo_rust_in_out_roundtrip.speed: normal
-[    3.188339]     ok 1 kfifo_rust_in_out_roundtrip
-[    3.196277]     # kfifo_rust_out_is_clamped_to_the_content.speed: normal
-[    3.199085]     ok 2 kfifo_rust_out_is_clamped_to_the_content
-[    3.204347]     # kfifo_rust_in_is_clamped_to_the_free_space.speed: normal
-[    3.205903]     ok 3 kfifo_rust_in_is_clamped_to_the_free_space
-[    3.211385]     # kfifo_rust_wrap_around_keeps_the_order.speed: normal
-[    3.214020]     ok 4 kfifo_rust_wrap_around_keeps_the_order
-[    3.217721]     # kfifo_rust_peek_does_not_consume.speed: normal
-[    3.219004]     ok 5 kfifo_rust_peek_does_not_consume
-[    3.228870]     # kfifo_rust_record_roundtrip.speed: normal
-[    3.231580]     ok 6 kfifo_rust_record_roundtrip
-[    3.237407]     # kfifo_rust_record_skip.speed: normal
-[    3.240888]     ok 7 kfifo_rust_record_skip
-[    3.246345]     # kfifo_rust_max_r.speed: normal
-[    3.247599]     ok 8 kfifo_rust_max_r
-[    3.261290]     # kfifo_rust_max_r_large_recsize.speed: normal
-[    3.262298]     ok 9 kfifo_rust_max_r_large_recsize
-[    3.266266]     # kfifo_rust_init_zero_element_size.speed: normal
-[    3.267188]     ok 10 kfifo_rust_init_zero_element_size
-[    3.274302]     # kfifo_rust_user_copy_fault.speed: normal
-[    3.275282]     ok 11 kfifo_rust_user_copy_fault
-[    3.284269]     # kfifo_rust_power_of_two_helpers.speed: normal
-[    3.285661]     ok 12 kfifo_rust_power_of_two_helpers
-[    3.294304]     # kfifo_rust_alloc_and_free.speed: normal
-[    3.295708]     ok 13 kfifo_rust_alloc_and_free
-[    3.296521] # kfifo_rust: pass:13 fail:0 skip:0 total:13
-[    3.297194] # Totals: pass:13 fail:0 skip:0 total:13
-[    3.298357] ok 7 kfifo_rust
-[    3.300027]     KTAP version 1
-[    3.300526]     # Subtest: kfifo_diff
-[    3.301086]     # module: kfifo_diff_kunit
-[    3.301104]     1..10
-[    3.307267]     ok 1 kfifo_diff_init
-[    3.314292]     ok 2 kfifo_diff_alloc
-[    3.324289]     ok 3 kfifo_diff_random_sequences
-[    3.329269]     ok 4 kfifo_diff_wrap_around
-[    3.334330]     ok 5 kfifo_diff_records
-[    3.338786]     ok 6 kfifo_diff_max_r
-[    3.344282]     ok 7 kfifo_diff_dma_prepare
-[    3.350726]     ok 8 kfifo_diff_dma_wrap
-[    3.357268]     ok 9 kfifo_diff_user_copy_fault
-[    3.432093] kfifo benchmark: 20000 iterations of in(64)+out(64), best of 3
-[    3.435175] kfifo benchmark: rust 12416145 ns, c 11443307 ns
-[    3.436068] kfifo benchmark: rust/c ratio 1085 per mille
-[    3.440352]     ok 10 kfifo_diff_benchmark
-[    3.440368] # kfifo_diff: pass:10 fail:0 skip:0 total:10
-[    3.441036] # Totals: pass:10 fail:0 skip:0 total:10
-[    3.442212] ok 8 kfifo_diff
-[    3.443550]     KTAP version 1
-[    3.444125]     # Subtest: crc16_rust
-[    3.444661]     # speed: normal
-[    3.444670]     1..5
-[    3.448296]     # crc16_rust_check_value.speed: normal
-[    3.448309]     ok 1 crc16_rust_check_value
-[    3.451759]     # crc16_rust_empty_buffer.speed: normal
-[    3.452424]     ok 2 crc16_rust_empty_buffer
-[    3.458290]     # crc16_rust_incremental.speed: normal
-[    3.458974]     ok 3 crc16_rust_incremental
-[    3.460106]     # crc16_rust_all_initial_values_single_byte.speed: normal
-[    3.460869]     ok 4 crc16_rust_all_initial_values_single_byte
-[    3.462667]     # crc16_rust_deterministic_prng.speed: normal
-[    3.463723]     ok 5 crc16_rust_deterministic_prng
-[    3.464588] # crc16_rust: pass:5 fail:0 skip:0 total:5
-[    3.465349] # Totals: pass:5 fail:0 skip:0 total:5
-[    3.466460] ok 9 crc16_rust
-[    3.467720]     KTAP version 1
-[    3.468180]     # Subtest: crc16_diff
-[    3.468771]     # module: crc16_diff_kunit
-[    3.468849]     1..2
-[    3.481264]     ok 1 crc16_diff_edge_cases
-[    3.510311]     ok 2 crc16_diff_random_streams
-[    3.510960] # crc16_diff: pass:2 fail:0 skip:0 total:2
-[    3.511635] # Totals: pass:2 fail:0 skip:0 total:2
-[    3.513157] ok 10 crc16_diff
-[    3.514364]     KTAP version 1
-[    3.515098]     # Subtest: crc_ccitt_rust
-[    3.516264]     # speed: normal
-[    3.516274]     1..7
-[    3.526272]     # crc_ccitt_rust_check_value.speed: normal
-[    3.526302]     ok 1 crc_ccitt_rust_check_value
-[    3.532141]     # crc_ccitt_rust_check_value_init_ffff.speed: normal
-[    3.535780]     ok 2 crc_ccitt_rust_check_value_init_ffff
-[    3.540608]     # crc_ccitt_rust_empty_buffer.speed: normal
-[    3.544767]     ok 3 crc_ccitt_rust_empty_buffer
-[    3.554985]     # crc_ccitt_rust_incremental.speed: normal
-[    3.559662]     ok 4 crc_ccitt_rust_incremental
-[    3.569779]     # crc_ccitt_rust_all_initial_values_single_byte.speed: normal
-[    3.570517]     ok 5 crc_ccitt_rust_all_initial_values_single_byte
-[    3.576391]     # crc_ccitt_rust_table_matches_bitwise.speed: normal
-[    3.577804]     ok 6 crc_ccitt_rust_table_matches_bitwise
-[    3.588589]     # crc_ccitt_rust_deterministic_prng.speed: normal
-[    3.589491]     ok 7 crc_ccitt_rust_deterministic_prng
-[    3.590399] # crc_ccitt_rust: pass:7 fail:0 skip:0 total:7
-[    3.591655] # Totals: pass:7 fail:0 skip:0 total:7
-[    3.592805] ok 11 crc_ccitt_rust
-[    3.594139]     KTAP version 1
-[    3.594635]     # Subtest: crc_ccitt_diff
-[    3.595262]     # module: crc_ccitt_diff_kunit
-[    3.595271]     1..3
-[    3.606659]     ok 1 crc_ccitt_diff_table
-[    3.612294]     ok 2 crc_ccitt_diff_edge_cases
-[    3.638321]     ok 3 crc_ccitt_diff_random_streams
-[    3.639418] # crc_ccitt_diff: pass:3 fail:0 skip:0 total:3
-[    3.641650] # Totals: pass:3 fail:0 skip:0 total:3
-[    3.642574] ok 12 crc_ccitt_diff
-[    3.644376]     KTAP version 1
-[    3.644955]     # Subtest: crc
-[    3.645536]     # module: crc_kunit
-[    3.645615]     1..8
-[    3.831512] hrtimer: interrupt took 10625 ns
-[    4.275310]     ok 1 crc16_test
-[    4.277913]     ok 2 crc16_benchmark # SKIP not enabled
-[    4.604726]     ok 3 crc32_le_test
-[    4.612317]     ok 4 crc32_le_benchmark # SKIP not enabled
-[    5.377773]     ok 5 crc32_be_test
-[    5.381725]     ok 6 crc32_be_benchmark # SKIP not enabled
-[    6.223762]     ok 7 crc32c_test
-[    6.234787]     ok 8 crc32c_benchmark # SKIP not enabled
-[    6.235495] # crc: pass:4 fail:0 skip:4 total:8
-[    6.236573] # Totals: pass:4 fail:0 skip:4 total:8
-[    6.238115] ok 13 crc
-[    6.239619]     KTAP version 1
-[    6.240308]     # Subtest: kfifo
-[    6.240958]     # module: kfifo_kunit
-[    6.240972]     1..10
-[    6.251393]     ok 1 kfifo_test_reset_should_clear_the_fifo
-[    6.253302]     ok 2 kfifo_test_define_should_define_an_empty_fifo
-[    6.263282]     ok 3 kfifo_test_len_should_ret_n_of_stored_elements
-[    6.270738]     ok 4 kfifo_test_put_should_insert_and_get_should_pop
-[    6.276763]     ok 5 kfifo_test_in_should_insert_multiple_elements
-[    6.282297]     ok 6 kfifo_test_out_should_pop_multiple_elements
-[    6.291675]     ok 7 kfifo_test_dec_init_should_define_an_empty_fifo
-[    6.297707]     ok 8 kfifo_test_define_should_equal_declare_init
-[    6.301392]     ok 9 kfifo_test_alloc_should_initiliaze_a_ptr_fifo
-[    6.309695]     ok 10 kfifo_test_peek_should_not_remove_elements
-[    6.310870] # kfifo: pass:10 fail:0 skip:0 total:10
-[    6.312421] # Totals: pass:10 fail:0 skip:0 total:10
-[    6.313445] ok 14 kfifo
-[    6.315098]     KTAP version 1
-[    6.315690]     # Subtest: bitmap_diff
-[    6.316484]     # module: bitmap_diff_kunit
-[    6.316494]     1..11
-[    6.330673]     ok 1 bitmap_diff_sizes
-[    6.337297]     ok 2 bitmap_diff_set_clear
-[    6.343312]     ok 3 bitmap_diff_shifts
-[    6.351295]     ok 4 bitmap_diff_cut
-[    6.357325]     ok 5 bitmap_diff_cut_out_of_range
-[    6.363306]     ok 6 bitmap_diff_find_next_zero_area
-[    6.366695]     ok 7 bitmap_diff_remap
-[    6.371279]     ok 8 bitmap_diff_arr32
-[    6.377280]     ok 9 bitmap_diff_alloc
-[    6.382613]     ok 10 bitmap_diff_alloc_node
-[    6.398376] bitmap benchmark: 2000 iterations over 1024 bits, best of 3
-[    6.400942] bitmap benchmark: all operations, rust 2495512 ns, c 2117302 ns, ratio 1178 per mille
-[    6.415021] bitmap benchmark: without the weight helpers, rust 1901969 ns, c 1942967 ns, ratio 978 per mille
-[    6.418334]     ok 11 bitmap_diff_benchmark
-[    6.418348] # bitmap_diff: pass:11 fail:0 skip:0 total:11
-[    6.419534] # Totals: pass:11 fail:0 skip:0 total:11
-[    6.420632] ok 15 bitmap_diff
-[    6.430337] check access for rdinit=/init failed: -2, ignoring
-[    6.433367] md: Waiting for all devices to be available before autodetect
-[    6.435248] md: If you don't use raid, use raid=noautodetect
-[    6.437037] md: Autodetecting RAID arrays.
-[    6.437817] md: autorun ...
-[    6.438395] md: ... autorun DONE.
-[    6.479783] EXT4-fs (vda): recovery complete
-[    6.481405] EXT4-fs (vda): mounted filesystem 02f8190d-4eff-4f3f-8bb0-9fa2ddab79de r/w with ordered data mode. Quota mode: none.
-[    6.484465] VFS: Mounted root (ext4 filesystem) on device 253:0.
-[    6.486883] devtmpfs: mounted
-[    6.766782] Freeing unused kernel image (initmem) memory: 2916K
-[    6.768181] Write protecting the kernel read-only data: 30720k
-[    6.775981] Freeing unused kernel image (text/rodata gap) memory: 628K
-[    6.784906] Freeing unused kernel image (rodata/data gap) memory: 1784K
-[    6.952090] x86/mm: Checked W+X mappings: passed, no W+X pages found.
-[    6.953975] Run /sbin/init as init process
+[    0.000000] tsc: Detected 999.995 MHz processor
+[    0.007002] last_pfn = 0x7ffdd max_arch_pfn = 0x10000000000
+[    0.007441] MTRR map: 4 entries (3 fixed + 1 variable; max 19), built from 8 variable MTRRs
+[    0.007590] x86/PAT: Configuration [0-7]: WB  WC  UC- UC  WB  WP  UC- WT  
+[    0.018351] found SMP MP-table at [mem 0x000f5470-0x000f547f]
+[    0.019471] Using GB pages for direct mapping
+[    0.022406] ACPI: Early table checksum verification disabled
+[    0.022694] ACPI: RSDP 0x00000000000F52A0 000014 (v00 BOCHS )
+[    0.023005] ACPI: RSDT 0x000000007FFE1CB3 000034 (v01 BOCHS  BXPC     00000001 BXPC 00000001)
+[    0.023527] ACPI: FACP 0x000000007FFE1B5F 000074 (v01 BOCHS  BXPC     00000001 BXPC 00000001)
+[    0.023930] ACPI: DSDT 0x000000007FFE0040 001B1F (v01 BOCHS  BXPC     00000001 BXPC 00000001)
+[    0.023975] ACPI: FACS 0x000000007FFE0000 000040
+[    0.024005] ACPI: APIC 0x000000007FFE1BD3 000080 (v03 BOCHS  BXPC     00000001 BXPC 00000001)
+[    0.024018] ACPI: HPET 0x000000007FFE1C53 000038 (v01 BOCHS  BXPC     00000001 BXPC 00000001)
+[    0.024031] ACPI: WAET 0x000000007FFE1C8B 000028 (v01 BOCHS  BXPC     00000001 BXPC 00000001)
+[    0.024102] ACPI: Reserving FACP table memory at [mem 0x7ffe1b5f-0x7ffe1bd2]
+[    0.024119] ACPI: Reserving DSDT table memory at [mem 0x7ffe0040-0x7ffe1b5e]
+[    0.024124] ACPI: Reserving FACS table memory at [mem 0x7ffe0000-0x7ffe003f]
+[    0.024131] ACPI: Reserving APIC table memory at [mem 0x7ffe1bd3-0x7ffe1c52]
+[    0.024135] ACPI: Reserving HPET table memory at [mem 0x7ffe1c53-0x7ffe1c8a]
+[    0.024139] ACPI: Reserving WAET table memory at [mem 0x7ffe1c8b-0x7ffe1cb2]
+[    0.025499] No NUMA configuration found
+[    0.025510] Faking a node at [mem 0x0000000000000000-0x000000007ffdcfff]
+[    0.025955] NODE_DATA(0) allocated [mem 0x7ffd9900-0x7ffdcfff]
+[    0.028225] Zone ranges:
+[    0.028233]   DMA      [mem 0x0000000000001000-0x0000000000ffffff]
+[    0.028311]   DMA32    [mem 0x0000000001000000-0x000000007ffdcfff]
+[    0.028317]   Normal   empty
+[    0.028327] Movable zone start for each node
+[    0.028345] Early memory node ranges
+[    0.028362]   node   0: [mem 0x0000000000001000-0x000000000009efff]
+[    0.028487]   node   0: [mem 0x0000000000100000-0x000000007ffdcfff]
+[    0.028570] Initmem setup node 0 [mem 0x0000000000001000-0x000000007ffdcfff]
+[    0.029436] On node 0, zone DMA: 1 pages in unavailable ranges
+[    0.029821] On node 0, zone DMA: 97 pages in unavailable ranges
+[    0.092475] On node 0, zone DMA32: 35 pages in unavailable ranges
+[    0.092904] ACPI: PM-Timer IO Port: 0x608
+[    0.093249] ACPI: LAPIC_NMI (acpi_id[0xff] dfl dfl lint[0x1])
+[    0.093528] IOAPIC[0]: apic_id 0, version 32, address 0xfec00000, GSI 0-23
+[    0.093600] ACPI: INT_SRC_OVR (bus 0 bus_irq 0 global_irq 2 dfl dfl)
+[    0.093755] ACPI: INT_SRC_OVR (bus 0 bus_irq 5 global_irq 5 high level)
+[    0.093780] ACPI: INT_SRC_OVR (bus 0 bus_irq 9 global_irq 9 high level)
+[    0.093835] ACPI: INT_SRC_OVR (bus 0 bus_irq 10 global_irq 10 high level)
+[    0.093840] ACPI: INT_SRC_OVR (bus 0 bus_irq 11 global_irq 11 high level)
+[    0.093992] ACPI: Using ACPI (MADT) for SMP configuration information
+[    0.094018] ACPI: HPET id: 0x8086a201 base: 0xfed00000
+[    0.094327] CPU topo: Max. logical packages:   1
+[    0.094335] CPU topo: Max. logical dies:       1
+[    0.094341] CPU topo: Max. dies per package:   1
+[    0.094392] CPU topo: Max. threads per core:   1
+[    0.094500] CPU topo: Num. cores per package:     2
+[    0.094509] CPU topo: Num. threads per package:   2
+[    0.094521] CPU topo: Allowing 2 present CPUs plus 0 hotplug CPUs
+[    0.095118] PM: hibernation: Registered nosave memory: [mem 0x00000000-0x00000fff]
+[    0.095140] PM: hibernation: Registered nosave memory: [mem 0x0009f000-0x000fffff]
+[    0.095234] [mem 0x80000000-0xfffbffff] available for PCI devices
+[    0.095275] Booting paravirtualized kernel on bare hardware
+[    0.095449] clocksource: refined-jiffies: mask: 0xffffffff max_cycles: 0xffffffff, max_idle_ns: 1910969940391419 ns
+[    0.105740] setup_percpu: NR_CPUS:64 nr_cpumask_bits:2 nr_cpu_ids:2 nr_node_ids:1
+[    0.107687] percpu: Embedded 52 pages/cpu s172184 r8192 d32616 u1048576
+[    0.108873] Kernel command line: console=ttyS0 root=/dev/vda rw rootwait rootfstype=ext4 panic=-1 loglevel=7 systemd.unit=multi-user.target systemd.firstboot=no fsck.mode=skip
+[    0.110117] random: crng init done
+[    0.110191] printk: log buffer data + meta data: 262144 + 917504 = 1179648 bytes
+[    0.111819] Dentry cache hash table entries: 262144 (order: 9, 2097152 bytes, linear)
+[    0.113204] Inode-cache hash table entries: 131072 (order: 8, 1048576 bytes, linear)
+[    0.115248] Fallback order for Node 0: 0 
+[    0.115398] Built 1 zonelists, mobility grouping on.  Total pages: 524155
+[    0.115408] Policy zone: DMA32
+[    0.115560] mem auto-init: stack:all(zero), heap alloc:off, heap free:off
+[    0.133583] SLUB: HWalign=64, Order=0-3, MinObjects=0, CPUs=2, Nodes=1
+[    0.142676] Dynamic Preempt: voluntary
+[    0.145070] rcu: Preemptible hierarchical RCU implementation.
+[    0.145085] rcu: 	RCU event tracing is enabled.
+[    0.145104] rcu: 	RCU restricting CPUs from NR_CPUS=64 to nr_cpu_ids=2.
+[    0.145233] 	Trampoline variant of Tasks RCU enabled.
+[    0.145239] 	Tracing variant of Tasks RCU enabled.
+[    0.145306] rcu: RCU calculated value of scheduler-enlistment delay is 100 jiffies.
+[    0.145324] rcu: Adjusting geometry for rcu_fanout_leaf=16, nr_cpu_ids=2
+[    0.146342] RCU Tasks: Setting shift to 1 and lim to 1 rcu_task_cb_adjust=1 rcu_task_cpu_ids=2.
+[    0.146361] RCU Tasks Trace: Setting shift to 1 and lim to 1 rcu_task_cb_adjust=1 rcu_task_cpu_ids=2.
+[    0.163144] NR_IRQS: 4352, nr_irqs: 440, preallocated irqs: 16
+[    0.170620] rcu: srcu_init: Setting srcu_struct sizes based on contention.
+[    0.171114] clocksource: jiffies: mask: 0xffffffff max_cycles: 0xffffffff, max_idle_ns: 1911260446275000 ns
+[    0.175750] Console: colour VGA+ 80x25
+[    0.177195] printk: legacy console [ttyS0] enabled
+[    0.312523] ACPI: Core revision 20250807
+[    0.317773] clocksource: hpet: mask: 0xffffffff max_cycles: 0xffffffff, max_idle_ns: 19112604467 ns
+[    0.324998] APIC: Switch to symmetric I/O mode setup
+[    0.332044] ..TIMER: vector=0x30 apic1=0 pin1=2 apic2=-1 pin2=-1
+[    0.339712] clocksource: tsc-early: mask: 0xffffffffffffffff max_cycles: 0x1cd424c4a68, max_idle_ns: 881590510633 ns
+[    0.342704] Calibrating delay loop (skipped), value calculated using timer frequency.. 1999.99 BogoMIPS (lpj=999995)
+[    0.344512] x86/cpu: User Mode Instruction Prevention (UMIP) activated
+[    0.350123] Last level iTLB entries: 4KB 0, 2MB 0, 4MB 0
+[    0.350519] Last level dTLB entries: 4KB 0, 2MB 0, 4MB 0, 1GB 0
+[    0.352341] mitigations: Enabled attack vectors: user_kernel, user_user, SMT mitigations: auto
+[    0.352647] Speculative Store Bypass: Vulnerable
+[    0.353705] Spectre V2 : Mitigation: Retpolines
+[    0.354638] Spectre V1 : Mitigation: usercopy/swapgs barriers and __user pointer sanitization
+[    0.355589] Spectre V2 : Spectre v2 / SpectreRSB: Filling RSB on context switch and VMEXIT
+[    0.358512] x86/fpu: Supporting XSAVE feature 0x001: 'x87 floating point registers'
+[    0.361783] x86/fpu: Supporting XSAVE feature 0x002: 'SSE registers'
+[    0.362512] x86/fpu: Supporting XSAVE feature 0x004: 'AVX registers'
+[    0.363512] x86/fpu: Supporting XSAVE feature 0x008: 'MPX bounds registers'
+[    0.363512] x86/fpu: Supporting XSAVE feature 0x010: 'MPX CSR'
+[    0.364512] x86/fpu: Supporting XSAVE feature 0x200: 'Protection Keys User registers'
+[    0.365622] x86/fpu: xstate_offset[2]:  576, xstate_sizes[2]:  256
+[    0.366526] x86/fpu: xstate_offset[3]:  960, xstate_sizes[3]:   64
+[    0.367512] x86/fpu: xstate_offset[4]: 1024, xstate_sizes[4]:   64
+[    0.367512] x86/fpu: xstate_offset[9]: 2688, xstate_sizes[9]:    8
+[    0.368520] x86/fpu: Enabled xstate features 0x21f, context size is 2696 bytes, using 'standard' format.
+[    0.490351] Freeing SMP alternatives memory: 60K
+[    0.491706] pid_max: default: 32768 minimum: 301
+[    0.495802] LSM: initializing lsm=capability,selinux
+[    0.497456] SELinux:  Initializing.
+[    0.501163] Mount-cache hash table entries: 4096 (order: 3, 32768 bytes, linear)
+[    0.501692] Mountpoint-cache hash table entries: 4096 (order: 3, 32768 bytes, linear)
+[    0.629274] smpboot: CPU0: AMD QEMU TCG CPU version 2.5+ (family: 0x6, model: 0x6, stepping: 0x3)
+[    0.640079] Performance Events: PMU not available due to virtualization, using software events only.
+[    0.641104] signal: max sigframe size: 3632
+[    0.642576] rcu: Hierarchical SRCU implementation.
+[    0.643531] rcu: 	Max phase no-delay instances is 400.
+[    0.646061] Timer migration: 1 hierarchy levels; 8 children per group; 1 crossnode level
+[    0.651856] smp: Bringing up secondary CPUs ...
+[    0.659579] smpboot: x86: Booting SMP configuration:
+[    0.660533] .... node  #0, CPUs:      #1
+[    0.158477] calibrate_delay_direct() dropping max bogoMips estimate 3 = 1670929
+[    0.158477] calibrate_delay_direct() dropping min bogoMips estimate 0 = 1001516
+[    0.158477] calibrate_delay_direct() dropping min bogoMips estimate 2 = 1099645
+[    0.750073] smp: Brought up 1 node, 2 CPUs
+[    0.751599] smpboot: Total of 2 processors activated (4802.54 BogoMIPS)
+[    0.760205] Memory: 2011940K/2096620K available (19885K kernel code, 2793K rwdata, 8492K rodata, 2916K init, 884K bss, 80988K reserved, 0K cma-reserved)
+[    0.769550] devtmpfs: initialized
+[    0.783117] posixtimers hash table entries: 1024 (order: 2, 16384 bytes, linear)
+[    0.783117] futex hash table entries: 512 (32768 bytes on 1 NUMA nodes, total 32 KiB, linear).
+[    0.786769] PM: RTC time: 22:43:02, date: 2026-10-22
+[    0.791782] NET: Registered PF_NETLINK/PF_ROUTE protocol family
+[    0.795258] audit: initializing netlink subsys (disabled)
+[    0.798136] audit: type=2000 audit(1792708982.469:1): state=initialized audit_enabled=0 res=1
+[    0.799512] thermal_sys: Registered thermal governor 'step_wise'
+[    0.799850] cpuidle: using governor menu
+[    0.805814] PCI: Using configuration type 1 for base access
+[    0.806999] mtrr: your CPUs had inconsistent fixed MTRR settings
+[    0.807517] mtrr: your CPUs had inconsistent variable MTRR settings
+[    0.808512] mtrr: your CPUs had inconsistent MTRRdefType settings
+[    0.809523] mtrr: probably your BIOS does not setup all CPUs.
+[    0.810512] mtrr: corrected configuration.
+[    0.813226] kprobes: kprobe jump-optimization is enabled. All kprobes are optimized if possible.
+[    0.817728] HugeTLB: registered 2.00 MiB page size, pre-allocated 0 pages
+[    0.818518] HugeTLB: 28 KiB vmemmap can be freed for a 2.00 MiB page
+[    0.829668] ACPI: Added _OSI(Module Device)
+[    0.830534] ACPI: Added _OSI(Processor Device)
+[    0.831519] ACPI: Added _OSI(Processor Aggregator Device)
+[    0.851582] ACPI: 1 ACPI AML tables successfully acquired and loaded
+[    0.871300] ACPI: Interpreter enabled
+[    0.872512] ACPI: PM: (supports S0 S3 S4 S5)
+[    0.872568] ACPI: Using IOAPIC for interrupt routing
+[    0.873935] PCI: Using host bridge windows from ACPI; if necessary, use "pci=nocrs" and report a bug
+[    0.874535] PCI: Using E820 reservations for host bridge windows
+[    0.877126] ACPI: Enabled 2 GPEs in block 00 to 0F
+[    0.916682] ACPI: PCI Root Bridge [PCI0] (domain 0000 [bus 00-ff])
+[    0.917881] acpi PNP0A03:00: _OSC: OS supports [ASPM ClockPM Segments MSI HPX-Type3]
+[    0.918590] acpi PNP0A03:00: _OSC: not requesting OS control; OS requires [ExtendedConfig ASPM ClockPM MSI]
+[    0.920656] acpi PNP0A03:00: fail to add MMCONFIG information, can't access extended configuration space under this bridge
+[    0.925875] PCI host bridge to bus 0000:00
+[    0.926716] pci_bus 0000:00: root bus resource [io  0x0000-0x0cf7 window]
+[    0.927536] pci_bus 0000:00: root bus resource [io  0x0d00-0xffff window]
+[    0.928512] pci_bus 0000:00: root bus resource [mem 0x000a0000-0x000bffff window]
+[    0.929512] pci_bus 0000:00: root bus resource [mem 0x80000000-0xfebfffff window]
+[    0.930512] pci_bus 0000:00: root bus resource [mem 0x100000000-0x17fffffff window]
+[    0.931626] pci_bus 0000:00: root bus resource [bus 00-ff]
+[    0.934432] pci 0000:00:00.0: [8086:1237] type 00 class 0x060000 conventional PCI endpoint
+[    0.938673] pci 0000:00:01.0: [8086:7000] type 00 class 0x060100 conventional PCI endpoint
+[    0.940195] pci 0000:00:01.1: [8086:7010] type 00 class 0x010180 conventional PCI endpoint
+[    0.941282] pci 0000:00:01.1: BAR 4 [io  0xc0c0-0xc0cf]
+[    0.941616] pci 0000:00:01.1: BAR 0 [io  0x01f0-0x01f7]: legacy IDE quirk
+[    0.942525] pci 0000:00:01.1: BAR 1 [io  0x03f6]: legacy IDE quirk
+[    0.943531] pci 0000:00:01.1: BAR 2 [io  0x0170-0x0177]: legacy IDE quirk
+[    0.944523] pci 0000:00:01.1: BAR 3 [io  0x0376]: legacy IDE quirk
+[    0.946213] pci 0000:00:01.3: [8086:7113] type 00 class 0x068000 conventional PCI endpoint
+[    0.947549] pci 0000:00:01.3: quirk: [io  0x0600-0x063f] claimed by PIIX4 ACPI
+[    0.948541] pci 0000:00:01.3: quirk: [io  0x0700-0x070f] claimed by PIIX4 SMB
+[    0.950988] pci 0000:00:02.0: [1234:1111] type 00 class 0x030000 conventional PCI endpoint
+[    0.952539] pci 0000:00:02.0: BAR 0 [mem 0xfd000000-0xfdffffff pref]
+[    0.953524] pci 0000:00:02.0: BAR 2 [mem 0xfebb0000-0xfebb0fff]
+[    0.954512] pci 0000:00:02.0: ROM [mem 0xfeba0000-0xfebaffff pref]
+[    0.955809] pci 0000:00:02.0: Video device with shadowed ROM at [mem 0x000c0000-0x000dffff]
+[    0.957776] pci 0000:00:03.0: [8086:100e] type 00 class 0x020000 conventional PCI endpoint
+[    0.959536] pci 0000:00:03.0: BAR 0 [mem 0xfeb80000-0xfeb9ffff]
+[    0.960512] pci 0000:00:03.0: BAR 1 [io  0xc080-0xc0bf]
+[    0.961512] pci 0000:00:03.0: ROM [mem 0xfeb00000-0xfeb7ffff pref]
+[    0.970919] pci 0000:00:04.0: [1af4:1001] type 00 class 0x010000 conventional PCI endpoint
+[    0.972540] pci 0000:00:04.0: BAR 0 [io  0xc000-0xc07f]
+[    0.973518] pci 0000:00:04.0: BAR 1 [mem 0xfebb1000-0xfebb1fff]
+[    0.974551] pci 0000:00:04.0: BAR 4 [mem 0xfe000000-0xfe003fff 64bit pref]
+[    0.985438] ACPI: PCI: Interrupt link LNKA configured for IRQ 10
+[    0.986301] ACPI: PCI: Interrupt link LNKB configured for IRQ 10
+[    0.988137] ACPI: PCI: Interrupt link LNKC configured for IRQ 11
+[    0.989192] ACPI: PCI: Interrupt link LNKD configured for IRQ 11
+[    0.989811] ACPI: PCI: Interrupt link LNKS configured for IRQ 9
+[    0.994596] iommu: Default domain type: Translated
+[    0.995536] iommu: DMA domain TLB invalidation policy: lazy mode
+[    1.006100] SCSI subsystem initialized
+[    1.007340] ACPI: bus type USB registered
+[    1.010143] usbcore: registered new interface driver usbfs
+[    1.040951] usbcore: registered new interface driver hub
+[    1.045728] usbcore: registered new device driver usb
+[    1.050742] pps_core: LinuxPPS API ver. 1 registered
+[    1.051519] pps_core: Software ver. 5.3.6 - Copyright 2005-2007 Rodolfo Giometti <giometti@linux.it>
+[    1.057595] PTP clock support registered
+[    1.063184] Advanced Linux Sound Architecture Driver Initialized.
+[    1.073972] NetLabel: Initializing
+[    1.074539] NetLabel:  domain hash size = 128
+[    1.078539] NetLabel:  protocols = UNLABELED CIPSOv4 CALIPSO
+[    1.082063] NetLabel:  unlabeled traffic allowed by default
+[    1.088940] PCI: Using ACPI for IRQ routing
+[    1.099397] pci 0000:00:02.0: vgaarb: setting as boot VGA device
+[    1.099512] pci 0000:00:02.0: vgaarb: bridge control possible
+[    1.099512] pci 0000:00:02.0: vgaarb: VGA device added: decodes=io+mem,owns=io+mem,locks=none
+[    1.103576] vgaarb: loaded
+[    1.107750] hpet0: at MMIO 0xfed00000, IRQs 2, 8, 0
+[    1.111543] hpet0: 3 comparators, 64-bit 100.000000 MHz counter
+[    1.124469] clocksource: Switched to clocksource tsc-early
+[    1.577610] VFS: Disk quotas dquot_6.6.0
+[    1.582260] VFS: Dquot-cache hash table entries: 512 (order 0, 4096 bytes)
+[    1.587881] pnp: PnP ACPI init
+[    1.594567] pnp: PnP ACPI: found 5 devices
+[    1.627361] clocksource: acpi_pm: mask: 0xffffff max_cycles: 0xffffff, max_idle_ns: 2085701024 ns
+[    1.631473] NET: Registered PF_INET protocol family
+[    1.635633] IP idents hash table entries: 32768 (order: 6, 262144 bytes, linear)
+[    1.646559] tcp_listen_portaddr_hash hash table entries: 1024 (order: 2, 16384 bytes, linear)
+[    1.650652] Table-perturb hash table entries: 65536 (order: 6, 262144 bytes, linear)
+[    1.653721] TCP established hash table entries: 16384 (order: 5, 131072 bytes, linear)
+[    1.657441] TCP bind hash table entries: 16384 (order: 7, 524288 bytes, linear)
+[    1.661276] TCP: Hash tables configured (established 16384 bind 16384)
+[    1.664951] UDP hash table entries: 1024 (order: 4, 65536 bytes, linear)
+[    1.668231] UDP-Lite hash table entries: 1024 (order: 4, 65536 bytes, linear)
+[    1.671989] NET: Registered PF_UNIX/PF_LOCAL protocol family
+[    1.679828] RPC: Registered named UNIX socket transport module.
+[    1.682359] RPC: Registered udp transport module.
+[    1.684055] RPC: Registered tcp transport module.
+[    1.686064] RPC: Registered tcp-with-tls transport module.
+[    1.688173] RPC: Registered tcp NFSv4.1 backchannel transport module.
+[    1.694168] pci_bus 0000:00: resource 4 [io  0x0000-0x0cf7 window]
+[    1.696664] pci_bus 0000:00: resource 5 [io  0x0d00-0xffff window]
+[    1.697644] pci_bus 0000:00: resource 6 [mem 0x000a0000-0x000bffff window]
+[    1.700012] pci_bus 0000:00: resource 7 [mem 0x80000000-0xfebfffff window]
+[    1.702798] pci_bus 0000:00: resource 8 [mem 0x100000000-0x17fffffff window]
+[    1.707656] pci 0000:00:01.0: PIIX3: Enabling Passive Release
+[    1.710354] pci 0000:00:00.0: Limiting direct PCI/PCI transfers
+[    1.712845] PCI: CLS 0 bytes, default 64
+[    1.727486] Initialise system trusted keyrings
+[    1.731480] workingset: timestamp_bits=56 max_order=19 bucket_order=0
+[    1.739295] NFS: Registering the id_resolver key type
+[    1.741640] Key type id_resolver registered
+[    1.743376] Key type id_legacy registered
+[    1.745562] 9p: Installing v9fs 9p2000 file system support
+[    1.927576] Key type asymmetric registered
+[    1.929649] Asymmetric key parser 'x509' registered
+[    1.931639] Block layer SCSI generic (bsg) driver version 0.4 loaded (major 251)
+[    1.934972] io scheduler mq-deadline registered
+[    1.935569] io scheduler kyber registered
+[    1.938364] test_bitmap: loaded.
+[    1.942644] test_bitmap: parselist: 14: input is '0-2047:128/256' OK, Time: 2250
+[    1.946271] test_bitmap: bitmap_print_to_pagebuf: input is '0-32767
+[    1.946271] ', Time: 32333
+[    2.084690] test_bitmap: Time spent in test_bitmap_read_perf:	3981395
+[    2.096825] test_bitmap: Time spent in test_bitmap_write_perf:	9575048
+[    2.105795] test_bitmap: all 390447 tests passed
+[    2.352615] ACPI: \_SB_.LNKD: Enabled at IRQ 11
+[    2.358443] Serial: 8250/16550 driver, 4 ports, IRQ sharing enabled
+[    2.364796] 00:04: ttyS0 at I/O 0x3f8 (irq = 4, base_baud = 115200) is a 16550A
+[    2.372764] Non-volatile memory driver v1.3
+[    2.373642] Linux agpgart interface v0.103
+[    2.378841] ACPI: bus type drm_connector registered
+[    2.400277] loop: module loaded
+[    2.402036] virtio_blk virtio0: 2/0/0 default/read/poll queues
+[    2.414628] virtio_blk virtio0: [vda] 8388608 512-byte logical blocks (4.29 GB/4.00 GiB)
+[    2.435073] scsi host0: ata_piix
+[    2.439690] scsi host1: ata_piix
+[    2.440539] ata1: PATA max MWDMA2 cmd 0x1f0 ctl 0x3f6 bmdma 0xc0c0 irq 14 lpm-pol 0
+[    2.443733] ata2: PATA max MWDMA2 cmd 0x170 ctl 0x376 bmdma 0xc0c8 irq 15 lpm-pol 0
+[    2.449253] e100: Intel(R) PRO/100 Network Driver
+[    2.451376] e100: Copyright(c) 1999-2006 Intel Corporation
+[    2.453467] e1000: Intel(R) PRO/1000 Network Driver
+[    2.455077] e1000: Copyright (c) 1999-2006 Intel Corporation.
+[    2.608052] ata2: found unknown device (class 0)
+[    2.612487] ata2.00: ATAPI: QEMU DVD-ROM, 2.5+, max UDMA/100
+[    2.648951] scsi 1:0:0:0: CD-ROM            QEMU     QEMU DVD-ROM     2.5+ PQ: 0 ANSI: 5
+[    2.685535] sr 1:0:0:0: [sr0] scsi3-mmc drive: 4x/4x cd/rw xa/form2 tray
+[    2.686628] ACPI: \_SB_.LNKC: Enabled at IRQ 10
+[    2.761408] tsc: Refined TSC clocksource calibration: 999.992 MHz
+[    2.765091] clocksource: tsc: mask: 0xffffffffffffffff max_cycles: 0x1cd41f163de, max_idle_ns: 881590457442 ns
+[    2.769449] clocksource: Switched to clocksource tsc
+[    2.783788] cdrom: Uniform CD-ROM driver Revision: 3.20
+[    2.825891] sr 1:0:0:0: Attached scsi generic sg0 type 5
+[    3.152910] e1000 0000:00:03.0 eth0: (PCI:33MHz:32-bit) 52:54:00:12:34:56
+[    3.157205] e1000 0000:00:03.0 eth0: Intel(R) PRO/1000 Network Connection
+[    3.159977] e1000e: Intel(R) PRO/1000 Network Driver
+[    3.160540] e1000e: Copyright(c) 1999 - 2015 Intel Corporation.
+[    3.164597] sky2: driver version 1.30
+[    3.169205] usbcore: registered new interface driver usblp
+[    3.170739] usbcore: registered new interface driver usb-storage
+[    3.172814] i8042: PNP: PS/2 Controller [PNP0303:KBD,PNP0f13:MOU] at 0x60,0x64 irq 1,12
+[    3.182280] serio: i8042 KBD port at 0x60,0x64 irq 1
+[    3.183873] serio: i8042 AUX port at 0x60,0x64 irq 12
+[    3.186515] rtc_cmos PNP0B00:00: RTC can wake from S4
+[    3.192601] input: AT Translated Set 2 keyboard as /devices/platform/i8042/serio0/input/input0
+[    3.192948] rtc_cmos PNP0B00:00: registered as rtc0
+[    3.297516] hpet: Lost 5 RTC interrupts
+[    3.303473] rtc_cmos PNP0B00:00: alarms up to one day, y3k, 242 bytes nvram, hpet irqs
+[    3.307464] device-mapper: ioctl: 4.50.0-ioctl (2025-04-28) initialised: dm-devel@lists.linux.dev
+[    3.310550] amd_pstate: the _CPC object is not present in SBIOS or ACPI disabled
+[    3.315865] hid: raw HID events driver (C) Jiri Kosina
+[    3.318523] usbcore: registered new interface driver usbhid
+[    3.321210] usbhid: USB HID core driver
+[    3.334819] Initializing XFRM netlink socket
+[    3.336653] NET: Registered PF_INET6 protocol family
+[    3.356033] Segment Routing with IPv6
+[    3.357637] In-situ OAM (IOAM) with IPv6
+[    3.358489] sit: IPv6, IPv4 and MPLS over IPv4 tunneling driver
+[    3.362913] NET: Registered PF_PACKET protocol family
+[    3.365101] 9pnet: Installing 9P2000 support
+[    3.365510] Key type dns_resolver registered
+[    3.368549] IPI shorthand broadcast: enabled
+[    3.401024] sched_clock: Marking stable (3243124805, 157477982)->(3755669447, -355066660)
+[    3.405186] registered taskstats version 1
+[    3.406099] Loading compiled-in X.509 certificates
+[    3.429301] Demotion targets for Node 0: null
+[    3.435262] PM:   Magic number: 14:697:755
+[    3.436503] netconsole: network logging started
+[    3.438497] cfg80211: Loading compiled-in X.509 certificates for regulatory database
+[    3.450809] kworker/u8:0 (58) used greatest stack depth: 15000 bytes left
+[    3.486860] kworker/u8:0 (59) used greatest stack depth: 14416 bytes left
+[    3.502125] Loaded X.509 cert 'sforshee: 00b28ddf47aef9cea7'
+[    3.504630] Loaded X.509 cert 'wens: 61c038651aabdcf94bd0ac7ff06c7248db18c600'
+[    3.509431] faux_driver regulatory: Direct firmware load for regulatory.db failed with error -2
+[    3.513548] ALSA device list:
+[    3.515241] cfg80211: failed to load regulatory.db
+[    3.516532]   No soundcards found.
+[    3.517726] KTAP version 1
+[    3.518426] 1..19
+[    3.521900]     KTAP version 1
+[    3.522721]     # Subtest: rust_allocator
+[    3.523858]     # speed: normal
+[    3.524117]     1..1
+[    3.529216]     # test_alignment.speed: normal
+[    3.529293]     ok 1 test_alignment
+[    3.530565] ok 1 rust_allocator
+[    3.533237]     KTAP version 1
+[    3.533917]     # Subtest: rust_kvec
+[    3.534840]     # speed: normal
+[    3.535008]     1..1
+[    3.541306]     # test_kvec_retain.speed: normal
+[    3.541323]     ok 1 test_kvec_retain
+[    3.542459] ok 2 rust_kvec
+[    3.544759]     KTAP version 1
+[    3.545858]     # Subtest: rust_kernel_bitmap
+[    3.547443]     # speed: normal
+[    3.547520]     1..6
+[    3.554203]     # bitmap_borrow.speed: normal
+[    3.554221]     ok 1 bitmap_borrow
+[    3.561190]     # bitmap_copy.speed: normal
+[    3.562056]     ok 2 bitmap_copy
+[    3.567279]     # bitmap_vec_new.speed: normal
+[    3.568033]     ok 3 bitmap_vec_new
+[    3.574249]     # bitmap_set_clear_find.speed: normal
+[    3.575016]     ok 4 bitmap_set_clear_find
+[    3.583257] rust_kernel: Bit `index` must be < 128, was 2048
+[    3.584635] rust_kernel: Bit `index` must be < 128, was 2048
+[    3.586358] rust_kernel: Bit `index` must be < 128, was 2048
+[    3.587864] rust_kernel: Bit `index` must be < 128, was 2048
+[    3.590436]     # owned_bitmap_out_of_bounds.speed: normal
+[    3.591914]     ok 5 owned_bitmap_out_of_bounds
+[    3.598292]     # bitmap_copy_and_extend.speed: normal
+[    3.599999]     ok 6 bitmap_copy_and_extend
+[    3.603416] # rust_kernel_bitmap: pass:6 fail:0 skip:0 total:6
+[    3.604361] # Totals: pass:6 fail:0 skip:0 total:6
+[    3.607532] ok 3 rust_kernel_bitmap
+[    3.614764]     KTAP version 1
+[    3.617136]     # Subtest: rust_kernel_kunit
+[    3.620816]     # speed: normal
+[    3.620862]     1..3
+[    3.631295]     # rust_test_kunit_example_test.speed: normal
+[    3.631328]     ok 1 rust_test_kunit_example_test
+[    3.638257]     # rust_test_kunit_in_kunit_test.speed: normal
+[    3.639908]     ok 2 rust_test_kunit_in_kunit_test
+[    3.648229]     # rust_test_kunit_always_disabled_test.speed: normal
+[    3.649721]     ok 3 rust_test_kunit_always_disabled_test # SKIP 
+[    3.651329] # rust_kernel_kunit: pass:2 fail:0 skip:1 total:3
+[    3.653552] # Totals: pass:2 fail:0 skip:1 total:3
+[    3.654819] ok 4 rust_kernel_kunit
+[    3.657266]     KTAP version 1
+[    3.658399]     # Subtest: rust_kernel_str
+[    3.659347]     # speed: normal
+[    3.659454]     1..8
+[    3.673298]     # test_cstr_to_str.speed: normal
+[    3.673391]     ok 1 test_cstr_to_str
+[    3.681205]     # test_cstr_to_str_invalid_utf8.speed: normal
+[    3.682017]     ok 2 test_cstr_to_str_invalid_utf8
+[    3.690254]     # test_cstr_as_str_unchecked.speed: normal
+[    3.691323]     ok 3 test_cstr_as_str_unchecked
+[    3.700263]     # test_cstr_display.speed: normal
+[    3.701680]     ok 4 test_cstr_display
+[    3.708275]     # test_cstr_display_all_bytes.speed: normal
+[    3.709164]     ok 5 test_cstr_display_all_bytes
+[    3.716257]     # test_cstr_debug.speed: normal
+[    3.717298]     ok 6 test_cstr_debug
+[    3.724358] input: ImExPS/2 Generic Explorer Mouse as /devices/platform/i8042/serio1/input/input2
+[    3.724437]     # test_bstr_display.speed: normal
+[    3.780383]     ok 7 test_bstr_display
+[    3.788430]     # test_bstr_debug.speed: normal
+[    3.792025]     ok 8 test_bstr_debug
+[    3.795807] # rust_kernel_str: pass:8 fail:0 skip:0 total:8
+[    3.799345] # Totals: pass:8 fail:0 skip:0 total:8
+[    3.802490] ok 5 rust_kernel_str
+[    3.804983]     KTAP version 1
+[    3.805700]     # Subtest: rust_atomics
+[    3.806800]     # speed: normal
+[    3.806881]     1..4
+[    3.812643]     # atomic_basic_tests.speed: normal
+[    3.812662]     ok 1 atomic_basic_tests
+[    3.818214]     # atomic_xchg_tests.speed: normal
+[    3.819681]     ok 2 atomic_xchg_tests
+[    3.826256]     # atomic_cmpxchg_tests.speed: normal
+[    3.827084]     ok 3 atomic_cmpxchg_tests
+[    3.834448]     # atomic_arithmetic_tests.speed: normal
+[    3.835690]     ok 4 atomic_arithmetic_tests
+[    3.836825] # rust_atomics: pass:4 fail:0 skip:0 total:4
+[    3.838185] # Totals: pass:4 fail:0 skip:0 total:4
+[    3.839443] ok 6 rust_atomics
+[    3.841856]     KTAP version 1
+[    3.843350]     # Subtest: kfifo_rust
+[    3.844687]     # speed: normal
+[    3.844729]     1..13
+[    3.847325]     # kfifo_rust_in_out_roundtrip.speed: normal
+[    3.847341]     ok 1 kfifo_rust_in_out_roundtrip
+[    3.854250]     # kfifo_rust_out_is_clamped_to_the_content.speed: normal
+[    3.855425]     ok 2 kfifo_rust_out_is_clamped_to_the_content
+[    3.863259]     # kfifo_rust_in_is_clamped_to_the_free_space.speed: normal
+[    3.864864]     ok 3 kfifo_rust_in_is_clamped_to_the_free_space
+[    3.873210]     # kfifo_rust_wrap_around_keeps_the_order.speed: normal
+[    3.874705]     ok 4 kfifo_rust_wrap_around_keeps_the_order
+[    3.879236]     # kfifo_rust_peek_does_not_consume.speed: normal
+[    3.881120]     ok 5 kfifo_rust_peek_does_not_consume
+[    3.886303]     # kfifo_rust_record_roundtrip.speed: normal
+[    3.887384]     ok 6 kfifo_rust_record_roundtrip
+[    3.896262]     # kfifo_rust_record_skip.speed: normal
+[    3.897251]     ok 7 kfifo_rust_record_skip
+[    3.902257]     # kfifo_rust_max_r.speed: normal
+[    3.903132]     ok 8 kfifo_rust_max_r
+[    3.912384]     # kfifo_rust_max_r_large_recsize.speed: normal
+[    3.915679]     ok 9 kfifo_rust_max_r_large_recsize
+[    3.921914]     # kfifo_rust_init_zero_element_size.speed: normal
+[    3.923149]     ok 10 kfifo_rust_init_zero_element_size
+[    3.928242]     # kfifo_rust_user_copy_fault.speed: normal
+[    3.929378]     ok 11 kfifo_rust_user_copy_fault
+[    3.934262]     # kfifo_rust_power_of_two_helpers.speed: normal
+[    3.936337]     ok 12 kfifo_rust_power_of_two_helpers
+[    3.944256]     # kfifo_rust_alloc_and_free.speed: normal
+[    3.945365]     ok 13 kfifo_rust_alloc_and_free
+[    3.947199] # kfifo_rust: pass:13 fail:0 skip:0 total:13
+[    3.948176] # Totals: pass:13 fail:0 skip:0 total:13
+[    3.949970] ok 7 kfifo_rust
+[    3.951831]     KTAP version 1
+[    3.952982]     # Subtest: kfifo_diff
+[    3.954115]     # module: kfifo_diff_kunit
+[    3.954139]     1..10
+[    3.963529]     ok 1 kfifo_diff_init
+[    3.966445]     ok 2 kfifo_diff_alloc
+[    3.976258]     ok 3 kfifo_diff_random_sequences
+[    3.978486]     ok 4 kfifo_diff_wrap_around
+[    3.987300]     ok 5 kfifo_diff_records
+[    3.991516]     ok 6 kfifo_diff_max_r
+[    3.998257]     ok 7 kfifo_diff_dma_prepare
+[    4.003258]     ok 8 kfifo_diff_dma_wrap
+[    4.005332]     ok 9 kfifo_diff_user_copy_fault
+[    4.095705] kfifo benchmark: 20000 iterations of in(64)+out(64), best of 3
+[    4.099790] kfifo benchmark: rust 14666617 ns, c 13132855 ns
+[    4.100969] kfifo benchmark: rust/c ratio 1116 per mille
+[    4.103039]     ok 10 kfifo_diff_benchmark
+[    4.103063] # kfifo_diff: pass:10 fail:0 skip:0 total:10
+[    4.104117] # Totals: pass:10 fail:0 skip:0 total:10
+[    4.105837] ok 8 kfifo_diff
+[    4.107708]     KTAP version 1
+[    4.108374]     # Subtest: crc16_rust
+[    4.109135]     # speed: normal
+[    4.109151]     1..5
+[    4.116266]     # crc16_rust_check_value.speed: normal
+[    4.116288]     ok 1 crc16_rust_check_value
+[    4.123200]     # crc16_rust_empty_buffer.speed: normal
+[    4.125430]     ok 2 crc16_rust_empty_buffer
+[    4.131276]     # crc16_rust_incremental.speed: normal
+[    4.132487]     ok 3 crc16_rust_incremental
+[    4.134131]     # crc16_rust_all_initial_values_single_byte.speed: normal
+[    4.135062]     ok 4 crc16_rust_all_initial_values_single_byte
+[    4.141283]     # crc16_rust_deterministic_prng.speed: normal
+[    4.142927]     ok 5 crc16_rust_deterministic_prng
+[    4.144109] # crc16_rust: pass:5 fail:0 skip:0 total:5
+[    4.145171] # Totals: pass:5 fail:0 skip:0 total:5
+[    4.146325] ok 9 crc16_rust
+[    4.148773]     KTAP version 1
+[    4.149392]     # Subtest: crc16_diff
+[    4.150625]     # module: crc16_diff_kunit
+[    4.150718]     1..2
+[    4.166345]     ok 1 crc16_diff_edge_cases
+[    4.197280]     ok 2 crc16_diff_random_streams
+[    4.198275] # crc16_diff: pass:2 fail:0 skip:0 total:2
+[    4.199893] # Totals: pass:2 fail:0 skip:0 total:2
+[    4.201002] ok 10 crc16_diff
+[    4.204248]     KTAP version 1
+[    4.204961]     # Subtest: crc_ccitt_rust
+[    4.206887]     # speed: normal
+[    4.206986]     1..7
+[    4.210224]     # crc_ccitt_rust_check_value.speed: normal
+[    4.210244]     ok 1 crc_ccitt_rust_check_value
+[    4.220394]     # crc_ccitt_rust_check_value_init_ffff.speed: normal
+[    4.222263]     ok 2 crc_ccitt_rust_check_value_init_ffff
+[    4.224781]     # crc_ccitt_rust_empty_buffer.speed: normal
+[    4.226666]     ok 3 crc_ccitt_rust_empty_buffer
+[    4.228919]     # crc_ccitt_rust_incremental.speed: normal
+[    4.230145]     ok 4 crc_ccitt_rust_incremental
+[    4.242211]     # crc_ccitt_rust_all_initial_values_single_byte.speed: normal
+[    4.243448]     ok 5 crc_ccitt_rust_all_initial_values_single_byte
+[    4.248190]     # crc_ccitt_rust_table_matches_bitwise.speed: normal
+[    4.251109]     ok 6 crc_ccitt_rust_table_matches_bitwise
+[    4.260495]     # crc_ccitt_rust_deterministic_prng.speed: normal
+[    4.262482]     ok 7 crc_ccitt_rust_deterministic_prng
+[    4.264838] # crc_ccitt_rust: pass:7 fail:0 skip:0 total:7
+[    4.266295] # Totals: pass:7 fail:0 skip:0 total:7
+[    4.268198] ok 11 crc_ccitt_rust
+[    4.270298]     KTAP version 1
+[    4.271014]     # Subtest: crc_ccitt_diff
+[    4.272095]     # module: crc_ccitt_diff_kunit
+[    4.272202]     1..3
+[    4.280255]     ok 1 crc_ccitt_diff_table
+[    4.287645]     ok 2 crc_ccitt_diff_edge_cases
+[    4.321281]     ok 3 crc_ccitt_diff_random_streams
+[    4.322937] # crc_ccitt_diff: pass:3 fail:0 skip:0 total:3
+[    4.324042] # Totals: pass:3 fail:0 skip:0 total:3
+[    4.325648] ok 12 crc_ccitt_diff
+[    4.329632]     KTAP version 1
+[    4.330805]     # Subtest: crc
+[    4.331863]     # module: crc_kunit
+[    4.333526]     1..8
+[    4.656589] hrtimer: interrupt took 29334 ns
+[    5.082836]     ok 1 crc16_test
+[    5.083451]     ok 2 crc16_benchmark # SKIP not enabled
+[    5.536666]     ok 3 crc32_le_test
+[    5.542599]     ok 4 crc32_le_benchmark # SKIP not enabled
+[    6.493516]     ok 5 crc32_be_test
+[    6.498288]     ok 6 crc32_be_benchmark # SKIP not enabled
+[    7.375709]     ok 7 crc32c_test
+[    7.381981]     ok 8 crc32c_benchmark # SKIP not enabled
+[    7.382898] # crc: pass:4 fail:0 skip:4 total:8
+[    7.384457] # Totals: pass:4 fail:0 skip:4 total:8
+[    7.385613] ok 13 crc
+[    7.387267]     KTAP version 1
+[    7.388108]     # Subtest: kfifo
+[    7.389338]     # module: kfifo_kunit
+[    7.389352]     1..10
+[    7.391390]     ok 1 kfifo_test_reset_should_clear_the_fifo
+[    7.391850]     ok 2 kfifo_test_define_should_define_an_empty_fifo
+[    7.394463]     ok 3 kfifo_test_len_should_ret_n_of_stored_elements
+[    7.397025]     ok 4 kfifo_test_put_should_insert_and_get_should_pop
+[    7.402988]     ok 5 kfifo_test_in_should_insert_multiple_elements
+[    7.410795]     ok 6 kfifo_test_out_should_pop_multiple_elements
+[    7.415293]     ok 7 kfifo_test_dec_init_should_define_an_empty_fifo
+[    7.417155]     ok 8 kfifo_test_define_should_equal_declare_init
+[    7.425225]     ok 9 kfifo_test_alloc_should_initiliaze_a_ptr_fifo
+[    7.432650]     ok 10 kfifo_test_peek_should_not_remove_elements
+[    7.433975] # kfifo: pass:10 fail:0 skip:0 total:10
+[    7.435779] # Totals: pass:10 fail:0 skip:0 total:10
+[    7.436774] ok 14 kfifo
+[    7.439088]     KTAP version 1
+[    7.439741]     # Subtest: bitmap_diff
+[    7.440656]     # module: bitmap_diff_kunit
+[    7.440668]     1..11
+[    7.448876]     ok 1 bitmap_diff_sizes
+[    7.459255]     ok 2 bitmap_diff_set_clear
+[    7.465677]     ok 3 bitmap_diff_shifts
+[    7.474672]     ok 4 bitmap_diff_cut
+[    7.482478]     ok 5 bitmap_diff_cut_out_of_range
+[    7.494491]     ok 6 bitmap_diff_find_next_zero_area
+[    7.499673]     ok 7 bitmap_diff_remap
+[    7.503666]     ok 8 bitmap_diff_arr32
+[    7.515635]     ok 9 bitmap_diff_alloc
+[    7.523746]     ok 10 bitmap_diff_alloc_node
+[    7.540640] bitmap benchmark: 2000 iterations over 1024 bits, best of 3
+[    7.543470] bitmap benchmark: all operations, rust 2321643 ns, c 2527854 ns, ratio 918 per mille
+[    7.558039] bitmap benchmark: without the weight helpers, rust 1768847 ns, c 2326561 ns, ratio 760 per mille
+[    7.561097]     ok 11 bitmap_diff_benchmark
+[    7.561122] # bitmap_diff: pass:11 fail:0 skip:0 total:11
+[    7.562161] # Totals: pass:11 fail:0 skip:0 total:11
+[    7.564125] ok 15 bitmap_diff
+[    7.566218]     KTAP version 1
+[    7.567018]     # Subtest: refcount_rust
+[    7.568125]     # speed: normal
+[    7.568268]     1..4
+[    7.575506]     # dec_if_one_ignores_a_saturated_count.speed: normal
+[    7.575537]     ok 1 dec_if_one_ignores_a_saturated_count
+[    7.587226]     # dec_not_one_refuses_a_count_of_one.speed: normal
+[    7.589064]     ok 2 dec_not_one_refuses_a_count_of_one
+[    7.591236]     # dec_not_one_decrements_a_larger_count.speed: normal
+[    7.592518]     ok 3 dec_not_one_decrements_a_larger_count
+[    7.601228]     # dec_not_one_leaves_a_saturated_count_alone.speed: normal
+[    7.602873]     ok 4 dec_not_one_leaves_a_saturated_count_alone
+[    7.604660] # refcount_rust: pass:4 fail:0 skip:0 total:4
+[    7.606092] # Totals: pass:4 fail:0 skip:0 total:4
+[    7.607625] ok 16 refcount_rust
+[    7.609839]     KTAP version 1
+[    7.610643]     # Subtest: fvs_refcount
+[    7.611649]     # module: fvs_refcount_adversarial_kunit
+[    7.611745]     1..10
+[    7.620102]     ok 1 fvs_sweep_dec_if_one
+[    7.620446] rust_kernel: refcount_t: underflow; use-after-free.
+[    7.623657] ------------[ cut here ]------------
+[    7.625259] WARNING: CPU: 0 PID: 255 at /build/ferret/src/rust/kernel/sync/refcount.rs:278 _RNvMNtNtCshc5sK6KjdJJ_6kernel4sync8refcountNtB2_8Refcount15try_dec_not_one+0xd9/0xf0
+[    7.632670] Modules linked in:
+[    7.633955] CPU: 0 UID: 0 PID: 255 Comm: kunit_try_catch Tainted: G                 N  6.18.57-ferret-rust #1 PREEMPT(voluntary) 
+[    7.637695] Tainted: [N]=TEST
+[    7.638786] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.16.3-debian-1.16.3-2 04/01/2014
+[    7.643785] RIP: 0010:_RNvMNtNtCshc5sK6KjdJJ_6kernel4sync8refcountNtB2_8Refcount15try_dec_not_one+0xd9/0xf0
+[    7.646848] Code: 24 08 48 89 44 24 20 48 c7 44 24 28 00 00 00 00 48 8d 54 24 10 48 c7 c7 d0 36 67 8c 48 c7 c6 87 7e c7 8c 31 c0 e8 47 16 a0 ff <0f> 0b 89 d8 48 83 c4 40 5b 41 5e 41 5f c3 cc cc cc cc 0f 1f 44 00
+[    7.652916] RSP: 0018:ff348e0b8030fdc0 EFLAGS: 00000246
+[    7.654222] RAX: 0000000000000033 RBX: ff348e0b80013c01 RCX: 5d2254542e004800
+[    7.656799] RDX: 0000000000000002 RSI: 00000000ffffdfff RDI: ffffffff8d087b00
+[    7.658385] RBP: 0000000080013c01 R08: 0000000000001fff R09: ffffffff8d057b00
+[    7.660582] R10: 0000000000005ffd R11: 0000000000000004 R12: 0000000000000000
+[    7.662356] R13: 0000000000000024 R14: ff348e0b8030fe3c R15: ff348e0b8030fdc4
+[    7.664306] FS:  0000000000000000(0000) GS:ff1f58b1f0118000(0000) knlGS:0000000000000000
+[    7.666276] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[    7.667651] CR2: 00fffffffffff000 CR3: 000000003062c000 CR4: 0000000000751ef0
+[    7.669366] PKRU: 55555554
+[    7.670350] Call Trace:
+[    7.671589]  <TASK>
+[    7.672365]  fvs_sweep_dec_not_one+0x84/0x410
+[    7.673821]  kunit_try_run_case+0x8f/0x190
+[    7.674996]  kunit_generic_run_threadfn_adapter+0x1d/0x40
+[    7.676721]  ? __pfx_kunit_generic_run_threadfn_adapter+0x10/0x10
+[    7.678297]  kthread+0x209/0x250
+[    7.679523]  ? __pfx_kthread+0x10/0x10
+[    7.680697]  ret_from_fork+0xbe/0x170
+[    7.681704]  ? __pfx_kthread+0x10/0x10
+[    7.682677]  ret_from_fork_asm+0x1a/0x30
+[    7.683764]  </TASK>
+[    7.684338] ---[ end trace 0000000000000000 ]---
+[    7.686080] ------------[ cut here ]------------
+[    7.687204] refcount_t: underflow; use-after-free.
+[    7.690551] WARNING: CPU: 0 PID: 255 at lib/refcount.c:87 refcount_dec_not_one_c_ref+0x4f/0x60
+[    7.692601] Modules linked in:
+[    7.693454] CPU: 0 UID: 0 PID: 255 Comm: kunit_try_catch Tainted: G        W        N  6.18.57-ferret-rust #1 PREEMPT(voluntary) 
+[    7.696955] Tainted: [W]=WARN, [N]=TEST
+[    7.697894] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.16.3-debian-1.16.3-2 04/01/2014
+[    7.700889] RIP: 0010:refcount_dec_not_one_c_ref+0x4f/0x60
+[    7.702167] Code: db eb 09 80 3d 33 7c 7f 01 00 74 09 89 d8 5b c3 cc cc cc cc cc c6 05 21 7c 7f 01 01 90 48 c7 c7 d3 ce d1 8c e8 52 af a0 ff 90 <0f> 0b 90 90 eb dc 66 66 2e 0f 1f 84 00 00 00 00 00 90 90 90 90 90
+[    7.708273] RSP: 0018:ff348e0b8030fe10 EFLAGS: 00000246
+[    7.709703] RAX: 5d2254542e004800 RBX: ff348e0b80013c01 RCX: 5d2254542e004800
+[    7.711275] RDX: 0000000000000002 RSI: 00000000ffffdfff RDI: ffffffff8d087b00
+[    7.714034] RBP: 0000000080013c01 R08: 0000000000001fff R09: ffffffff8d057b00
+[    7.715957] R10: 0000000000005ffd R11: 0000000000000004 R12: 0000000000000000
+[    7.717792] R13: 0000000000000024 R14: ff348e0b8030fe3c R15: ff348e0b8030fe38
+[    7.719549] FS:  0000000000000000(0000) GS:ff1f58b1f0118000(0000) knlGS:0000000000000000
+[    7.721488] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[    7.723031] CR2: 00fffffffffff000 CR3: 000000003062c000 CR4: 0000000000751ef0
+[    7.725536] PKRU: 55555554
+[    7.726299] Call Trace:
+[    7.726841]  <TASK>
+[    7.727481]  fvs_sweep_dec_not_one+0x8e/0x410
+[    7.728582]  kunit_try_run_case+0x8f/0x190
+[    7.729520]  kunit_generic_run_threadfn_adapter+0x1d/0x40
+[    7.731340]  ? __pfx_kunit_generic_run_threadfn_adapter+0x10/0x10
+[    7.732964]  kthread+0x209/0x250
+[    7.733795]  ? __pfx_kthread+0x10/0x10
+[    7.734639]  ret_from_fork+0xbe/0x170
+[    7.735508]  ? __pfx_kthread+0x10/0x10
+[    7.736271]  ret_from_fork_asm+0x1a/0x30
+[    7.737532]  </TASK>
+[    7.738026] ---[ end trace 0000000000000000 ]---
+[    7.739675] kunit_try_catch (255) used greatest stack depth: 13424 bytes left
+[    7.741260]     ok 2 fvs_sweep_dec_not_one
+[    7.741709] rust_kernel: refcount_t: saturated; leaking memory.
+[    7.744509] ------------[ cut here ]------------
+[    7.745636] WARNING: CPU: 0 PID: 257 at /build/ferret/src/rust/kernel/sync/refcount.rs:220 _RNvMNtNtCshc5sK6KjdJJ_6kernel4sync8refcountNtB2_8Refcount13warn_saturate+0x2bc/0x350
+[    7.751301] Modules linked in:
+[    7.752086] CPU: 0 UID: 0 PID: 257 Comm: kunit_try_catch Tainted: G        W        N  6.18.57-ferret-rust #1 PREEMPT(voluntary) 
+[    7.756051] Tainted: [W]=WARN, [N]=TEST
+[    7.756948] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.16.3-debian-1.16.3-2 04/01/2014
+[    7.759987] RIP: 0010:_RNvMNtNtCshc5sK6KjdJJ_6kernel4sync8refcountNtB2_8Refcount13warn_saturate+0x2bc/0x350
+[    7.763323] Code: 24 08 48 89 44 24 20 48 c7 44 24 28 00 00 00 00 48 8d 54 24 10 48 c7 c7 d0 36 67 8c 48 c7 c6 87 7e c7 8c 31 c0 e8 c4 17 a0 ff <0f> 0b eb 7e c7 44 24 0c 00 00 00 00 48 8d 74 24 0c 48 c7 c7 8c be
+[    7.770121] RSP: 0018:ff348e0b8031fce0 EFLAGS: 00000246
+[    7.771248] RAX: 0000000000000033 RBX: 0000000000000000 RCX: 053a25541ecc1a00
+[    7.773578] RDX: 0000000000000002 RSI: 00000000ffffdfff RDI: ffffffff8d087b00
+[    7.775087] RBP: 0000000000000000 R08: 0000000000001fff R09: ffffffff8d057b00
+[    7.777173] R10: 0000000000005ffd R11: 0000000000000004 R12: 00000000c0000000
+[    7.779650] R13: 0000000000000000 R14: ff348e0b8031fe3c R15: ff348e0b8031fe38
+[    7.782142] FS:  0000000000000000(0000) GS:ff1f58b1f0118000(0000) knlGS:0000000000000000
+[    7.785130] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[    7.787166] CR2: 00fffffffffff000 CR3: 000000003062c000 CR4: 0000000000751ef0
+[    7.789173] PKRU: 55555554
+[    7.790234] Call Trace:
+[    7.791077]  <TASK>
+[    7.791633]  ? update_load_avg+0x1da/0x820
+[    7.792594]  ? set_next_entity+0x69/0x1d0
+[    7.794002]  ? __switch_to+0x15b/0x590
+[    7.795322]  fvs_sweep_warn_saturate+0x6b/0x240
+[    7.796339]  kunit_try_run_case+0x8f/0x190
+[    7.797731]  kunit_generic_run_threadfn_adapter+0x1d/0x40
+[    7.799540]  ? __pfx_kunit_generic_run_threadfn_adapter+0x10/0x10
+[    7.801666]  kthread+0x209/0x250
+[    7.802865]  ? __pfx_kthread+0x10/0x10
+[    7.804313]  ret_from_fork+0xbe/0x170
+[    7.805255]  ? __pfx_kthread+0x10/0x10
+[    7.806551]  ret_from_fork_asm+0x1a/0x30
+[    7.807923]  </TASK>
+[    7.808574] ---[ end trace 0000000000000000 ]---
+[    7.811646] ------------[ cut here ]------------
+[    7.812854] refcount_t: saturated; leaking memory.
+[    7.814265] WARNING: CPU: 0 PID: 257 at lib/refcount.c:19 refcount_warn_saturate_c_ref+0xe0/0x140
+[    7.817031] Modules linked in:
+[    7.818356] CPU: 0 UID: 0 PID: 257 Comm: kunit_try_catch Tainted: G        W        N  6.18.57-ferret-rust #1 PREEMPT(voluntary) 
+[    7.821964] Tainted: [W]=WARN, [N]=TEST
+[    7.823442] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.16.3-debian-1.16.3-2 04/01/2014
+[    7.825877] RIP: 0010:refcount_warn_saturate_c_ref+0xe0/0x140
+[    7.827202] Code: 90 90 c3 cc cc cc cc cc 80 3d 17 7d 7f 01 00 0f 85 64 ff ff ff c6 05 0a 7d 7f 01 01 90 48 c7 c7 e6 80 c7 8c e8 41 b0 a0 ff 90 <0f> 0b 90 90 c3 cc cc cc cc cc 80 3d f0 7c 7f 01 00 0f 85 38 ff ff
+[    7.833413] RSP: 0018:ff348e0b8031fe18 EFLAGS: 00000246
+[    7.835101] RAX: 053a25541ecc1a00 RBX: ff348e0b80013c08 RCX: 053a25541ecc1a00
+[    7.837554] RDX: 0000000000000002 RSI: 00000000ffffdfff RDI: ffffffff8d087b00
+[    7.839413] RBP: 0000000000000000 R08: 0000000000001fff R09: ffffffff8d057b00
+[    7.841562] R10: 0000000000005ffd R11: 0000000000000004 R12: 00000000c0000000
+[    7.843140] R13: 0000000000000000 R14: ff348e0b8031fe3c R15: ff348e0b8031fe38
+[    7.845268] FS:  0000000000000000(0000) GS:ff1f58b1f0118000(0000) knlGS:0000000000000000
+[    7.847804] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[    7.849080] CR2: 00fffffffffff000 CR3: 000000003062c000 CR4: 0000000000751ef0
+[    7.851402] PKRU: 55555554
+[    7.852238] Call Trace:
+[    7.853159]  <TASK>
+[    7.854034]  fvs_sweep_warn_saturate+0x75/0x240
+[    7.855903]  kunit_try_run_case+0x8f/0x190
+[    7.856938]  kunit_generic_run_threadfn_adapter+0x1d/0x40
+[    7.858714]  ? __pfx_kunit_generic_run_threadfn_adapter+0x10/0x10
+[    7.861056]  kthread+0x209/0x250
+[    7.862351]  ? __pfx_kthread+0x10/0x10
+[    7.863338]  ret_from_fork+0xbe/0x170
+[    7.864641]  ? __pfx_kthread+0x10/0x10
+[    7.865455]  ret_from_fork_asm+0x1a/0x30
+[    7.866281]  </TASK>
+[    7.866852] ---[ end trace 0000000000000000 ]---
+[    7.868641] rust_kernel: refcount_t: saturated; leaking memory.
+[    7.870042] ------------[ cut here ]------------
+[    7.871342] WARNING: CPU: 0 PID: 257 at /build/ferret/src/rust/kernel/sync/refcount.rs:226 _RNvMNtNtCshc5sK6KjdJJ_6kernel4sync8refcountNtB2_8Refcount13warn_saturate+0x142/0x350
+[    7.876376] Modules linked in:
+[    7.877187] CPU: 0 UID: 0 PID: 257 Comm: kunit_try_catch Tainted: G        W        N  6.18.57-ferret-rust #1 PREEMPT(voluntary) 
+[    7.881575] Tainted: [W]=WARN, [N]=TEST
+[    7.882612] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.16.3-debian-1.16.3-2 04/01/2014
+[    7.885565] RIP: 0010:_RNvMNtNtCshc5sK6KjdJJ_6kernel4sync8refcountNtB2_8Refcount13warn_saturate+0x142/0x350
+[    7.889156] Code: 24 08 48 89 44 24 50 48 c7 44 24 58 00 00 00 00 48 8d 54 24 40 48 c7 c7 d0 36 67 8c 48 c7 c6 87 7e c7 8c 31 c0 e8 3e 19 a0 ff <0f> 0b e9 f5 01 00 00 c7 44 24 0c 00 00 00 00 48 8d 74 24 0c 48 c7
+[    7.895648] RSP: 0018:ff348e0b8031fce0 EFLAGS: 00000246
+[    7.897087] RAX: 0000000000000033 RBX: 0000000000000001 RCX: 053a25541ecc1a00
+[    7.899256] RDX: 0000000000000002 RSI: 00000000ffffdfff RDI: ffffffff8d087b00
+[    7.901330] RBP: 0000000000000001 R08: 0000000000001fff R09: ffffffff8d057b00
+[    7.903550] R10: 0000000000005ffd R11: 0000000000000004 R12: 00000000c0000000
+[    7.905345] R13: 0000000000000004 R14: ff348e0b8031fe3c R15: ff348e0b8031fe38
+[    7.907645] FS:  0000000000000000(0000) GS:ff1f58b1f0118000(0000) knlGS:0000000000000000
+[    7.909657] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[    7.911020] CR2: 00fffffffffff000 CR3: 000000003062c000 CR4: 0000000000751ef0
+[    7.912926] PKRU: 55555554
+[    7.913830] Call Trace:
+[    7.914514]  <TASK>
+[    7.915061]  ? nbcon_cpu_emergency_exit+0x9/0x40
+[    7.916791]  ? refcount_warn_saturate_c_ref+0xe0/0x140
+[    7.918313]  ? refcount_warn_saturate_c_ref+0xe2/0x140
+[    7.920012]  ? sysvec_apic_timer_interrupt+0xe/0x80
+[    7.921643]  ? refcount_warn_saturate_c_ref+0xe2/0x140
+[    7.923113]  fvs_sweep_warn_saturate+0x6b/0x240
+[    7.924553]  kunit_try_run_case+0x8f/0x190
+[    7.925710]  kunit_generic_run_threadfn_adapter+0x1d/0x40
+[    7.927292]  ? __pfx_kunit_generic_run_threadfn_adapter+0x10/0x10
+[    7.929424]  kthread+0x209/0x250
+[    7.930285]  ? __pfx_kthread+0x10/0x10
+[    7.931675]  ret_from_fork+0xbe/0x170
+[    7.933100]  ? __pfx_kthread+0x10/0x10
+[    7.934059]  ret_from_fork_asm+0x1a/0x30
+[    7.935438]  </TASK>
+[    7.935947] ---[ end trace 0000000000000000 ]---
+[    7.937609] ------------[ cut here ]------------
+[    7.938797] refcount_t: saturated; leaking memory.
+[    7.940207] WARNING: CPU: 0 PID: 257 at lib/refcount.c:22 refcount_warn_saturate_c_ref+0x64/0x140
+[    7.942875] Modules linked in:
+[    7.943757] CPU: 0 UID: 0 PID: 257 Comm: kunit_try_catch Tainted: G        W        N  6.18.57-ferret-rust #1 PREEMPT(voluntary) 
+[    7.947562] Tainted: [W]=WARN, [N]=TEST
+[    7.948542] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.16.3-debian-1.16.3-2 04/01/2014
+[    7.951410] RIP: 0010:refcount_warn_saturate_c_ref+0x64/0x140
+[    7.952823] Code: 00 00 00 83 fe 01 0f 85 a4 00 00 00 80 3d 90 7d 7f 01 00 75 e0 c6 05 87 7d 7f 01 01 90 48 c7 c7 e6 80 c7 8c e8 bd b0 a0 ff 90 <0f> 0b 90 90 c3 cc cc cc cc cc 80 3d 69 7d 7f 01 00 75 b8 c6 05 60
+[    7.959202] RSP: 0018:ff348e0b8031fe18 EFLAGS: 00000246
+[    7.960546] RAX: 053a25541ecc1a00 RBX: ff348e0b80013c08 RCX: 053a25541ecc1a00
+[    7.963182] RDX: 0000000000000002 RSI: 00000000ffffdfff RDI: ffffffff8d087b00
+[    7.965863] RBP: 0000000000000001 R08: 0000000000001fff R09: ffffffff8d057b00
+[    7.967607] R10: 0000000000005ffd R11: 0000000000000004 R12: 00000000c0000000
+[    7.970195] R13: 0000000000000004 R14: ff348e0b8031fe3c R15: ff348e0b8031fe38
+[    7.972824] FS:  0000000000000000(0000) GS:ff1f58b1f0118000(0000) knlGS:0000000000000000
+[    7.975807] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[    7.977353] CR2: 00fffffffffff000 CR3: 000000003062c000 CR4: 0000000000751ef0
+[    7.979898] PKRU: 55555554
+[    7.980941] Call Trace:
+[    7.981738]  <TASK>
+[    7.982276]  fvs_sweep_warn_saturate+0x75/0x240
+[    7.983989]  kunit_try_run_case+0x8f/0x190
+[    7.985391]  kunit_generic_run_threadfn_adapter+0x1d/0x40
+[    7.987162]  ? __pfx_kunit_generic_run_threadfn_adapter+0x10/0x10
+[    7.989301]  kthread+0x209/0x250
+[    7.990439]  ? __pfx_kthread+0x10/0x10
+[    7.991364]  ret_from_fork+0xbe/0x170
+[    7.992148]  ? __pfx_kthread+0x10/0x10
+[    7.993294]  ret_from_fork_asm+0x1a/0x30
+[    7.994668]  </TASK>
+[    7.995258] ---[ end trace 0000000000000000 ]---
+[    7.996238] rust_kernel: refcount_t: addition on 0; use-after-free.
+[    7.998084] ------------[ cut here ]------------
+[    7.999289] WARNING: CPU: 0 PID: 257 at /build/ferret/src/rust/kernel/sync/refcount.rs:229 _RNvMNtNtCshc5sK6KjdJJ_6kernel4sync8refcountNtB2_8Refcount13warn_saturate+0x1c0/0x350
+[    8.004641] Modules linked in:
+[    8.005726] CPU: 0 UID: 0 PID: 257 Comm: kunit_try_catch Tainted: G        W        N  6.18.57-ferret-rust #1 PREEMPT(voluntary) 
+[    8.009603] Tainted: [W]=WARN, [N]=TEST
+[    8.010389] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.16.3-debian-1.16.3-2 04/01/2014
+[    8.012438] RIP: 0010:_RNvMNtNtCshc5sK6KjdJJ_6kernel4sync8refcountNtB2_8Refcount13warn_saturate+0x1c0/0x350
+[    8.014985] Code: 80 00 00 00 48 c7 84 24 88 00 00 00 00 00 00 00 48 8d 54 24 70 48 c7 c7 d0 36 67 8c 48 c7 c6 87 7e c7 8c 31 c0 e8 c0 18 a0 ff <0f> 0b e9 77 01 00 00 c7 44 24 0c 00 00 00 00 48 8d 74 24 0c 48 c7
+[    8.021188] RSP: 0018:ff348e0b8031fce0 EFLAGS: 00000246
+[    8.022458] RAX: 0000000000000037 RBX: 0000000000000002 RCX: 053a25541ecc1a00
+[    8.025159] RDX: 0000000000000002 RSI: 00000000ffffdfff RDI: ffffffff8d087b00
+[    8.027812] RBP: 0000000000000002 R08: 0000000000001fff R09: ffffffff8d057b00
+[    8.030378] R10: 0000000000005ffd R11: 0000000000000004 R12: 00000000c0000000
+[    8.032402] R13: 0000000000000008 R14: ff348e0b8031fe3c R15: ff348e0b8031fe38
+[    8.034896] FS:  0000000000000000(0000) GS:ff1f58b1f0118000(0000) knlGS:0000000000000000
+[    8.037578] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[    8.038868] CR2: 00fffffffffff000 CR3: 000000003062c000 CR4: 0000000000751ef0
+[    8.040926] PKRU: 55555554
+[    8.041735] Call Trace:
+[    8.042464]  <TASK>
+[    8.042935]  ? nbcon_cpu_emergency_exit+0x9/0x40
+[    8.044186]  ? refcount_warn_saturate_c_ref+0x64/0x140
+[    8.045981]  ? refcount_warn_saturate_c_ref+0x66/0x140
+[    8.047822]  ? handle_bug+0x84/0x160
+[    8.049278]  ? exc_invalid_op+0x1a/0x50
+[    8.050709]  ? refcount_warn_saturate_c_ref+0x66/0x140
+[    8.051999]  fvs_sweep_warn_saturate+0x6b/0x240
+[    8.053218]  kunit_try_run_case+0x8f/0x190
+[    8.054151]  kunit_generic_run_threadfn_adapter+0x1d/0x40
+[    8.055841]  ? __pfx_kunit_generic_run_threadfn_adapter+0x10/0x10
+[    8.058097]  kthread+0x209/0x250
+[    8.059365]  ? __pfx_kthread+0x10/0x10
+[    8.060678]  ret_from_fork+0xbe/0x170
+[    8.062062]  ? __pfx_kthread+0x10/0x10
+[    8.063165]  ret_from_fork_asm+0x1a/0x30
+[    8.064437]  </TASK>
+[    8.064953] ---[ end trace 0000000000000000 ]---
+[    8.066580] ------------[ cut here ]------------
+[    8.067789] refcount_t: addition on 0; use-after-free.
+[    8.069972] WARNING: CPU: 0 PID: 257 at lib/refcount.c:25 refcount_warn_saturate_c_ref+0x8c/0x140
+[    8.072687] Modules linked in:
+[    8.073582] CPU: 0 UID: 0 PID: 257 Comm: kunit_try_catch Tainted: G        W        N  6.18.57-ferret-rust #1 PREEMPT(voluntary) 
+[    8.077509] Tainted: [W]=WARN, [N]=TEST
+[    8.078501] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.16.3-debian-1.16.3-2 04/01/2014
+[    8.081307] RIP: 0010:refcount_warn_saturate_c_ref+0x8c/0x140
+[    8.082989] Code: ff 90 0f 0b 90 90 c3 cc cc cc cc cc 80 3d 69 7d 7f 01 00 75 b8 c6 05 60 7d 7f 01 01 90 48 c7 c7 d4 32 ca 8c e8 95 b0 a0 ff 90 <0f> 0b 90 90 c3 cc cc cc cc cc 80 3d 42 7d 7f 01 00 75 90 c6 05 39
+[    8.088899] RSP: 0018:ff348e0b8031fe18 EFLAGS: 00000246
+[    8.090198] RAX: 053a25541ecc1a00 RBX: ff348e0b80013c08 RCX: 053a25541ecc1a00
+[    8.092695] RDX: 0000000000000002 RSI: 00000000ffffdfff RDI: ffffffff8d087b00
+[    8.094617] RBP: 0000000000000002 R08: 0000000000001fff R09: ffffffff8d057b00
+[    8.097341] R10: 0000000000005ffd R11: 0000000000000004 R12: 00000000c0000000
+[    8.099640] R13: 0000000000000008 R14: ff348e0b8031fe3c R15: ff348e0b8031fe38
+[    8.101388] FS:  0000000000000000(0000) GS:ff1f58b1f0118000(0000) knlGS:0000000000000000
+[    8.104112] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[    8.105520] CR2: 00fffffffffff000 CR3: 000000003062c000 CR4: 0000000000751ef0
+[    8.107265] PKRU: 55555554
+[    8.108092] Call Trace:
+[    8.108834]  <TASK>
+[    8.109333]  fvs_sweep_warn_saturate+0x75/0x240
+[    8.111012]  kunit_try_run_case+0x8f/0x190
+[    8.111998]  kunit_generic_run_threadfn_adapter+0x1d/0x40
+[    8.113763]  ? __pfx_kunit_generic_run_threadfn_adapter+0x10/0x10
+[    8.116074]  kthread+0x209/0x250
+[    8.116930]  ? __pfx_kthread+0x10/0x10
+[    8.118042]  ret_from_fork+0xbe/0x170
+[    8.118921]  ? __pfx_kthread+0x10/0x10
+[    8.119862]  ret_from_fork_asm+0x1a/0x30
+[    8.120781]  </TASK>
+[    8.121233] ---[ end trace 0000000000000000 ]---
+[    8.122942] rust_kernel: refcount_t: underflow; use-after-free.
+[    8.124331] ------------[ cut here ]------------
+[    8.125875] WARNING: CPU: 0 PID: 257 at /build/ferret/src/rust/kernel/sync/refcount.rs:232 _RNvMNtNtCshc5sK6KjdJJ_6kernel4sync8refcountNtB2_8Refcount13warn_saturate+0x247/0x350
+[    8.130497] Modules linked in:
+[    8.131410] CPU: 0 UID: 0 PID: 257 Comm: kunit_try_catch Tainted: G        W        N  6.18.57-ferret-rust #1 PREEMPT(voluntary) 
+[    8.135060] Tainted: [W]=WARN, [N]=TEST
+[    8.136008] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.16.3-debian-1.16.3-2 04/01/2014
+[    8.138392] RIP: 0010:_RNvMNtNtCshc5sK6KjdJJ_6kernel4sync8refcountNtB2_8Refcount13warn_saturate+0x247/0x350
+[    8.141771] Code: 00 48 c7 84 24 b8 00 00 00 00 00 00 00 48 8d 94 24 a0 00 00 00 48 c7 c7 d0 36 67 8c 48 c7 c6 87 7e c7 8c 31 c0 e8 39 18 a0 ff <0f> 0b e9 f0 00 00 00 c7 44 24 0c 00 00 00 00 48 8d 74 24 0c 48 c7
+[    8.148647] RSP: 0018:ff348e0b8031fce0 EFLAGS: 00000246
+[    8.150038] RAX: 0000000000000033 RBX: 0000000000000003 RCX: 053a25541ecc1a00
+[    8.152397] RDX: 0000000000000002 RSI: 00000000ffffdfff RDI: ffffffff8d087b00
+[    8.154310] RBP: 0000000000000003 R08: 0000000000001fff R09: ffffffff8d057b00
+[    8.156329] R10: 0000000000005ffd R11: 0000000000000004 R12: 00000000c0000000
+[    8.158309] R13: 000000000000000c R14: ff348e0b8031fe3c R15: ff348e0b8031fe38
+[    8.160267] FS:  0000000000000000(0000) GS:ff1f58b1f0118000(0000) knlGS:0000000000000000
+[    8.162575] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[    8.164055] CR2: 00fffffffffff000 CR3: 000000003062c000 CR4: 0000000000751ef0
+[    8.166164] PKRU: 55555554
+[    8.167112] Call Trace:
+[    8.167775]  <TASK>
+[    8.168270]  ? nbcon_cpu_emergency_exit+0x9/0x40
+[    8.169616]  ? refcount_warn_saturate_c_ref+0x8c/0x140
+[    8.170924]  ? refcount_warn_saturate_c_ref+0x8e/0x140
+[    8.172580]  ? handle_bug+0x84/0x160
+[    8.173561]  ? sysvec_apic_timer_interrupt+0xe/0x80
+[    8.174950]  ? refcount_warn_saturate_c_ref+0x8e/0x140
+[    8.176274]  fvs_sweep_warn_saturate+0x6b/0x240
+[    8.177594]  kunit_try_run_case+0x8f/0x190
+[    8.178573]  kunit_generic_run_threadfn_adapter+0x1d/0x40
+[    8.179836]  ? __pfx_kunit_generic_run_threadfn_adapter+0x10/0x10
+[    8.181345]  kthread+0x209/0x250
+[    8.182293]  ? __pfx_kthread+0x10/0x10
+[    8.183255]  ret_from_fork+0xbe/0x170
+[    8.184302]  ? __pfx_kthread+0x10/0x10
+[    8.185243]  ret_from_fork_asm+0x1a/0x30
+[    8.186755]  </TASK>
+[    8.187331] ---[ end trace 0000000000000000 ]---
+[    8.188475] ------------[ cut here ]------------
+[    8.190162] refcount_t: underflow; use-after-free.
+[    8.191347] WARNING: CPU: 0 PID: 257 at lib/refcount.c:28 refcount_warn_saturate_c_ref+0xb4/0x140
+[    8.193816] Modules linked in:
+[    8.194577] CPU: 0 UID: 0 PID: 257 Comm: kunit_try_catch Tainted: G        W        N  6.18.57-ferret-rust #1 PREEMPT(voluntary) 
+[    8.197893] Tainted: [W]=WARN, [N]=TEST
+[    8.198795] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.16.3-debian-1.16.3-2 04/01/2014
+[    8.201491] RIP: 0010:refcount_warn_saturate_c_ref+0xb4/0x140
+[    8.202773] Code: ff 90 0f 0b 90 90 c3 cc cc cc cc cc 80 3d 42 7d 7f 01 00 75 90 c6 05 39 7d 7f 01 01 90 48 c7 c7 d3 ce d1 8c e8 6d b0 a0 ff 90 <0f> 0b 90 90 c3 cc cc cc cc cc 80 3d 17 7d 7f 01 00 0f 85 64 ff ff
+[    8.208735] RSP: 0018:ff348e0b8031fe18 EFLAGS: 00000246
+[    8.210043] RAX: 053a25541ecc1a00 RBX: ff348e0b80013c08 RCX: 053a25541ecc1a00
+[    8.212360] RDX: 0000000000000002 RSI: 00000000ffffdfff RDI: ffffffff8d087b00
+[    8.214134] RBP: 0000000000000003 R08: 0000000000001fff R09: ffffffff8d057b00
+[    8.216079] R10: 0000000000005ffd R11: 0000000000000004 R12: 00000000c0000000
+[    8.218536] R13: 000000000000000c R14: ff348e0b8031fe3c R15: ff348e0b8031fe38
+[    8.220079] FS:  0000000000000000(0000) GS:ff1f58b1f0118000(0000) knlGS:0000000000000000
+[    8.222409] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[    8.224327] CR2: 00fffffffffff000 CR3: 000000003062c000 CR4: 0000000000751ef0
+[    8.226149] PKRU: 55555554
+[    8.226768] Call Trace:
+[    8.227304]  <TASK>
+[    8.227913]  fvs_sweep_warn_saturate+0x75/0x240
+[    8.229190]  kunit_try_run_case+0x8f/0x190
+[    8.230578]  kunit_generic_run_threadfn_adapter+0x1d/0x40
+[    8.231952]  ? __pfx_kunit_generic_run_threadfn_adapter+0x10/0x10
+[    8.233852]  kthread+0x209/0x250
+[    8.234649]  ? __pfx_kthread+0x10/0x10
+[    8.235544]  ret_from_fork+0xbe/0x170
+[    8.236445]  ? __pfx_kthread+0x10/0x10
+[    8.237277]  ret_from_fork_asm+0x1a/0x30
+[    8.238605]  </TASK>
+[    8.239171] ---[ end trace 0000000000000000 ]---
+[    8.240176] rust_kernel: refcount_t: decrement hit 0; leaking memory.
+[    8.242207] ------------[ cut here ]------------
+[    8.243179] WARNING: CPU: 0 PID: 257 at /build/ferret/src/rust/kernel/sync/refcount.rs:235 _RNvMNtNtCshc5sK6KjdJJ_6kernel4sync8refcountNtB2_8Refcount13warn_saturate+0xbc/0x350
+[    8.248295] Modules linked in:
+[    8.249061] CPU: 0 UID: 0 PID: 257 Comm: kunit_try_catch Tainted: G        W        N  6.18.57-ferret-rust #1 PREEMPT(voluntary) 
+[    8.251520] Tainted: [W]=WARN, [N]=TEST
+[    8.252321] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.16.3-debian-1.16.3-2 04/01/2014
+[    8.254597] RIP: 0010:_RNvMNtNtCshc5sK6KjdJJ_6kernel4sync8refcountNtB2_8Refcount13warn_saturate+0xbc/0x350
+[    8.257837] Code: 00 48 c7 84 24 e8 00 00 00 00 00 00 00 48 8d 94 24 d0 00 00 00 48 c7 c7 d0 36 67 8c 48 c7 c6 87 7e c7 8c 31 c0 e8 c4 19 a0 ff <0f> 0b e9 7b 02 00 00 85 db 0f 84 83 01 00 00 83 fb 01 0f 85 ec 01
+[    8.264143] RSP: 0018:ff348e0b8031fce0 EFLAGS: 00000246
+[    8.265505] RAX: 0000000000000039 RBX: 0000000000000004 RCX: 053a25541ecc1a00
+[    8.267275] RDX: 0000000000000002 RSI: 00000000ffffdfff RDI: ffffffff8d087b00
+[    8.269753] RBP: 0000000000000004 R08: 0000000000001fff R09: ffffffff8d057b00
+[    8.271575] R10: 0000000000005ffd R11: 0000000000000004 R12: 00000000c0000000
+[    8.273329] R13: 0000000000000010 R14: ff348e0b8031fe3c R15: ff348e0b8031fe38
+[    8.275742] FS:  0000000000000000(0000) GS:ff1f58b1f0118000(0000) knlGS:0000000000000000
+[    8.277798] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[    8.279268] CR2: 00fffffffffff000 CR3: 000000003062c000 CR4: 0000000000751ef0
+[    8.281737] PKRU: 55555554
+[    8.282493] Call Trace:
+[    8.283077]  <TASK>
+[    8.283612]  ? nbcon_cpu_emergency_exit+0x9/0x40
+[    8.284801]  ? refcount_warn_saturate_c_ref+0xb4/0x140
+[    8.286264]  ? refcount_warn_saturate_c_ref+0xb6/0x140
+[    8.287577]  ? handle_bug+0x84/0x160
+[    8.288481]  ? exc_invalid_op+0x1a/0x50
+[    8.289293]  ? refcount_warn_saturate_c_ref+0xb6/0x140
+[    8.290479]  fvs_sweep_warn_saturate+0x6b/0x240
+[    8.291480]  kunit_try_run_case+0x8f/0x190
+[    8.292375]  kunit_generic_run_threadfn_adapter+0x1d/0x40
+[    8.294081]  ? __pfx_kunit_generic_run_threadfn_adapter+0x10/0x10
+[    8.296143]  kthread+0x209/0x250
+[    8.297269]  ? __pfx_kthread+0x10/0x10
+[    8.298525]  ret_from_fork+0xbe/0x170
+[    8.299451]  ? __pfx_kthread+0x10/0x10
+[    8.300269]  ret_from_fork_asm+0x1a/0x30
+[    8.301596]  </TASK>
+[    8.302152] ---[ end trace 0000000000000000 ]---
+[    8.303322] ------------[ cut here ]------------
+[    8.304813] refcount_t: decrement hit 0; leaking memory.
+[    8.306147] WARNING: CPU: 0 PID: 257 at lib/refcount.c:31 refcount_warn_saturate_c_ref+0x12b/0x140
+[    8.309174] Modules linked in:
+[    8.310048] CPU: 0 UID: 0 PID: 257 Comm: kunit_try_catch Tainted: G        W        N  6.18.57-ferret-rust #1 PREEMPT(voluntary) 
+[    8.313823] Tainted: [W]=WARN, [N]=TEST
+[    8.314670] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.16.3-debian-1.16.3-2 04/01/2014
+[    8.317209] RIP: 0010:refcount_warn_saturate_c_ref+0x12b/0x140
+[    8.319235] Code: c7 c8 71 c1 8c e8 15 b0 a0 ff 90 0f 0b 90 90 c3 cc cc cc cc cc c6 05 c3 7c 7f 01 01 90 48 c7 c7 05 31 c4 8c e8 f6 af a0 ff 90 <0f> 0b 90 90 c3 cc cc cc cc cc 66 66 2e 0f 1f 84 00 00 00 00 00 90
+[    8.324927] RSP: 0018:ff348e0b8031fe18 EFLAGS: 00000246
+[    8.326221] RAX: 053a25541ecc1a00 RBX: ff348e0b80013c08 RCX: 053a25541ecc1a00
+[    8.328724] RDX: 0000000000000002 RSI: 00000000ffffdfff RDI: ffffffff8d087b00
+[    8.330445] RBP: 0000000000000004 R08: 0000000000001fff R09: ffffffff8d057b00
+[    8.333020] R10: 0000000000005ffd R11: 0000000000000004 R12: 00000000c0000000
+[    8.334641] R13: 0000000000000010 R14: ff348e0b8031fe3c R15: ff348e0b8031fe38
+[    8.336307] FS:  0000000000000000(0000) GS:ff1f58b1f0118000(0000) knlGS:0000000000000000
+[    8.338895] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[    8.340506] CR2: 00fffffffffff000 CR3: 000000003062c000 CR4: 0000000000751ef0
+[    8.342085] PKRU: 55555554
+[    8.342668] Call Trace:
+[    8.343299]  <TASK>
+[    8.343741]  fvs_sweep_warn_saturate+0x75/0x240
+[    8.344722]  kunit_try_run_case+0x8f/0x190
+[    8.345632]  kunit_generic_run_threadfn_adapter+0x1d/0x40
+[    8.346868]  ? __pfx_kunit_generic_run_threadfn_adapter+0x10/0x10
+[    8.348288]  kthread+0x209/0x250
+[    8.349266]  ? __pfx_kthread+0x10/0x10
+[    8.350272]  ret_from_fork+0xbe/0x170
+[    8.351530]  ? __pfx_kthread+0x10/0x10
+[    8.352533]  ret_from_fork_asm+0x1a/0x30
+[    8.353423]  </TASK>
+[    8.354137] ---[ end trace 0000000000000000 ]---
+[    8.355287] rust_kernel: refcount_t: unknown saturation event!?.
+[    8.357429] ------------[ cut here ]------------
+[    8.358776] WARNING: CPU: 0 PID: 257 at /build/ferret/src/rust/kernel/sync/refcount.rs:237 _RNvMNtNtCshc5sK6KjdJJ_6kernel4sync8refcountNtB2_8Refcount13warn_saturate+0x33c/0x350
+[    8.364156] Modules linked in:
+[    8.365314] CPU: 0 UID: 0 PID: 257 Comm: kunit_try_catch Tainted: G        W        N  6.18.57-ferret-rust #1 PREEMPT(voluntary) 
+[    8.368546] Tainted: [W]=WARN, [N]=TEST
+[    8.369891] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.16.3-debian-1.16.3-2 04/01/2014
+[    8.373042] RIP: 0010:_RNvMNtNtCshc5sK6KjdJJ_6kernel4sync8refcountNtB2_8Refcount13warn_saturate+0x33c/0x350
+[    8.376111] Code: 00 48 c7 84 24 18 01 00 00 00 00 00 00 48 8d 94 24 00 01 00 00 48 c7 c7 d0 36 67 8c 48 c7 c6 87 7e c7 8c 31 c0 e8 44 17 a0 ff <0f> 0b 48 81 c4 30 01 00 00 5b c3 cc cc cc cc 0f 1f 44 00 00 90 90
+[    8.381968] RSP: 0018:ff348e0b8031fce0 EFLAGS: 00000246
+[    8.383390] RAX: 0000000000000034 RBX: 0000000000000063 RCX: 053a25541ecc1a00
+[    8.386083] RDX: 0000000000000002 RSI: 00000000ffffdfff RDI: ffffffff8d087b00
+[    8.387989] RBP: 0000000000000004 R08: 0000000000001fff R09: ffffffff8d057b00
+[    8.389897] R10: 0000000000005ffd R11: 0000000000000004 R12: 00000000c0000000
+[    8.391827] R13: 0000000000000014 R14: ff348e0b8031fe3c R15: ff348e0b8031fe38
+[    8.393578] FS:  0000000000000000(0000) GS:ff1f58b1f0118000(0000) knlGS:0000000000000000
+[    8.395898] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[    8.397309] CR2: 00fffffffffff000 CR3: 000000003062c000 CR4: 0000000000751ef0
+[    8.399605] PKRU: 55555554
+[    8.400244] Call Trace:
+[    8.400823]  <TASK>
+[    8.401282]  ? nbcon_cpu_emergency_exit+0x9/0x40
+[    8.402760]  ? refcount_warn_saturate_c_ref+0x12b/0x140
+[    8.404062]  ? refcount_warn_saturate_c_ref+0x12d/0x140
+[    8.405584]  ? handle_bug+0x84/0x160
+[    8.406546]  ? exc_invalid_op+0x1a/0x50
+[    8.407457]  fvs_sweep_warn_saturate+0x149/0x240
+[    8.409133]  kunit_try_run_case+0x8f/0x190
+[    8.410214]  kunit_generic_run_threadfn_adapter+0x1d/0x40
+[    8.411994]  ? __pfx_kunit_generic_run_threadfn_adapter+0x10/0x10
+[    8.414216]  kthread+0x209/0x250
+[    8.415208]  ? __pfx_kthread+0x10/0x10
+[    8.416544]  ret_from_fork+0xbe/0x170
+[    8.417729]  ? __pfx_kthread+0x10/0x10
+[    8.418859]  ret_from_fork_asm+0x1a/0x30
+[    8.420078]  </TASK>
+[    8.420729] ---[ end trace 0000000000000000 ]---
+[    8.422004] ------------[ cut here ]------------
+[    8.423392] refcount_t: unknown saturation event!?.
+[    8.424769] WARNING: CPU: 0 PID: 257 at lib/refcount.c:34 refcount_warn_saturate_c_ref+0x10c/0x140
+[    8.427214] Modules linked in:
+[    8.428087] CPU: 0 UID: 0 PID: 257 Comm: kunit_try_catch Tainted: G        W        N  6.18.57-ferret-rust #1 PREEMPT(voluntary) 
+[    8.431762] Tainted: [W]=WARN, [N]=TEST
+[    8.432660] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.16.3-debian-1.16.3-2 04/01/2014
+[    8.435264] RIP: 0010:refcount_warn_saturate_c_ref+0x10c/0x140
+[    8.436746] Code: 90 90 c3 cc cc cc cc cc 80 3d f0 7c 7f 01 00 0f 85 38 ff ff ff c6 05 e3 7c 7f 01 01 90 48 c7 c7 c8 71 c1 8c e8 15 b0 a0 ff 90 <0f> 0b 90 90 c3 cc cc cc cc cc c6 05 c3 7c 7f 01 01 90 48 c7 c7 05
+[    8.442309] RSP: 0018:ff348e0b8031fe18 EFLAGS: 00000246
+[    8.443848] RAX: 053a25541ecc1a00 RBX: ff348e0b80013c08 RCX: 053a25541ecc1a00
+[    8.445662] RDX: 0000000000000002 RSI: 00000000ffffdfff RDI: ffffffff8d087b00
+[    8.447350] RBP: 0000000000000004 R08: 0000000000001fff R09: ffffffff8d057b00
+[    8.449898] R10: 0000000000005ffd R11: 0000000000000004 R12: 00000000c0000000
+[    8.451688] R13: 0000000000000014 R14: ff348e0b8031fe3c R15: ff348e0b8031fe38
+[    8.453470] FS:  0000000000000000(0000) GS:ff1f58b1f0118000(0000) knlGS:0000000000000000
+[    8.456309] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[    8.457972] CR2: 00fffffffffff000 CR3: 000000003062c000 CR4: 0000000000751ef0
+[    8.460105] PKRU: 55555554
+[    8.460774] Call Trace:
+[    8.461384]  <TASK>
+[    8.461868]  fvs_sweep_warn_saturate+0x158/0x240
+[    8.463012]  kunit_try_run_case+0x8f/0x190
+[    8.463968]  kunit_generic_run_threadfn_adapter+0x1d/0x40
+[    8.465727]  ? __pfx_kunit_generic_run_threadfn_adapter+0x10/0x10
+[    8.467973]  kthread+0x209/0x250
+[    8.469220]  ? __pfx_kthread+0x10/0x10
+[    8.470659]  ret_from_fork+0xbe/0x170
+[    8.471583]  ? __pfx_kthread+0x10/0x10
+[    8.472462]  ret_from_fork_asm+0x1a/0x30
+[    8.473879]  </TASK>
+[    8.474404] ---[ end trace 0000000000000000 ]---
+[    8.475836] kunit_try_catch (257) used greatest stack depth: 13200 bytes left
+[    8.476322]     ok 3 fvs_sweep_warn_saturate
+[    8.593304]     ok 4 fvs_sweep_dec_and_mutex_lock
+[    8.598712]     ok 5 fvs_sweep_dec_and_lock
+[    8.610714]     ok 6 fvs_sweep_dec_and_lock_irqsave
+[   10.046556]     ok 7 fvs_lock_failure_path_spinlock
+[   12.252195]     # fvs_lock_failure_path_irqsave: Test should be marked slow (runtime: 2.203901271s)
+[   12.257325]     ok 8 fvs_lock_failure_path_irqsave
+[   12.584903]     ok 9 fvs_lock_failure_path_mutex
+[   12.603759]     ok 10 fvs_random_differential
+[   12.605124] # fvs_refcount: pass:10 fail:0 skip:0 total:10
+[   12.605921] # Totals: pass:10 fail:0 skip:0 total:10
+[   12.607177] ok 17 fvs_refcount
+[   12.608934]     KTAP version 1
+[   12.609506]     # Subtest: fvs_refcount_adv
+[   12.610358]     # speed: normal
+[   12.610390]     1..8
+[   12.618275]     # kref_new_does_not_take_a_reference.speed: normal
+[   12.618296]     ok 1 kref_new_does_not_take_a_reference
+[   12.623875]     # two_handles_over_one_reference_release_the_object_early.speed: normal
+[   12.624944]     ok 2 two_handles_over_one_reference_release_the_object_early
+[   12.631313]     # get_on_a_saturated_count_takes_no_reference.speed: normal
+[   12.633396]     ok 3 get_on_a_saturated_count_takes_no_reference
+[   12.643385]     # get_on_a_dead_count_takes_no_reference.speed: normal
+[   12.644734]     ok 4 get_on_a_dead_count_takes_no_reference
+[   12.651312]     # into_raw_then_c_kref_put_releases_once.speed: normal
+[   12.652468]     ok 5 into_raw_then_c_kref_put_releases_once
+[   12.654514]     # kref_is_send_and_sync.speed: normal
+[   12.655749]     ok 6 kref_is_send_and_sync
+[   12.661334]     # dec_helpers_match_the_contract_model_on_the_boundaries.speed: normal
+[   12.662161]     ok 7 dec_helpers_match_the_contract_model_on_the_boundaries
+[   12.673262]     # dec_helpers_match_the_contract_model_over_a_reaching_distribution.speed: normal
+[   12.674863]     ok 8 dec_helpers_match_the_contract_model_over_a_reaching_distribution
+[   12.676953] # fvs_refcount_adv: pass:8 fail:0 skip:0 total:8
+[   12.678609] # Totals: pass:8 fail:0 skip:0 total:8
+[   12.679687] ok 18 fvs_refcount_adv
+[   12.681939]     KTAP version 1
+[   12.682543]     # Subtest: refcount_diff
+[   12.683239]     # module: refcount_diff_kunit
+[   12.683251]     1..9
+[   12.690759]     ok 1 refcount_diff_dec_if_one
+[   12.697364]     ok 2 refcount_diff_dec_not_one
+[   12.704267]     ok 3 refcount_diff_warn_saturate
+[   12.710323]     ok 4 refcount_diff_dec_and_mutex_lock
+[   12.713435]     ok 5 refcount_diff_dec_and_lock
+[   12.715160]     ok 6 refcount_diff_dec_and_lock_irqsave
+[   12.719620]     ok 7 refcount_diff_sequence
+[   12.728661] ferret refcount: rust phase 0: count 1 decrements 4000 refused 0 dropped 0 retries 0
+[   12.732314] ferret refcount: no retry in attempt 1 of 5: the workers did not overlap
+[   12.741043] ferret refcount: rust phase 0: count 1 decrements 4000 refused 0 dropped 0 retries 0
+[   12.742850] ferret refcount: no retry in attempt 2 of 5: the workers did not overlap
+[   12.750808] ferret refcount: rust phase 0: count 1 decrements 4000 refused 0 dropped 0 retries 0
+[   12.753546] ferret refcount: no retry in attempt 3 of 5: the workers did not overlap
+[   12.762988] ferret refcount: rust phase 0: count 1 decrements 4000 refused 0 dropped 0 retries 2
+[   12.764968] ferret refcount: retry path exercised: 2 retries (attempt 4 of 5)
+[   12.776641] ferret refcount: c_ref phase 0: count 1 decrements 4000 refused 0 dropped 0 retries 0
+[   12.785728] ferret refcount: rust phase 1: count 0 decrements 0 refused 0 dropped 1 retries 0
+[   12.792512] ferret refcount: c_ref phase 1: count 0 decrements 0 refused 0 dropped 1 retries 0
+[   12.804283]     ok 8 refcount_diff_concurrent
+[   12.805333] ferret refcount: property coverage: zero=65 one=78 two=76 saturated=71 int_max=68 if_one_success=14 not_one_refused=18 not_one_saturated=18 not_one_underflow=18 lock_taken=46
+[   12.812876]     ok 9 refcount_diff_property
+[   12.812898] # refcount_diff: pass:9 fail:0 skip:0 total:9
+[   12.813902] # Totals: pass:9 fail:0 skip:0 total:9
+[   12.815403] ok 19 refcount_diff
+[   12.824249] check access for rdinit=/init failed: -2, ignoring
+[   12.825982] md: Waiting for all devices to be available before autodetect
+[   12.829270] md: If you don't use raid, use raid=noautodetect
+[   12.830687] md: Autodetecting RAID arrays.
+[   12.831601] md: autorun ...
+[   12.832223] md: ... autorun DONE.
+[   12.872509] EXT4-fs (vda): recovery complete
+[   12.874466] EXT4-fs (vda): mounted filesystem 674e9254-334d-4103-8873-7bc9733f439d r/w with ordered data mode. Quota mode: none.
+[   12.878474] VFS: Mounted root (ext4 filesystem) on device 253:0.
+[   12.881253] devtmpfs: mounted
+[   13.235667] Freeing unused kernel image (initmem) memory: 2916K
+[   13.240022] Write protecting the kernel read-only data: 30720k
+[   13.245835] Freeing unused kernel image (text/rodata gap) memory: 592K
+[   13.255083] Freeing unused kernel image (rodata/data gap) memory: 1748K
+[   13.451486] x86/mm: Checked W+X mappings: passed, no W+X pages found.
+[   13.454391] Run /sbin/init as init process
 SELinux:  Could not open policy file <= /etc/selinux/targeted/policy/policy.35:  No such file or directory
-[    7.388898] systemd[1]: systemd 255.4-1ubuntu8.18 running in system mode (+PAM +AUDIT +SELINUX +APPARMOR +IMA +SMACK +SECCOMP +GCRYPT -GNUTLS +OPENSSL +ACL +BLKID +CURL +ELFUTILS +FIDO2 +IDN2 -IDN +IPTC +KMOD +LIBCRYPTSETUP +LIBFDISK +PCRE2 -PWQUALITY +P11KIT +QRENCODE +TPM2 +BZIP2 +LZ4 +XZ +ZLIB +ZSTD -BPF_FRAMEWORK -XKBCOMMON +UTMP +SYSVINIT default-hierarchy=unified)
-[    7.401120] systemd[1]: Detected virtualization qemu.
-[    7.404958] systemd[1]: Detected architecture x86-64.
+[   13.792666] systemd[1]: systemd 255.4-1ubuntu8.18 running in system mode (+PAM +AUDIT +SELINUX +APPARMOR +IMA +SMACK +SECCOMP +GCRYPT -GNUTLS +OPENSSL +ACL +BLKID +CURL +ELFUTILS +FIDO2 +IDN2 -IDN +IPTC +KMOD +LIBCRYPTSETUP +LIBFDISK +PCRE2 -PWQUALITY +P11KIT +QRENCODE +TPM2 +BZIP2 +LZ4 +XZ +ZLIB +ZSTD -BPF_FRAMEWORK -XKBCOMMON +UTMP +SYSVINIT default-hierarchy=unified)
+[   13.804846] systemd[1]: Detected virtualization qemu.
+[   13.807468] systemd[1]: Detected architecture x86-64.
 
 Welcome to [1mUbuntu 24.04.5 LTS[0m!
 
-[    7.472703] systemd[1]: Hostname set to <ferret>.
-[    7.610434] snapd-env-gener (249) used greatest stack depth: 13120 bytes left
-[    7.962954] open-vm-tools-a (255) used greatest stack depth: 12816 bytes left
-[    8.403800] mkdir (269) used greatest stack depth: 12432 bytes left
-[    8.619114] systemd-system- (267) used greatest stack depth: 12424 bytes left
-[    8.932350] cloud-init-gene (252) used greatest stack depth: 12352 bytes left
-[    9.873716] systemd[1]: Queued start job for default target multi-user.target.
-[    9.906846] systemd[1]: Created slice system-modprobe.slice - Slice /system/modprobe.
+[   13.819981] systemd[1]: Hostname set to <ferret>.
+[   13.960628] snapd-env-gener (349) used greatest stack depth: 13120 bytes left
+[   14.301810] open-vm-tools-a (355) used greatest stack depth: 12816 bytes left
+[   14.671527] sshd-socket-gen (357) used greatest stack depth: 12496 bytes left
+[   14.716471] systemd-cryptse (358) used greatest stack depth: 12424 bytes left
+[   16.532064] systemd[1]: Queued start job for default target multi-user.target.
+[   16.585350] systemd[1]: Created slice system-modprobe.slice - Slice /system/modprobe.
 [[0;32m  OK  [0m] Created slice [0;1;39msystem-modprobe.slice[0m - Slice /system/modprobe.
-[    9.915022] systemd[1]: Created slice system-serial\x2dgetty.slice - Slice /system/serial-getty.
+[   16.606214] systemd[1]: Created slice system-serial\x2dgetty.slice - Slice /system/serial-getty.
 [[0;32m  OK  [0m] Created slice [0;1;39msystem-serial\x2dget…slice[0m - Slice /system/serial-getty.
-[    9.919621] systemd[1]: Created slice user.slice - User and Session Slice.
+[   16.619744] systemd[1]: Created slice user.slice - User and Session Slice.
 [[0;32m  OK  [0m] Created slice [0;1;39muser.slice[0m - User and Session Slice.
-[    9.925285] systemd[1]: Started systemd-ask-password-wall.path - Forward Password Requests to Wall Directory Watch.
+[   16.631064] systemd[1]: Started systemd-ask-password-wall.path - Forward Password Requests to Wall Directory Watch.
 [[0;32m  OK  [0m] Started [0;1;39msystemd-ask-password-wall.…[0md Requests to Wall Directory Watch.
-[    9.934500] systemd[1]: Set up automount proc-sys-fs-binfmt_misc.automount - Arbitrary Executable File Formats File System Automount Point.
+[   16.647357] systemd[1]: Set up automount proc-sys-fs-binfmt_misc.automount - Arbitrary Executable File Formats File System Automount Point.
 [[0;32m  OK  [0m] Set up automount [0;1;39mproc-sys-fs-binfm…[0mormats File System Automount Point.
-[    9.941057] systemd[1]: Expecting device dev-ttyS0.device - /dev/ttyS0...
+[   16.659608] systemd[1]: Expecting device dev-ttyS0.device - /dev/ttyS0...
          Expecting device [0;1;39mdev-ttyS0.device[0m - /dev/ttyS0...
-[    9.945729] systemd[1]: Reached target integritysetup.target - Local Integrity Protected Volumes.
+[   16.670529] systemd[1]: Reached target integritysetup.target - Local Integrity Protected Volumes.
 [[0;32m  OK  [0m] Reached target [0;1;39mintegritysetup.targ…[0m Local Integrity Protected Volumes.
-[    9.951102] systemd[1]: Reached target slices.target - Slice Units.
+[   16.680636] systemd[1]: Reached target slices.target - Slice Units.
 [[0;32m  OK  [0m] Reached target [0;1;39mslices.target[0m - Slice Units.
-[    9.954419] systemd[1]: Reached target snapd.mounts-pre.target - Mounting snaps.
+[   16.687578] systemd[1]: Reached target snapd.mounts-pre.target - Mounting snaps.
 [[0;32m  OK  [0m] Reached target [0;1;39msnapd.mounts-pre.target[0m - Mounting snaps.
-[    9.958447] systemd[1]: Reached target snapd.mounts.target - Mounted snaps.
+[   16.696291] systemd[1]: Reached target snapd.mounts.target - Mounted snaps.
 [[0;32m  OK  [0m] Reached target [0;1;39msnapd.mounts.target[0m - Mounted snaps.
-[    9.962544] systemd[1]: Reached target swap.target - Swaps.
+[   16.704240] systemd[1]: Reached target swap.target - Swaps.
 [[0;32m  OK  [0m] Reached target [0;1;39mswap.target[0m - Swaps.
-[    9.966439] systemd[1]: Reached target veritysetup.target - Local Verity Protected Volumes.
+[   16.712816] systemd[1]: Reached target veritysetup.target - Local Verity Protected Volumes.
 [[0;32m  OK  [0m] Reached target [0;1;39mveritysetup.target[0m - Local Verity Protected Volumes.
-[    9.973176] systemd[1]: Listening on dm-event.socket - Device-mapper event daemon FIFOs.
+[   16.727014] systemd[1]: Listening on dm-event.socket - Device-mapper event daemon FIFOs.
 [[0;32m  OK  [0m] Listening on [0;1;39mdm-event.socket[0m - Device-mapper event daemon FIFOs.
-[    9.979089] systemd[1]: Listening on lvm2-lvmpolld.socket - LVM2 poll daemon socket.
+[   16.741794] systemd[1]: Listening on lvm2-lvmpolld.socket - LVM2 poll daemon socket.
 [[0;32m  OK  [0m] Listening on [0;1;39mlvm2-lvmpolld.socket[0m - LVM2 poll daemon socket.
-[    9.985835] systemd[1]: Listening on syslog.socket - Syslog Socket.
+[   16.755256] systemd[1]: Listening on syslog.socket - Syslog Socket.
 [[0;32m  OK  [0m] Listening on [0;1;39msyslog.socket[0m - Syslog Socket.
-[    9.989866] systemd[1]: Listening on systemd-fsckd.socket - fsck to fsckd communication Socket.
+[   16.766657] systemd[1]: Listening on systemd-fsckd.socket - fsck to fsckd communication Socket.
 [[0;32m  OK  [0m] Listening on [0;1;39msystemd-fsckd.socket[0m …fsck to fsckd communication Socket.
-[    9.995398] systemd[1]: Listening on systemd-initctl.socket - initctl Compatibility Named Pipe.
+[   16.777783] systemd[1]: Listening on systemd-initctl.socket - initctl Compatibility Named Pipe.
 [[0;32m  OK  [0m] Listening on [0;1;39msystemd-initctl.socke…[0m- initctl Compatibility Named Pipe.
-[   10.000622] systemd[1]: Listening on systemd-journald-dev-log.socket - Journal Socket (/dev/log).
+[   16.788254] systemd[1]: Listening on systemd-journald-dev-log.socket - Journal Socket (/dev/log).
 [[0;32m  OK  [0m] Listening on [0;1;39msystemd-journald-dev-…socket[0m - Journal Socket (/dev/log).
-[   10.005420] systemd[1]: Listening on systemd-journald.socket - Journal Socket.
+[   16.799953] systemd[1]: Listening on systemd-journald.socket - Journal Socket.
 [[0;32m  OK  [0m] Listening on [0;1;39msystemd-journald.socket[0m - Journal Socket.
-[   10.009932] systemd[1]: Listening on systemd-networkd.socket - Network Service Netlink Socket.
+[   16.812054] systemd[1]: Listening on systemd-networkd.socket - Network Service Netlink Socket.
 [[0;32m  OK  [0m] Listening on [0;1;39msystemd-networkd.socket[0m - Network Service Netlink Socket.
-[   10.014816] systemd[1]: systemd-pcrextend.socket - TPM2 PCR Extension (Varlink) was skipped because of an unmet condition check (ConditionSecurity=measured-uki).
-[   10.019578] systemd[1]: Listening on systemd-udevd-control.socket - udev Control Socket.
+[   16.820174] systemd[1]: systemd-pcrextend.socket - TPM2 PCR Extension (Varlink) was skipped because of an unmet condition check (ConditionSecurity=measured-uki).
+[   16.829741] systemd[1]: Listening on systemd-udevd-control.socket - udev Control Socket.
 [[0;32m  OK  [0m] Listening on [0;1;39msystemd-udevd-control.socket[0m - udev Control Socket.
-[   10.024455] systemd[1]: Listening on systemd-udevd-kernel.socket - udev Kernel Socket.
+[   16.841432] systemd[1]: Listening on systemd-udevd-kernel.socket - udev Kernel Socket.
 [[0;32m  OK  [0m] Listening on [0;1;39msystemd-udevd-kernel.socket[0m - udev Kernel Socket.
-[   10.067854] systemd[1]: Mounting dev-hugepages.mount - Huge Pages File System...
+[   16.882160] systemd[1]: Mounting dev-hugepages.mount - Huge Pages File System...
          Mounting [0;1;39mdev-hugepages.mount[0m - Huge Pages File System...
-[   10.136799] systemd[1]: Mounting dev-mqueue.mount - POSIX Message Queue File System...
+[   16.983337] systemd[1]: Mounting dev-mqueue.mount - POSIX Message Queue File System...
          Mounting [0;1;39mdev-mqueue.mount[0m - POSIX Message Queue File System...
-[   10.170605] systemd[1]: Mounting sys-kernel-debug.mount - Kernel Debug File System...
+[   17.199664] systemd[1]: Mounting sys-kernel-debug.mount - Kernel Debug File System...
          Mounting [0;1;39msys-kernel-debug.mount[0m - Kernel Debug File System...
-[   10.307900] systemd[1]: Mounting sys-kernel-tracing.mount - Kernel Trace File System...
+[   17.343042] systemd[1]: Mounting sys-kernel-tracing.mount - Kernel Trace File System...
          Mounting [0;1;39msys-kernel-tracing.mount[0m - Kernel Trace File System...
-[   10.414708] systemd[1]: systemd-journald.service: unit configures an IP firewall, but the local system does not support BPF/cgroup firewalling.
-[   10.418326] systemd[1]: systemd-journald.service: (This warning is only shown for the first unit using IP firewalling.)
-[   10.435833] systemd[1]: Starting systemd-journald.service - Journal Service...
+[   17.521493] systemd[1]: systemd-journald.service: unit configures an IP firewall, but the local system does not support BPF/cgroup firewalling.
+[   17.650852] systemd[1]: systemd-journald.service: (This warning is only shown for the first unit using IP firewalling.)
+[   17.724912] systemd[1]: Starting systemd-journald.service - Journal Service...
          Starting [0;1;39msystemd-journald.service[0m - Journal Service...
-[   10.499043] systemd[1]: Starting keyboard-setup.service - Set the console keyboard layout...
+[   17.918432] systemd[1]: Starting keyboard-setup.service - Set the console keyboard layout...
          Starting [0;1;39mkeyboard-setup.service[0m - Set the console keyboard layout...
-[   10.643230] systemd[1]: kmod-static-nodes.service - Create List of Static Device Nodes was skipped because of an unmet condition check (ConditionFileNotEmpty=/lib/modules/6.18.57-ferret-rust/modules.devname).
-[   10.682825] systemd[1]: Starting lvm2-monitor.service - Monitoring of LVM2 mirrors, snapshots etc. using dmeventd or progress polling...
-[   10.715909] systemd-journald[278]: Collecting audit messages is disabled.
+[   17.998517] systemd[1]: kmod-static-nodes.service - Create List of Static Device Nodes was skipped because of an unmet condition check (ConditionFileNotEmpty=/lib/modules/6.18.57-ferret-rust/modules.devname).
+[   18.055286] systemd[1]: Starting lvm2-monitor.service - Monitoring of LVM2 mirrors, snapshots etc. using dmeventd or progress polling...
          Starting [0;1;39mlvm2-monitor.service[0m - Mo…ing dmeventd or progress polling...
-[   10.900323] systemd[1]: Starting modprobe@configfs.service - Load Kernel Module configfs...
+[   18.292485] systemd[1]: Starting modprobe@configfs.service - Load Kernel Module configfs...
          Starting [0;1;39mmodprobe@configfs.service[0m - Load Kernel Module configfs...
-[   11.062395] systemd[1]: Starting modprobe@dm_mod.service - Load Kernel Module dm_mod...
+[   18.422907] systemd[1]: Starting modprobe@dm_mod.service - Load Kernel Module dm_mod...
          Starting [0;1;39mmodprobe@dm_mod.service[0m - Load Kernel Module dm_mod...
-[   11.132468] systemd[1]: Starting modprobe@drm.service - Load Kernel Module drm...
+[   18.653329] systemd-journald[378]: Collecting audit messages is disabled.
+[   18.711627] systemd[1]: Starting modprobe@drm.service - Load Kernel Module drm...
          Starting [0;1;39mmodprobe@drm.service[0m - Load Kernel Module drm...
-[   11.333633] systemd[1]: Starting modprobe@efi_pstore.service - Load Kernel Module efi_pstore...
+[   18.827541] systemd[1]: Starting modprobe@efi_pstore.service - Load Kernel Module efi_pstore...
          Starting [0;1;39mmodprobe@efi_pstore.servi…[0m - Load Kernel Module efi_pstore...
-[   11.442463] systemd[1]: Starting modprobe@fuse.service - Load Kernel Module fuse...
+[   19.107219] systemd[1]: Starting modprobe@fuse.service - Load Kernel Module fuse...
          Starting [0;1;39mmodprobe@fuse.service[0m - Load Kernel Module fuse...
-[   11.487245] systemd[1]: Starting modprobe@loop.service - Load Kernel Module loop...
+[   19.265382] systemd[1]: Starting modprobe@loop.service - Load Kernel Module loop...
          Starting [0;1;39mmodprobe@loop.service[0m - Load Kernel Module loop...
-[   11.554304] systemd[1]: netplan-ovs-cleanup.service - OpenVSwitch configuration for cleanup was skipped because of an unmet condition check (ConditionFileIsExecutable=/usr/bin/ovs-vsctl).
-[   11.564376] systemd[1]: systemd-fsck-root.service - File System Check on Root Device was skipped because of an unmet condition check (ConditionPathIsReadWrite=!/).
-[   11.641900] systemd[1]: Starting systemd-modules-load.service - Load Kernel Modules...
+[   19.390676] systemd[1]: netplan-ovs-cleanup.service - OpenVSwitch configuration for cleanup was skipped because of an unmet condition check (ConditionFileIsExecutable=/usr/bin/ovs-vsctl).
+[   19.471104] systemd[1]: systemd-fsck-root.service - File System Check on Root Device was skipped because of an unmet condition check (ConditionPathIsReadWrite=!/).
+[   19.496589] systemd[1]: Starting systemd-modules-load.service - Load Kernel Modules...
          Starting [0;1;39msystemd-modules-load.service[0m - Load Kernel Modules...
-[   11.738001] systemd[1]: systemd-pcrmachine.service - TPM2 PCR Machine ID Measurement was skipped because of an unmet condition check (ConditionSecurity=measured-uki).
-[   11.764576] systemd[1]: Starting systemd-remount-fs.service - Remount Root and Kernel File Systems...
+[   19.600729] systemd[1]: systemd-pcrmachine.service - TPM2 PCR Machine ID Measurement was skipped because of an unmet condition check (ConditionSecurity=measured-uki).
+[   19.644503] systemd[1]: Starting systemd-remount-fs.service - Remount Root and Kernel File Systems...
          Starting [0;1;39msystemd-remount-fs.servic…[0munt Root and Kernel File Systems...
-[   11.836454] systemd[1]: Starting systemd-tmpfiles-setup-dev-early.service - Create Static Device Nodes in /dev gracefully...
+[   19.854015] systemd[1]: Starting systemd-tmpfiles-setup-dev-early.service - Create Static Device Nodes in /dev gracefully...
          Starting [0;1;39msystemd-tmpfiles-setup-de…[0m Device Nodes in /dev gracefully...
-[   11.893572] systemd[1]: systemd-tpm2-setup-early.service - TPM2 SRK Setup (Early) was skipped because of an unmet condition check (ConditionSecurity=measured-uki).
-[   11.945451] systemd[1]: Starting systemd-udev-trigger.service - Coldplug All udev Devices...
+[   19.982162] systemd[1]: systemd-tpm2-setup-early.service - TPM2 SRK Setup (Early) was skipped because of an unmet condition check (ConditionSecurity=measured-uki).
+[   20.078561] systemd[1]: Starting systemd-udev-trigger.service - Coldplug All udev Devices...
          Starting [0;1;39msystemd-udev-trigger.service[0m - Coldplug All udev Devices...
-[   12.045624] systemd[1]: Started systemd-journald.service - Journal Service.
+[   20.162585] EXT4-fs (vda): re-mounted 674e9254-334d-4103-8873-7bc9733f439d.
+[   20.199993] systemd[1]: Started systemd-journald.service - Journal Service.
 [[0;32m  OK  [0m] Started [0;1;39msystemd-journald.service[0m - Journal Service.
 [[0;32m  OK  [0m] Mounted [0;1;39mdev-hugepages.mount[0m - Huge Pages File System.
 [[0;32m  OK  [0m] Mounted [0;1;39mdev-mqueue.mount[0m - POSIX Message Queue File System.
 [[0;32m  OK  [0m] Mounted [0;1;39msys-kernel-debug.mount[0m - Kernel Debug File System.
-[   12.224089] EXT4-fs (vda): re-mounted 02f8190d-4eff-4f3f-8bb0-9fa2ddab79de.
 [[0;32m  OK  [0m] Mounted [0;1;39msys-kernel-tracing.mount[0m - Kernel Trace File System.
-[[0;32m  OK  [0m] Finished [0;1;39mlvm2-monitor.service[0m - Mo…using dmeventd or progress polling.
+[[0;32m  OK  [0m] Finished [0;1;39mlvm2-monitor.service[0m - Mo…using dmeventd or progress polling.[   20.466335] systemd-tmpfile (394) used greatest stack depth: 12408 bytes left
+
+[[0;32m  OK  [0m] Finished [0;1;39mkeyboard-setup.service[0m - Set the console keyboard layout.
 [[0;32m  OK  [0m] Finished [0;1;39mmodprobe@configfs.service[0m - Load Kernel Module configfs.
 [[0;32m  OK  [0m] Finished [0;1;39mmodprobe@dm_mod.service[0m - Load Kernel Module dm_mod.
 [[0;32m  OK  [0m] Finished [0;1;39mmodprobe@drm.service[0m - Load Kernel Module drm.
@@ -741,16 +1308,16 @@ Welcome to [1mUbuntu 24.04.5 LTS[0m!
 [[0;32m  OK  [0m] Finished [0;1;39msystemd-modules-load.service[0m - Load Kernel Modules.
 [[0;32m  OK  [0m] Finished [0;1;39msystemd-remount-fs.servic…[0mmount Root and Kernel File Systems.
 [[0;32m  OK  [0m] Finished [0;1;39msystemd-tmpfiles-setup-de…[0mic Device Nodes in /dev gracefully.
-[[0;32m  OK  [0m] Finished [0;1;39mkeyboard-setup.service[0m - Set the console keyboard layout.
          Starting [0;1;39msystemd-journal-flush.ser…[0msh Journal to Persistent Storage...
          Starting [0;1;39msystemd-random-seed.service[0m - Load/Save OS Random Seed...
          Starting [0;1;39msystemd-sysctl.service[0m - Apply Kernel Variables...
          Starting [0;1;39msystemd-sysusers.service[0m - Create System Users...
-[   13.026727] systemd-journald[278]: Received client request to flush runtime journal.
-[[0;32m  OK  [0m] Finished [0;1;39msystemd-udev-trigger.service[0m - Coldplug All udev Devices.
+[   21.801855] systemd-journald[378]: Received client request to flush runtime journal.
 [[0;32m  OK  [0m] Finished [0;1;39msystemd-random-seed.service[0m - Load/Save OS Random Seed.
-[[0;32m  OK  [0m] Finished [0;1;39msystemd-journal-flush.ser…[0mlush Journal to Persistent Storage.
+[   22.201446] udevadm (396) used greatest stack depth: 12280 bytes left
+[[0;32m  OK  [0m] Finished [0;1;39msystemd-udev-trigger.service[0m - Coldplug All udev Devices.
 [[0;32m  OK  [0m] Finished [0;1;39msystemd-sysctl.service[0m - Apply Kernel Variables.
+[[0;32m  OK  [0m] Finished [0;1;39msystemd-journal-flush.ser…[0mlush Journal to Persistent Storage.
 [[0;32m  OK  [0m] Finished [0;1;39msystemd-sysusers.service[0m - Create System Users.
          Starting [0;1;39msystemd-tmpfiles-setup-de…[0meate Static Device Nodes in /dev...
 [[0;32m  OK  [0m] Finished [0;1;39msystemd-tmpfiles-setup-de…[0mCreate Static Device Nodes in /dev.
@@ -769,31 +1336,28 @@ Welcome to [1mUbuntu 24.04.5 LTS[0m!
 [[0;32m  OK  [0m] Finished [0;1;39mplymouth-read-write.servi…[0mPlymouth To Write Out Runtime Data.
          Mounting [0;1;39mproc-sys-fs-binfmt_misc.m…[0mcutable File Formats File System...
 [[0;32m  OK  [0m] Finished [0;1;39mufw.service[0m - Uncomplicated firewall.
-[[0;32m  OK  [0m] Reached target [0;1;39mnetwork-pre.target[0m - Preparation for Network.
-[[0;32m  OK  [0m] Finished [0;1;39msystemd-tmpfiles-setup.se…[0mate Volatile Files and Directories.
 [[0;32m  OK  [0m] Mounted [0;1;39mproc-sys-fs-binfmt_misc.mo…[0mxecutable File Formats File System.
+[[0;32m  OK  [0m] Reached target [0;1;39mnetwork-pre.target[0m - Preparation for Network.
+[[0;32m  OK  [0m] Finished [0;1;39msystemd-binfmt.service[0m - Set Up Additional Binary Formats.
+[[0;32m  OK  [0m] Finished [0;1;39msystemd-tmpfiles-setup.se…[0mate Volatile Files and Directories.
          Starting [0;1;39msystemd-journal-catalog-u…ervice[0m - Rebuild Journal Catalog...
          Starting [0;1;39msystemd-resolved.service[0m - Network Name Resolution...
          Starting [0;1;39msystemd-timesyncd.service[0m - Network Time Synchronization...
          Starting [0;1;39msystemd-update-utmp.servi…[0mord System Boot/Shutdown in UTMP...
 [[0;32m  OK  [0m] Finished [0;1;39mldconfig.service[0m - Rebuild Dynamic Linker Cache.
-[[0;32m  OK  [0m] Finished [0;1;39msystemd-binfmt.service[0m - Set Up Additional Binary Formats.
+[[0;32m  OK  [0m] Started [0;1;39msystemd-udevd.service[0m - Ru…anager for Device Events and Files.
 [[0;32m  OK  [0m] Finished [0;1;39msystemd-update-utmp.servi…[0mecord System Boot/Shutdown in UTMP.
 [[0;32m  OK  [0m] Finished [0;1;39msystemd-journal-catalog-u….service[0m - Rebuild Journal Catalog.
-         Starting [0;1;39msystemd-update-done.service[0m - Update is Completed...
-[[0;32m  OK  [0m] Started [0;1;39msystemd-udevd.service[0m - Ru…anager for Device Events and Files.
+[[0;32m  OK  [0m] Found device [0;1;39mdev-ttyS0.device[0m - /dev/ttyS0.
 [[0;32m  OK  [0m] Started [0;1;39msystemd-ask-password-conso…[0mequests to Console Directory Watch.
 [[0;32m  OK  [0m] Reached target [0;1;39mcryptsetup.target[0m - Local Encrypted Volumes.
          Starting [0;1;39msystemd-networkd.service[0m - Network Configuration...
-[[0;32m  OK  [0m] Finished [0;1;39msystemd-update-done.service[0m - Update is Completed.
-[[0;32m  OK  [0m] Found device [0;1;39mdev-ttyS0.device[0m - /dev/ttyS0.
+         Starting [0;1;39msystemd-update-done.service[0m - Update is Completed...
 [[0;32m  OK  [0m] Started [0;1;39msystemd-timesyncd.service[0m - Network Time Synchronization.
 [[0;32m  OK  [0m] Reached target [0;1;39mtime-set.target[0m - System Time Set.
 [[0;32m  OK  [0m] Listening on [0;1;39msystemd-rfkill.socket[0m…ll Switch Status /dev/rfkill Watch.
-[[0;32m  OK  [0m] Started [0;1;39msystemd-networkd.service[0m - Network Configuration.
+[[0;32m  OK  [0m] Finished [0;1;39msystemd-update-done.service[0m - Update is Completed.
 [[0;32m  OK  [0m] Started [0;1;39msystemd-resolved.service[0m - Network Name Resolution.
-[[0;32m  OK  [0m] Reached target [0;1;39mnetwork.target[0m - Network.
-[[0;32m  OK  [0m] Reached target [0;1;39mnetwork-online.target[0m - Network is Online.
 [[0;32m  OK  [0m] Reached target [0;1;39mnss-lookup.target[0m - Host and Network Name Lookups.
 [[0;32m  OK  [0m] Reached target [0;1;39msysinit.target[0m - System Initialization.
 [[0;32m  OK  [0m] Started [0;1;39mapt-daily.timer[0m - Daily apt download activities.
@@ -808,29 +1372,32 @@ Welcome to [1mUbuntu 24.04.5 LTS[0m!
 [[0;32m  OK  [0m] Started [0;1;39msysstat-collect.timer[0m - Ru…y accounting tool every 10 minutes.
 [[0;32m  OK  [0m] Started [0;1;39msysstat-summary.timer[0m - Ge… of yesterday's process accounting.
 [[0;32m  OK  [0m] Started [0;1;39msystemd-tmpfiles-clean.tim…[0my Cleanup of Temporary Directories.
-[[0;32m  OK  [0m] Started [0;1;39mupdate-notifier-download.t…[0mhat failed at package install time.
-[[0;32m  OK  [0m] Started [0;1;39mupdate-notifier-motd.timer[0m… a new version of Ubuntu available.
 [[0;32m  OK  [0m] Reached target [0;1;39mpaths.target[0m - Path Units.
-[[0;32m  OK  [0m] Reached target [0;1;39mtimers.target[0m - Timer Units.
 [[0;32m  OK  [0m] Listening on [0;1;39mdbus.socket[0m - D-Bus System Message Bus Socket.
 [[0;32m  OK  [0m] Listening on [0;1;39miscsid.socket[0m - Open-iSCSI iscsid Socket.
          Starting [0;1;39mlxd-installer.socket[0m - He…er to install lxd snap on demand...
          Starting [0;1;39msnapd.socket[0m - Socket activation for snappy daemon...
 [[0;32m  OK  [0m] Listening on [0;1;39mssh.socket[0m - OpenBSD Secure Shell server socket.
 [[0;32m  OK  [0m] Listening on [0;1;39muuidd.socket[0m - UUID daemon activation socket.
-[[0;32m  OK  [0m] Reached target [0;1;39mremote-fs-pre.targe…[0mreparation for Remote File Systems.
-[[0;32m  OK  [0m] Reached target [0;1;39mremote-fs.target[0m - Remote File Systems.
-[[0;32m  OK  [0m] Finished [0;1;39mblk-availability.service[0m - Availability of block devices.
+[[0;32m  OK  [0m] Started [0;1;39msystemd-networkd.service[0m - Network Configuration.
 [[0;32m  OK  [0m] Listening on [0;1;39mlxd-installer.socket[0m …lper to install lxd snap on demand.
 [[0;32m  OK  [0m] Listening on [0;1;39msnapd.socket[0m - Socket activation for snappy daemon.
+[[0;32m  OK  [0m] Reached target [0;1;39mnetwork.target[0m - Network.
+[[0;32m  OK  [0m] Reached target [0;1;39mnetwork-online.target[0m - Network is Online.
+[[0;32m  OK  [0m] Started [0;1;39mupdate-notifier-download.t…[0mhat failed at package install time.
+[[0;32m  OK  [0m] Started [0;1;39mupdate-notifier-motd.timer[0m… a new version of Ubuntu available.
 [[0;32m  OK  [0m] Reached target [0;1;39msockets.target[0m - Socket Units.
 [[0;32m  OK  [0m] Reached target [0;1;39mbasic.target[0m - Basic System.
-         Starting [0;1;39mapport.service[0m - automatic crash report generation...
-[[0;32m  OK  [0m] Started [0;1;39mcron.service[0m - Regular background program processing daemon.
+[[0;32m  OK  [0m] Reached target [0;1;39mtimers.target[0m - Timer Units.
          Starting [0;1;39mdbus.service[0m - D-Bus System Message Bus...
 [[0;32m  OK  [0m] Started [0;1;39mdmesg.service[0m - Save initial kernel messages after boot.
          Starting [0;1;39me2scrub_reap.service[0m - Re…ne ext4 Metadata Check Snapshots...
          Starting [0;1;39mferret-check.service[0m - Fe…obe (systemd reached multi-user)...
+[[0;32m  OK  [0m] Reached target [0;1;39mremote-fs-pre.targe…[0mreparation for Remote File Systems.
+[[0;32m  OK  [0m] Reached target [0;1;39mremote-fs.target[0m - Remote File Systems.
+         Starting [0;1;39mapport.service[0m - automatic crash report generation...
+[[0;32m  OK  [0m] Finished [0;1;39mblk-availability.service[0m - Availability of block devices.
+[[0;32m  OK  [0m] Started [0;1;39mcron.service[0m - Regular background program processing daemon.
          Starting [0;1;39mpolkit.service[0m - Authorization Manager...
          Starting [0;1;39mpollinate.service[0m - Polli…e pseudo random number generator...
          Starting [0;1;39mrsyslog.service[0m - System Logging Service...
@@ -846,26 +1413,30 @@ Welcome to [1mUbuntu 24.04.5 LTS[0m!
 [[0;32m  OK  [0m] Started [0;1;39mferret-getty.service[0m - Fer…t serial console autologin (ttyS0).
          Starting [0;1;39mplymouth-quit-wait.servic…[0md until boot process finishes up...
          Starting [0;1;39mplymouth-quit.service[0m - Terminate Plymouth Boot Screen...
-
-Ubuntu 24.04.5 LTS ferret ttyS0
-
-ferret login: root (automatic login)
-
 [[0;32m  OK  [0m] Finished [0;1;39mplymouth-quit-wait.servic…[0mold until boot process finishes up.
-[[0;32m  OK  [0m] Finished [0;1;39mplymouth-quit.service[0m - Terminate Plymouth Boot Screen.
 [[0;32m  OK  [0m] Started [0;1;39mserial-getty@ttyS0.service[0m - Serial Getty on ttyS0.
+
+Ubuntu 24.04.5 LTS ferret ttyS0
+
          Starting [0;1;39msetvtrgb.service[0m - Set console scheme...
+ferret[[0;32m  OK  [0m] Started [0;1;39msystemd-logind.service[0m - User Login Management.
+[[0;32m  OK  [0m] Finished [0;1;39mplymouth-quit.service[0m - Terminate Plymouth Boot Screen.
+[[0;32m  OK  [0m] Started [0;1;39munattended-upgrades.service[0m - Unattended Upgrades Shutdown.
+ login: root (automatic login)
+
+[[0;32m  OK  [0m] Started [0;1;39mpolkit.service[0m - Authorization Manager.
+[[0;32m  OK  [0m] Finished [0;1;39msetvtrgb.service[0m - Set console scheme.
 
 Ubuntu 24.04.5 LTS ferret ttyS0
 
 ferret login: root (automatic login)
 
-[   34.941205] ferret-systemd-check[538]: SYSTEMD-VERSION: systemd 255 (255.4-1ubuntu8.18)
-[   34.960712] ferret-systemd-check[538]: SYSTEMD-STATE: starting
-[   35.133290] ferret-systemd-check[538]: SYSTEMD-HOSTNAME: ferret
-[   35.233609] ferret-systemd-check[538]: SYSTEMD-KERNEL: 6.18.57-ferret-rust
-[   35.234180] ferret-systemd-check[538]: SYSTEMD-RELEASE: Ubuntu 24.04.5 LTS
-[   35.480608] ferret-systemd-check[538]: SYSTEMD-CHECK: ok
+[   41.642685] ferret-systemd-check[655]: SYSTEMD-VERSION: systemd 255 (255.4-1ubuntu8.18)
+[   41.813090] ferret-systemd-check[655]: SYSTEMD-STATE: starting
+[   41.858178] ferret-systemd-check[655]: SYSTEMD-HOSTNAME: ferret
+[   41.919655] ferret-systemd-check[655]: SYSTEMD-KERNEL: 6.18.57-ferret-rust
+[   41.920212] ferret-systemd-check[655]: SYSTEMD-RELEASE: Ubuntu 24.04.5 LTS
+[   41.964170] ferret-systemd-check[655]: SYSTEMD-CHECK: ok
 [[0;32m  OK  [0m] Stopped [0;1;39mferret-check.service[0m - Fer…probe (systemd reached multi-user).
 [[0;32m  OK  [0m] Removed slice [0;1;39msystem-modprobe.slice[0m - Slice /system/modprobe.
 [[0;32m  OK  [0m] Stopped target [0;1;39mnss-lookup.target[0m - Host and Network Name Lookups.
@@ -880,4 +1451,14 @@ ferret login: root (automatic login)
 [[0;32m  OK  [0m] Stopped [0;1;39mman-db.timer[0m - Daily man-db regeneration.
 [[0;32m  OK  [0m] Stopped [0;1;39mmotd-news.timer[0m - Message of the Day.
 [[0;32m  OK  [0m] Stopped [0;1;39msysstat-collect.timer[0m - Ru…y accounting tool every 10 minutes.
-[[0;32m  OK  [
+[[0;32m  OK  [0m] Stopped [0;1;39msysstat-summary.timer[0m - Ge… of yesterday's process accounting.
+[[0;32m  OK  [0m] Stopped [0;1;39msystemd-tmpfiles-clean.tim…[0my Cleanup of Temporary Directories.
+[[0;32m  OK  [0m] Stopped [0;1;39mupdate-notifier-download.t…[0mhat failed at package install time.
+[[0;32m  OK  [0m] Stopped [0;1;39mupdate-notifier-motd.timer[0m… a new version of Ubuntu available.
+[[0;32m  OK  [0m] Stopped target [0;1;39mnetwork-online.target[0m - Network is Online.
+[[0;32m  OK  [0m] Closed [0;1;39mlvm2-lvmpolld.socket[0m - LVM2 poll daemon socket.
+[[0;32m  OK  [0m] Closed [0;1;39msystemd-rfkill.socket[0m - Loa…ll Switch Status /dev/rfkill Watch.
+         Stopping [0;1;39mblk-availability.service[0m - Availability of block devices...
+         Stopping [0;1;39mfinalrd.service[0m - Create …time dir for shutdown pivot root...
+[[0;32m  OK  [0m] Reached target [0;1;39mumount.target[0m - Unmount All Filesystems.
+         Stopping [0;1;39msystemd-random-seed.service[0m - Load/Save OS Random Seed...

@@ -1,92 +1,112 @@
 Ferret verification evidence
-Source commit: 48fed460f7cf
-Extracted: 2026-10-21T19:25:59Z (UTC)
-Raw logs: artifacts/ (not published; reproduced by tools/ferret/test.sh)
+Source commit: 058e0ca1ddce
+Source tree:   3514db64c8616b1f774ecd70f56ce221be2b6c849f7f49c794c81d44543ec320
+Harness:       ee80b7dcedf58bf3070ce0cde2dc70104e06e0264be3a2d1557bb022591afa17
+Configuration: 9e7e2143a3e7f2c90a6244dabe175aa6f315380475cd4fdbb6e9e72e1cf5cb0f
+Extracted:     2026-10-22T22:48:01Z (UTC)
+Binding:       every input artifact carries a provenance stamp naming
+               this source tree, this harness and its configuration;
+               an artifact from another revision is refused.
+Raw logs:      artifacts/ (not published; reproduced by tools/ferret/test.sh)
 ----------------------------------------------------------------------
 Guest: Ubuntu 24.04 root filesystem, amd64
 Mode: systemd PID 1
 Architecture: amd64
 Result: PASS (required marker found)
 
-[    0.000000] Linux version 6.18.57-ferret-rust (root@3ea769cb049c) (Ubuntu clang version 18.1.3 (1ubuntu1), Ubuntu LLD 18.1.3) #1 SMP PREEMPT_DYNAMIC Wed Oct 21 18:56:12 UTC 2026
-[    6.479783] EXT4-fs (vda): recovery complete
-[    6.481405] EXT4-fs (vda): mounted filesystem 02f8190d-4eff-4f3f-8bb0-9fa2ddab79de r/w with ordered data mode. Quota mode: none.
-[    7.388898] systemd[1]: systemd 255.4-1ubuntu8.18 running in system mode (+PAM +AUDIT +SELINUX +APPARMOR +IMA +SMACK +SECCOMP +GCRYPT -GNUTLS +OPENSSL +ACL +BLKID +CURL +ELFUTILS +FIDO2 +IDN2 -IDN +IPTC +KMOD +LIBCRYPTSETUP +LIBFDISK +PCRE2 -PWQUALITY +P11KIT +QRENCODE +TPM2 +BZIP2 +LZ4 +XZ +ZLIB +ZSTD -BPF_FRAMEWORK -XKBCOMMON +UTMP +SYSVINIT default-hierarchy=unified)
-[    7.401120] systemd[1]: Detected virtualization qemu.
-[    7.404958] systemd[1]: Detected architecture x86-64.
-[    7.472703] systemd[1]: Hostname set to <ferret>.
-[    9.873716] systemd[1]: Queued start job for default target multi-user.target.
-[    9.906846] systemd[1]: Created slice system-modprobe.slice - Slice /system/modprobe.
-[    9.915022] systemd[1]: Created slice system-serial\x2dgetty.slice - Slice /system/serial-getty.
-[    9.919621] systemd[1]: Created slice user.slice - User and Session Slice.
-[    9.925285] systemd[1]: Started systemd-ask-password-wall.path - Forward Password Requests to Wall Directory Watch.
-[    9.934500] systemd[1]: Set up automount proc-sys-fs-binfmt_misc.automount - Arbitrary Executable File Formats File System Automount Point.
-[    9.941057] systemd[1]: Expecting device dev-ttyS0.device - /dev/ttyS0...
-[    9.945729] systemd[1]: Reached target integritysetup.target - Local Integrity Protected Volumes.
+[    0.000000] Linux version 6.18.57-ferret-rust (root@3ea769cb049c) (Ubuntu clang version 18.1.3 (1ubuntu1), Ubuntu LLD 18.1.3) #1 SMP PREEMPT_DYNAMIC Thu Oct 22 22:39:30 UTC 2026
+[    7.670350] Call Trace:
+[    7.726299] Call Trace:
+[    7.790234] Call Trace:
+[    7.852238] Call Trace:
+[    7.913830] Call Trace:
+[    7.980941] Call Trace:
+[    8.041735] Call Trace:
+[    8.108092] Call Trace:
+[    8.167112] Call Trace:
+[    8.226768] Call Trace:
+[    8.282493] Call Trace:
+[    8.342668] Call Trace:
+[    8.400244] Call Trace:
+[    8.460774] Call Trace:
+[   12.872509] EXT4-fs (vda): recovery complete
+[   12.874466] EXT4-fs (vda): mounted filesystem 674e9254-334d-4103-8873-7bc9733f439d r/w with ordered data mode. Quota mode: none.
+[   13.792666] systemd[1]: systemd 255.4-1ubuntu8.18 running in system mode (+PAM +AUDIT +SELINUX +APPARMOR +IMA +SMACK +SECCOMP +GCRYPT -GNUTLS +OPENSSL +ACL +BLKID +CURL +ELFUTILS +FIDO2 +IDN2 -IDN +IPTC +KMOD +LIBCRYPTSETUP +LIBFDISK +PCRE2 -PWQUALITY +P11KIT +QRENCODE +TPM2 +BZIP2 +LZ4 +XZ +ZLIB +ZSTD -BPF_FRAMEWORK -XKBCOMMON +UTMP +SYSVINIT default-hierarchy=unified)
+[   13.804846] systemd[1]: Detected virtualization qemu.
+[   13.807468] systemd[1]: Detected architecture x86-64.
+[   13.819981] systemd[1]: Hostname set to <ferret>.
+[   16.532064] systemd[1]: Queued start job for default target multi-user.target.
+[   16.585350] systemd[1]: Created slice system-modprobe.slice - Slice /system/modprobe.
+[   16.606214] systemd[1]: Created slice system-serial\x2dgetty.slice - Slice /system/serial-getty.
+[   16.619744] systemd[1]: Created slice user.slice - User and Session Slice.
+[   16.631064] systemd[1]: Started systemd-ask-password-wall.path - Forward Password Requests to Wall Directory Watch.
+[   16.647357] systemd[1]: Set up automount proc-sys-fs-binfmt_misc.automount - Arbitrary Executable File Formats File System Automount Point.
+[   16.659608] systemd[1]: Expecting device dev-ttyS0.device - /dev/ttyS0...
+[   16.670529] systemd[1]: Reached target integritysetup.target - Local Integrity Protected Volumes.
 [[0;32m  OK  [0m] Reached target [0;1;39mintegritysetup.targ…[0m Local Integrity Protected Volumes.
-[    9.951102] systemd[1]: Reached target slices.target - Slice Units.
+[   16.680636] systemd[1]: Reached target slices.target - Slice Units.
 [[0;32m  OK  [0m] Reached target [0;1;39mslices.target[0m - Slice Units.
-[    9.954419] systemd[1]: Reached target snapd.mounts-pre.target - Mounting snaps.
+[   16.687578] systemd[1]: Reached target snapd.mounts-pre.target - Mounting snaps.
 [[0;32m  OK  [0m] Reached target [0;1;39msnapd.mounts-pre.target[0m - Mounting snaps.
-[    9.958447] systemd[1]: Reached target snapd.mounts.target - Mounted snaps.
+[   16.696291] systemd[1]: Reached target snapd.mounts.target - Mounted snaps.
 [[0;32m  OK  [0m] Reached target [0;1;39msnapd.mounts.target[0m - Mounted snaps.
-[    9.962544] systemd[1]: Reached target swap.target - Swaps.
+[   16.704240] systemd[1]: Reached target swap.target - Swaps.
 [[0;32m  OK  [0m] Reached target [0;1;39mswap.target[0m - Swaps.
-[    9.966439] systemd[1]: Reached target veritysetup.target - Local Verity Protected Volumes.
+[   16.712816] systemd[1]: Reached target veritysetup.target - Local Verity Protected Volumes.
 [[0;32m  OK  [0m] Reached target [0;1;39mveritysetup.target[0m - Local Verity Protected Volumes.
-[    9.973176] systemd[1]: Listening on dm-event.socket - Device-mapper event daemon FIFOs.
-[    9.979089] systemd[1]: Listening on lvm2-lvmpolld.socket - LVM2 poll daemon socket.
-[    9.985835] systemd[1]: Listening on syslog.socket - Syslog Socket.
-[    9.989866] systemd[1]: Listening on systemd-fsckd.socket - fsck to fsckd communication Socket.
-[    9.995398] systemd[1]: Listening on systemd-initctl.socket - initctl Compatibility Named Pipe.
-[   10.000622] systemd[1]: Listening on systemd-journald-dev-log.socket - Journal Socket (/dev/log).
-[   10.005420] systemd[1]: Listening on systemd-journald.socket - Journal Socket.
-[   10.009932] systemd[1]: Listening on systemd-networkd.socket - Network Service Netlink Socket.
-[   10.014816] systemd[1]: systemd-pcrextend.socket - TPM2 PCR Extension (Varlink) was skipped because of an unmet condition check (ConditionSecurity=measured-uki).
-[   10.019578] systemd[1]: Listening on systemd-udevd-control.socket - udev Control Socket.
-[   10.024455] systemd[1]: Listening on systemd-udevd-kernel.socket - udev Kernel Socket.
-[   10.067854] systemd[1]: Mounting dev-hugepages.mount - Huge Pages File System...
-[   10.136799] systemd[1]: Mounting dev-mqueue.mount - POSIX Message Queue File System...
-[   10.170605] systemd[1]: Mounting sys-kernel-debug.mount - Kernel Debug File System...
-[   10.307900] systemd[1]: Mounting sys-kernel-tracing.mount - Kernel Trace File System...
-[   10.414708] systemd[1]: systemd-journald.service: unit configures an IP firewall, but the local system does not support BPF/cgroup firewalling.
-[   10.418326] systemd[1]: systemd-journald.service: (This warning is only shown for the first unit using IP firewalling.)
-[   10.435833] systemd[1]: Starting systemd-journald.service - Journal Service...
-[   10.499043] systemd[1]: Starting keyboard-setup.service - Set the console keyboard layout...
-[   10.643230] systemd[1]: kmod-static-nodes.service - Create List of Static Device Nodes was skipped because of an unmet condition check (ConditionFileNotEmpty=/lib/modules/6.18.57-ferret-rust/modules.devname).
-[   10.682825] systemd[1]: Starting lvm2-monitor.service - Monitoring of LVM2 mirrors, snapshots etc. using dmeventd or progress polling...
-[   10.900323] systemd[1]: Starting modprobe@configfs.service - Load Kernel Module configfs...
-[   11.062395] systemd[1]: Starting modprobe@dm_mod.service - Load Kernel Module dm_mod...
-[   11.132468] systemd[1]: Starting modprobe@drm.service - Load Kernel Module drm...
-[   11.333633] systemd[1]: Starting modprobe@efi_pstore.service - Load Kernel Module efi_pstore...
-[   11.442463] systemd[1]: Starting modprobe@fuse.service - Load Kernel Module fuse...
-[   11.487245] systemd[1]: Starting modprobe@loop.service - Load Kernel Module loop...
-[   11.554304] systemd[1]: netplan-ovs-cleanup.service - OpenVSwitch configuration for cleanup was skipped because of an unmet condition check (ConditionFileIsExecutable=/usr/bin/ovs-vsctl).
-[   11.564376] systemd[1]: systemd-fsck-root.service - File System Check on Root Device was skipped because of an unmet condition check (ConditionPathIsReadWrite=!/).
-[   11.641900] systemd[1]: Starting systemd-modules-load.service - Load Kernel Modules...
-[   11.738001] systemd[1]: systemd-pcrmachine.service - TPM2 PCR Machine ID Measurement was skipped because of an unmet condition check (ConditionSecurity=measured-uki).
-[   11.764576] systemd[1]: Starting systemd-remount-fs.service - Remount Root and Kernel File Systems...
-[   11.836454] systemd[1]: Starting systemd-tmpfiles-setup-dev-early.service - Create Static Device Nodes in /dev gracefully...
-[   11.893572] systemd[1]: systemd-tpm2-setup-early.service - TPM2 SRK Setup (Early) was skipped because of an unmet condition check (ConditionSecurity=measured-uki).
-[   11.945451] systemd[1]: Starting systemd-udev-trigger.service - Coldplug All udev Devices...
-[   12.045624] systemd[1]: Started systemd-journald.service - Journal Service.
-[   12.224089] EXT4-fs (vda): re-mounted 02f8190d-4eff-4f3f-8bb0-9fa2ddab79de.
+[   16.727014] systemd[1]: Listening on dm-event.socket - Device-mapper event daemon FIFOs.
+[   16.741794] systemd[1]: Listening on lvm2-lvmpolld.socket - LVM2 poll daemon socket.
+[   16.755256] systemd[1]: Listening on syslog.socket - Syslog Socket.
+[   16.766657] systemd[1]: Listening on systemd-fsckd.socket - fsck to fsckd communication Socket.
+[   16.777783] systemd[1]: Listening on systemd-initctl.socket - initctl Compatibility Named Pipe.
+[   16.788254] systemd[1]: Listening on systemd-journald-dev-log.socket - Journal Socket (/dev/log).
+[   16.799953] systemd[1]: Listening on systemd-journald.socket - Journal Socket.
+[   16.812054] systemd[1]: Listening on systemd-networkd.socket - Network Service Netlink Socket.
+[   16.820174] systemd[1]: systemd-pcrextend.socket - TPM2 PCR Extension (Varlink) was skipped because of an unmet condition check (ConditionSecurity=measured-uki).
+[   16.829741] systemd[1]: Listening on systemd-udevd-control.socket - udev Control Socket.
+[   16.841432] systemd[1]: Listening on systemd-udevd-kernel.socket - udev Kernel Socket.
+[   16.882160] systemd[1]: Mounting dev-hugepages.mount - Huge Pages File System...
+[   16.983337] systemd[1]: Mounting dev-mqueue.mount - POSIX Message Queue File System...
+[   17.199664] systemd[1]: Mounting sys-kernel-debug.mount - Kernel Debug File System...
+[   17.343042] systemd[1]: Mounting sys-kernel-tracing.mount - Kernel Trace File System...
+[   17.521493] systemd[1]: systemd-journald.service: unit configures an IP firewall, but the local system does not support BPF/cgroup firewalling.
+[   17.650852] systemd[1]: systemd-journald.service: (This warning is only shown for the first unit using IP firewalling.)
+[   17.724912] systemd[1]: Starting systemd-journald.service - Journal Service...
+[   17.918432] systemd[1]: Starting keyboard-setup.service - Set the console keyboard layout...
+[   17.998517] systemd[1]: kmod-static-nodes.service - Create List of Static Device Nodes was skipped because of an unmet condition check (ConditionFileNotEmpty=/lib/modules/6.18.57-ferret-rust/modules.devname).
+[   18.055286] systemd[1]: Starting lvm2-monitor.service - Monitoring of LVM2 mirrors, snapshots etc. using dmeventd or progress polling...
+[   18.292485] systemd[1]: Starting modprobe@configfs.service - Load Kernel Module configfs...
+[   18.422907] systemd[1]: Starting modprobe@dm_mod.service - Load Kernel Module dm_mod...
+[   18.711627] systemd[1]: Starting modprobe@drm.service - Load Kernel Module drm...
+[   18.827541] systemd[1]: Starting modprobe@efi_pstore.service - Load Kernel Module efi_pstore...
+[   19.107219] systemd[1]: Starting modprobe@fuse.service - Load Kernel Module fuse...
+[   19.265382] systemd[1]: Starting modprobe@loop.service - Load Kernel Module loop...
+[   19.390676] systemd[1]: netplan-ovs-cleanup.service - OpenVSwitch configuration for cleanup was skipped because of an unmet condition check (ConditionFileIsExecutable=/usr/bin/ovs-vsctl).
+[   19.471104] systemd[1]: systemd-fsck-root.service - File System Check on Root Device was skipped because of an unmet condition check (ConditionPathIsReadWrite=!/).
+[   19.496589] systemd[1]: Starting systemd-modules-load.service - Load Kernel Modules...
+[   19.600729] systemd[1]: systemd-pcrmachine.service - TPM2 PCR Machine ID Measurement was skipped because of an unmet condition check (ConditionSecurity=measured-uki).
+[   19.644503] systemd[1]: Starting systemd-remount-fs.service - Remount Root and Kernel File Systems...
+[   19.854015] systemd[1]: Starting systemd-tmpfiles-setup-dev-early.service - Create Static Device Nodes in /dev gracefully...
+[   19.982162] systemd[1]: systemd-tpm2-setup-early.service - TPM2 SRK Setup (Early) was skipped because of an unmet condition check (ConditionSecurity=measured-uki).
+[   20.078561] systemd[1]: Starting systemd-udev-trigger.service - Coldplug All udev Devices...
+[   20.162585] EXT4-fs (vda): re-mounted 674e9254-334d-4103-8873-7bc9733f439d.
+[   20.199993] systemd[1]: Started systemd-journald.service - Journal Service.
 [[0;32m  OK  [0m] Reached target [0;1;39mlocal-fs-pre.target[0m…Preparation for Local File Systems.
 [[0;32m  OK  [0m] Reached target [0;1;39mlocal-fs.target[0m - Local File Systems.
 [[0;32m  OK  [0m] Reached target [0;1;39mnetwork-pre.target[0m - Preparation for Network.
 [[0;32m  OK  [0m] Reached target [0;1;39mcryptsetup.target[0m - Local Encrypted Volumes.
 [[0;32m  OK  [0m] Reached target [0;1;39mtime-set.target[0m - System Time Set.
-[[0;32m  OK  [0m] Reached target [0;1;39mnetwork.target[0m - Network.
-[[0;32m  OK  [0m] Reached target [0;1;39mnetwork-online.target[0m - Network is Online.
 [[0;32m  OK  [0m] Reached target [0;1;39mnss-lookup.target[0m - Host and Network Name Lookups.
 [[0;32m  OK  [0m] Reached target [0;1;39msysinit.target[0m - System Initialization.
 [[0;32m  OK  [0m] Reached target [0;1;39mpaths.target[0m - Path Units.
+[[0;32m  OK  [0m] Reached target [0;1;39mnetwork.target[0m - Network.
+[[0;32m  OK  [0m] Reached target [0;1;39mnetwork-online.target[0m - Network is Online.
+[[0;32m  OK  [0m] Reached target [0;1;39msockets.target[0m - Socket Units.
+[[0;32m  OK  [0m] Reached target [0;1;39mbasic.target[0m - Basic System.
 [[0;32m  OK  [0m] Reached target [0;1;39mtimers.target[0m - Timer Units.
 [[0;32m  OK  [0m] Reached target [0;1;39mremote-fs-pre.targe…[0mreparation for Remote File Systems.
 [[0;32m  OK  [0m] Reached target [0;1;39mremote-fs.target[0m - Remote File Systems.
-[[0;32m  OK  [0m] Reached target [0;1;39msockets.target[0m - Socket Units.
-[[0;32m  OK  [0m] Reached target [0;1;39mbasic.target[0m - Basic System.
 [[0;32m  OK  [0m] Reached target [0;1;39mgetty-pre.target[0m - Preparation for Logins.
 ferret login: root (automatic login)
-ferret login: root (automatic login)
-[   35.480608] ferret-systemd-check[538]: SYSTEMD-CHECK: ok
+[   41.964170] ferret-systemd-check[655]: SYSTEMD-CHECK: ok
+[[0;32m  OK  [0m] Reached target [0;1;39mumount.target[0m - Unmount All Filesystems.

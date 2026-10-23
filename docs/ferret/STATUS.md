@@ -1,3 +1,142 @@
+# Status — Checkpoint 005
+
+State vocabulary: **VERIFIED** (evidence produced and committed), **PARTIAL**,
+**FAILED**, **NOT TESTED**.
+
+Last updated: checkpoint 005 (2026-10-21).
+
+## 0. Checkpoint 005 — the out-of-line reference counting helpers in Rust
+
+**State: VERIFIED.** The implementation is complete, the *clean* cycle
+(`CLEAN=1 tools/ferret/test.sh`) passed all 16 steps with exit status 0, and
+the component went through the independent-verification gate
+([`AUDIT_PROTOCOL.md`](../../AUDIT_PROTOCOL.md)), whose report is
+[`design/COMPONENT_005_AUDIT.md`](design/COMPONENT_005_AUDIT.md).
+
+The gate is what a component has to pass before it is called verified: an
+independent build, the linkage and ABI proof, the integrity of the
+differential suite, mutation testing, the kernel sanitizers, the property and
+model tests, the Rust soundness review and an honest coverage report. The
+pull request stays open until the gate passes; the component was audited
+against the gate, and the two defects the audit found (the `KRef` aliasing
+promise and a race in the concurrency test) are fixed.
+
+| Item | State | Result |
+| --- | --- | --- |
+| Rust implementation | done | `lib/refcount_rust.rs`, all 6 exported symbols |
+| C object in the Rust build | absent | `lib/refcount.o` is not built; `lib/refcount_rust.o` defines every symbol |
+| Exports | preserved | all 6 symbols keep `EXPORT_SYMBOL` (non-GPL) via `lib/refcount_export.c` |
+| Rust unit tests (`refcount_rust`) | PASS | 4 cases: `dec_if_one` on a saturated count, `dec_not_one` on a count of one, on a larger count, and on a saturated count |
+| Differential KUnit (`refcount_diff`) | PASS | 9 cases against the unmodified C, including a randomised property test whose coverage is asserted, and a concurrency phase with a completion barrier that **counts and asserts the compare-and-exchange retries** (measured: 1208–3640 retries per boot across 22 boots, always on the first attempt) |
+| Adversarial KUnit (`fvs_refcount`, `fvs_refcount_adv`) | PASS | 18 cases contributed by the independent audit FVS-AUDIT-001 and taken into the tree: the boundary sweeps, the deterministic failure path of the three lock helpers, the randomised differential test, and the contract model |
+| Concurrency | PASS | 4 tasks × 250 decrements: 1 000 successful decrements, the count ends at exactly 1; the race for the last reference has exactly one winner, in both implementations |
+| Linkage evidence | PASS | one definition per symbol, size match, ksymtab, export class, in both variants |
+| arm64 build | PASS | the arm64 Ferret kernel builds and the arm64 linkage report is green |
+| Clean cycle | PASS | 16/16 steps, exit status 0 (x86_64 and arm64 builds, the linkage checks, the KUnit suites, the four Ubuntu boots) |
+| Independent-verification gate | PASS | the gate is defined in [`AUDIT_PROTOCOL.md`](../../AUDIT_PROTOCOL.md); the report is [`design/COMPONENT_005_AUDIT.md`](design/COMPONENT_005_AUDIT.md) |
+| Evidence binding | PASS | every artifact carries a provenance stamp (source-tree hash, harness hash, configuration hash, image hash) and the gate refuses a dirty tree or a stale `--skip-done` artifact; `tools/ferret/evidence.sh` refuses a stale input |
+| Mutation testing | PASS | 10 mutations: 9 detected, 1 declared not detectable (the memory ordering, which no functional test can observe), 0 coverage holes, 0 invalid runs |
+| KASAN + UBSAN | PASS | the audited suites pass inside a kernel with `CONFIG_KASAN{,_GENERIC,_INLINE}` and `CONFIG_UBSAN{,_BOUNDS,_SHIFT}`; no report implicates the component and there is no external report; the 14 WARN splats are the warning-path tests (7 Rust, 7 C) |
+| KCSAN | PASS (non-strict) | `CONFIG_KCSAN=y` and `CONFIG_KCSAN_EARLY_ENABLE=y`; the audited suites pass inside the sanitized kernel, no data-race report implicates the component and there is no external report. KCSAN runs in its default, non-strict mode: it reports races, it does not model every weak memory ordering, and a clean run is not evidence that the ordering is correct |
+| Native performance | NOT TESTED | the host has no KVM; all measurements would be QEMU TCG |
+
+What the port covers:
+
+* All six exported functions of `lib/refcount.c` are implemented in Rust:
+  `refcount_warn_saturate()`, `refcount_dec_if_one()`,
+  `refcount_dec_not_one()`, `refcount_dec_and_mutex_lock()`,
+  `refcount_dec_and_lock()` and `refcount_dec_and_lock_irqsave()`.
+* The `refcount_t` *primitive* stays in C, in `include/linux/refcount.h`. It
+  is a header type that the C code embeds in its own structures, and its
+  inline operations are what the kernel's own code calls. It cannot be
+  migrated as a file without changing every C structure that embeds it. The
+  exported layer is what moves.
+* The direction of the call is worth noting: the C inline operations of the
+  primitive (`refcount_inc()`, `refcount_dec()`, `refcount_add()`, ...) warn
+  through `refcount_warn_saturate()`, which is now the Rust implementation.
+  Every saturation warning in the kernel therefore goes through this Rust
+  code. There is no recursion.
+* The memory ordering is not re-implemented: the decrements use
+  `atomic_try_cmpxchg_release()`, the very same C primitive the C original
+  uses, through the kernel crate's `Atomic` wrapper. The disassembly of the
+  helper shows the same instructions as the C inline on both architectures
+  (`lock cmpxchg` on x86_64, `casl`/`ldxr`+`stlxr` on arm64).
+* The lock helpers keep the C contract exactly: the lock is taken only when
+  the count was greater than one, it is *held* by the caller on success, and
+  it is released again on failure. The `irqsave` variant restores the
+  interrupt state on the failure path.
+
+### The kernel-crate extensions
+
+Two additions to the in-tree kernel crate, both exposing what the C code
+already had:
+
+* `kernel::sync::Refcount`: `from_ptr()` (a borrowed view of a C
+  `refcount_t`), `read()`, `set_saturated()`, `try_dec_if_one()`,
+  `try_dec_not_one()` and `warn_saturate()`.
+* `kernel::sync::KRef`: a Rust handle for an object that is owned by C and
+  counted by an embedded `struct kref`. It owns one reference, releases it
+  when it is dropped, runs the C release callback when it was the last one,
+  and can hand the reference back to C with `into_raw()`.
+
+### Deviations from the C original
+
+* The C `WARN_ONCE()` uses a plain, racy flag, so two tasks that hit the same
+  warning at the same time may print it twice. The Rust code uses an atomic
+  compare-and-exchange, so each warning is printed exactly once. The message
+  text is unchanged.
+* The Rust code calls the C atomic primitives through the kernel crate's
+  `Atomic` wrapper, which is a real function call, where the C inlined them.
+  The semantics are identical, the cost is a call per operation. This is the
+  price of not re-implementing the ordering, and it is the reason the port
+  does not use Rust's own atomics.
+
+### The independent audit FVS-AUDIT-001
+
+The component was audited independently (FVS-AUDIT-001, against the pinned
+head `32b9daabdbee`). The audit reached the verdict **REQUIRE FURTHER
+EVIDENCE**: it found no defect in the port, but it found that the evidence
+of the self-audit was weaker than it read — the randomised tests never
+reached the boundary states, the "model" was a transliteration of the
+implementation, the warning path was never compared, and the failure path of
+the lock helpers was declared untestable when it is in fact deterministically
+reachable.
+
+The audit's adversarial test suites are now part of the tree, the randomised
+tests draw their state from the boundary table and assert their own
+coverage, the model is a model of the *contract*, the warning behaviour is
+checked from the boot log, and the mutation classifications are corrected.
+The disposition of every finding is in
+[`design/COMPONENT_005_AUDIT.md`](design/COMPONENT_005_AUDIT.md) §12.
+
+### The `KRef` soundness review
+
+The audit found a real defect in the new `KRef` abstraction: it carried
+`PhantomData<&'a mut T>`, which promises *exclusive* access to the object.
+That promise cannot be kept: the object is owned by C, the C code may hold
+other references to it, and other `KRef`s for the same object may exist at
+the same time. The promise was not even enforced, because the object is
+reached through a raw pointer.
+
+The marker is now a plain lifetime marker that says nothing about the
+aliasing, and `Send`/`Sync` are stated explicitly with the argument instead
+of being derived from the object type. The details, the full checklist
+(aliasing, ownership, `Drop`, `into_raw`, lifetimes, `Send`/`Sync`) and the
+remaining boundary are in
+[`design/COMPONENT_005_AUDIT.md`](design/COMPONENT_005_AUDIT.md) §2.
+
+### A defect in the test harness, not in the port
+
+The first version of the concurrency test failed, and the cause was in the
+test, not in the implementation: `kthread_stop()` on a task that has not been
+scheduled yet kills it *before* it calls the worker function, so one of the
+four tasks silently did nothing and the count ended 250 too high. The Rust
+implementation was never wrong in that run — the C reference showed the same
+behaviour in the same run. The test now waits for the tasks to signal that
+they are running before it stops them.
+
+---
+
 # Status — Checkpoint 003
 
 State vocabulary: **VERIFIED** (evidence produced by a clean cycle and
@@ -235,7 +374,8 @@ The defect was in the harness, not in the kernel: the symbols were exported as
 * Physical hardware boot — everything runs under QEMU.
 * Loadable-module Rust components (`CONFIG_CRC16=m` / `CONFIG_CRC_CCITT=m` are
   still the C implementation).
-* LTP, kselftests, sanitizer (KASAN/KCSAN/UBSAN) and lockdep boots.
+* LTP, kselftests and lockdep boots. (The KASAN+UBSAN and the KCSAN boots
+  *were* run for this component; the suites pass inside them, see §5.)
 * Container runtimes, musl userspace, 32-bit compat.
 * Ubuntu networking end-to-end, storage beyond one virtio disk, graphical
   desktop, suspend/resume.

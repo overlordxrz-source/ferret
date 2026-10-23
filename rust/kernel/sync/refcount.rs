@@ -5,8 +5,92 @@
 //! C header: [`include/linux/refcount.h`](srctree/include/linux/refcount.h)
 
 use crate::build_assert;
-use crate::sync::atomic::Atomic;
+use crate::sync::atomic::{Atomic, Relaxed, Release};
 use crate::types::Opaque;
+
+/// The value a saturated refcount takes (`REFCOUNT_SATURATED`).
+///
+/// The kernel's value is `INT_MIN / 2`, which is negative when seen as a
+/// signed integer: the saturation range is deliberately close to zero, so that
+/// a saturated count cannot reach the "bad" range in a single operation.
+pub const REFCOUNT_SATURATED: i32 = i32::MIN / 2;
+
+/// The "warn once" flag of the underflow warning.
+static UNDERFLOW_WARNED: Atomic<u32> = Atomic::new(0);
+
+/// The "warn once" flag of the "addition on zero" warning.
+static WARN_ADD_UAF: Atomic<u32> = Atomic::new(0);
+/// The "warn once" flag of the "saturated" warning (the `inc_not_zero` case).
+static WARN_ADD_NOT_ZERO_OVF: Atomic<u32> = Atomic::new(0);
+/// The "warn once" flag of the "saturated" warning (the `add` case).
+static WARN_ADD_OVF: Atomic<u32> = Atomic::new(0);
+/// The "warn once" flag of the "underflow" warning.
+static WARN_SUB_UAF: Atomic<u32> = Atomic::new(0);
+/// The "warn once" flag of the "decrement hit zero" warning.
+static WARN_DEC_LEAK: Atomic<u32> = Atomic::new(0);
+/// The "warn once" flag of the "unknown event" warning.
+static WARN_UNKNOWN: Atomic<u32> = Atomic::new(0);
+
+/// Warn once, like the kernel's `WARN_ONCE()`.
+///
+/// The C `WARN_ONCE()` uses a plain, racy flag, so two tasks that hit the
+/// warning at the same time may print it twice. This version uses an atomic
+/// compare-and-exchange, so the warning is printed exactly once.
+///
+/// The message is printed as a `KERN_WARNING` message, and the warning
+/// machinery of the kernel (`warn_on!()`) reports the location and dumps the
+/// stack, like the C `WARN_ONCE()` does.
+///
+/// This is a macro and not a function, so that every call site gets its own
+/// reported location: the C original reports the line of the `REFCOUNT_WARN()`
+/// call site, so the event that caused the warning can be read off the
+/// warning in the log.
+macro_rules! warn_once {
+    ($flag:expr, $message:expr) => {
+        if $flag.cmpxchg(0, 1, Relaxed).is_ok() {
+            crate::pr_warn!("{}", $message);
+            crate::warn_on!(true);
+        }
+    };
+}
+
+/// The compare-and-exchange retries of `try_dec_not_one()` (KUnit builds only).
+///
+/// This is instrumentation, not a behaviour: the branch it counts is the one
+/// the C original has, and a production build (no `CONFIG_KUNIT`) contains
+/// neither the counter nor the update. It exists because a test that claims
+/// to exercise the retry path has to be able to *assert* that it did, instead
+/// of inferring it from the final count.
+#[cfg(CONFIG_KUNIT)]
+mod retry_stats {
+    use core::sync::atomic::{AtomicU32, Ordering};
+
+    static TRY_DEC_NOT_ONE_RETRIES: AtomicU32 = AtomicU32::new(0);
+
+    pub(crate) fn record() {
+        TRY_DEC_NOT_ONE_RETRIES.fetch_add(1, Ordering::Relaxed);
+    }
+
+    pub(crate) fn get() -> u32 {
+        TRY_DEC_NOT_ONE_RETRIES.load(Ordering::Relaxed)
+    }
+
+    pub(crate) fn reset() {
+        TRY_DEC_NOT_ONE_RETRIES.store(0, Ordering::Relaxed);
+    }
+}
+
+/// The number of retries recorded by `try_dec_not_one()` (KUnit builds only).
+#[cfg(CONFIG_KUNIT)]
+pub fn try_dec_not_one_retries() -> u32 {
+    retry_stats::get()
+}
+
+/// Reset the `try_dec_not_one()` retry counter (KUnit builds only).
+#[cfg(CONFIG_KUNIT)]
+pub fn reset_try_dec_not_one_retries() {
+    retry_stats::reset()
+}
 
 /// Atomic reference counter.
 ///
@@ -80,6 +164,138 @@ impl Refcount {
     pub fn dec(&self) {
         // SAFETY: `self.as_ptr()` is valid.
         unsafe { bindings::refcount_dec(self.as_ptr()) }
+    }
+
+    /// Borrow an existing C `refcount_t`.
+    ///
+    /// This is the borrowed counterpart of [`Refcount::new()`]: it gives Rust
+    /// code access to a reference count that is *embedded in an object owned by
+    /// C*, which is what the exported `refcount_*` helpers operate on. The
+    /// count itself stays C: the `refcount_t` primitive is a header type that
+    /// the C code embeds in its own structures, and its inline operations are
+    /// what the kernel's own code calls.
+    ///
+    /// # Safety
+    ///
+    /// `ptr` must point to a valid, initialised `refcount_t` that outlives
+    /// `'a`, and the C contract of the reference count (no increment from
+    /// zero, no use after free) must be respected by the caller.
+    pub unsafe fn from_ptr<'a>(ptr: *mut bindings::refcount_t) -> &'a Self {
+        // SAFETY: the caller guarantees that the pointer is valid; `Refcount`
+        // is a transparent wrapper of `refcount_t`, so the layouts match.
+        unsafe { &*ptr.cast() }
+    }
+
+    /// Read the refcount's value.
+    ///
+    /// The read is relaxed, like the C `refcount_read()`, and the type is the
+    /// C one: `unsigned int`. A saturated count therefore reads back as
+    /// `0xc000_0000`, not as a negative number.
+    #[inline]
+    pub fn read(&self) -> u32 {
+        self.as_atomic().load(Relaxed) as u32
+    }
+
+    /// Set the refcount to the saturated value.
+    ///
+    /// This is the Rust equivalent of `refcount_set(r, REFCOUNT_SATURATED)`:
+    /// the count stops moving, so that a concurrent decrement cannot drive it
+    /// into the "bad" range and free the object.
+    #[inline]
+    pub fn set_saturated(&self) {
+        self.set(REFCOUNT_SATURATED);
+    }
+
+    /// Saturate the refcount and warn about the event that caused it.
+    ///
+    /// This is the Rust equivalent of the C `refcount_warn_saturate()`: the
+    /// count is set to the saturated value, which stops it from moving, and
+    /// the event is reported once. The message text is the one of the C
+    /// original.
+    pub fn warn_saturate(&self, t: bindings::refcount_saturation_type) {
+        self.set_saturated();
+
+        match t {
+            bindings::refcount_saturation_type_REFCOUNT_ADD_NOT_ZERO_OVF => {
+                warn_once!(
+                    &WARN_ADD_NOT_ZERO_OVF,
+                    "refcount_t: saturated; leaking memory.\n"
+                )
+            }
+            bindings::refcount_saturation_type_REFCOUNT_ADD_OVF => {
+                warn_once!(&WARN_ADD_OVF, "refcount_t: saturated; leaking memory.\n")
+            }
+            bindings::refcount_saturation_type_REFCOUNT_ADD_UAF => {
+                warn_once!(&WARN_ADD_UAF, "refcount_t: addition on 0; use-after-free.\n")
+            }
+            bindings::refcount_saturation_type_REFCOUNT_SUB_UAF => {
+                warn_once!(&WARN_SUB_UAF, "refcount_t: underflow; use-after-free.\n")
+            }
+            bindings::refcount_saturation_type_REFCOUNT_DEC_LEAK => {
+                warn_once!(&WARN_DEC_LEAK, "refcount_t: decrement hit 0; leaking memory.\n")
+            }
+            _ => warn_once!(&WARN_UNKNOWN, "refcount_t: unknown saturation event!?.\n"),
+        }
+    }
+
+    /// Decrement the refcount if it is one, and report whether it reached zero.
+    ///
+    /// This is the Rust equivalent of the C `atomic_try_cmpxchg_release()`
+    /// on the underlying counter: the one-to-zero transition is performed with
+    /// release ordering, and the failure ordering is relaxed, exactly as in C.
+    /// It provides a control dependency, so that the free cannot be reordered
+    /// before the decrement.
+    #[inline]
+    pub fn try_dec_if_one(&self) -> bool {
+        self.as_atomic().cmpxchg(1, 0, Release).is_ok()
+    }
+
+    /// Decrement the refcount unless it is one.
+    ///
+    /// This is the Rust equivalent of the C `refcount_dec_not_one()`: a
+    /// release-ordered compare-and-exchange loop that refuses to decrement a
+    /// count of one, treats a saturated count as "do not touch", and warns
+    /// (once) on an underflow.
+    ///
+    /// The return value follows the C: `true` when the count was decremented
+    /// (or when it is saturated), `false` when the count was one.
+    pub fn try_dec_not_one(&self) -> bool {
+        let mut val = self.read() as u32;
+
+        loop {
+            if val == REFCOUNT_SATURATED as u32 {
+                return true;
+            }
+
+            if val == 1 {
+                return false;
+            }
+
+            let new = val.wrapping_sub(1);
+            if new > val {
+                // The count was zero: this is an underflow. The C warns once
+                // and returns true without decrementing.
+                warn_once!(
+                    &UNDERFLOW_WARNED,
+                    "refcount_t: underflow; use-after-free.\n"
+                );
+
+                return true;
+            }
+
+            match self.as_atomic().cmpxchg(val as i32, new as i32, Release) {
+                Ok(_) => return true,
+                // The C updates the expected value on failure and retries.
+                Err(current) => {
+                    // The count changed between the read and the
+                    // compare-and-exchange: update the expected value and
+                    // retry, exactly as the C loop does.
+                    #[cfg(CONFIG_KUNIT)]
+                    retry_stats::record();
+                    val = current as u32;
+                }
+            }
+        }
     }
 
     /// Decrement a refcount and test if it is 0.

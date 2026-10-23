@@ -16,6 +16,7 @@
 
 #include <kunit/test.h>
 
+#include <linux/errno.h>
 #include <linux/kfifo.h>
 #include <linux/prandom.h>
 #include <linux/ktime.h>
@@ -69,7 +70,47 @@ struct kfifo_diff_pair {
 	struct __kfifo c;
 	u8 rust_buf[KFIFO_DIFF_BUF_SIZE];
 	u8 c_buf[KFIFO_DIFF_BUF_SIZE];
+	/* The return value of the Rust implementation. */
+	int rust_ret;
+	/*
+	 * Set when the C reference has undefined behaviour for this input,
+	 * so that it is not called at all.
+	 */
+	bool c_undefined;
 };
+
+/*
+ * The C reference is the unmodified upstream code, and the upstream code has
+ * undefined behaviour for some of the inputs this suite uses:
+ *
+ *   - the upstream `roundup_pow_of_two()` and `rounddown_pow_of_two()` shift
+ *     by an out-of-range amount when their argument is zero
+ *     (include/linux/log2.h): `1UL << fls_long(n - 1)` shifts by the word
+ *     width for n == 0, and `1UL << (fls_long(n) - 1)` shifts by -1. UBSAN
+ *     reports both;
+ *   - the C `__kfifo_init()` divides by the element size and rounds the
+ *     quotient down, so it calls `rounddown_pow_of_two(0)` whenever the
+ *     quotient is zero, and it divides by zero when the element size is
+ *     zero;
+ *   - the C `__kfifo_alloc()` rounds the size up, so it calls
+ *     `roundup_pow_of_two(0)` for a size of zero.
+ *
+ * The Rust implementation defines all of these cases, so the inputs that are
+ * undefined in C are checked against the specification instead of against
+ * the C reference: comparing against undefined behaviour compares noise.
+ * The upstream KUnit suite never uses such an input (it always uses a
+ * fixed size of 32 elements), which is why the undefined behaviour stayed
+ * latent upstream. See issue #25.
+ */
+static bool kfifo_diff_c_undefined_init(unsigned int size, size_t esize)
+{
+	return esize == 0 || size < esize;
+}
+
+static bool kfifo_diff_c_undefined_alloc(unsigned int size)
+{
+	return size == 0;
+}
 
 static void kfifo_diff_pair_init(struct kfifo_diff_pair *p, unsigned int size,
 				 size_t esize)
@@ -79,7 +120,12 @@ static void kfifo_diff_pair_init(struct kfifo_diff_pair *p, unsigned int size,
 	memset(p->rust_buf, 0, sizeof(p->rust_buf));
 	memset(p->c_buf, 0, sizeof(p->c_buf));
 
-	__kfifo_init(&p->rust, p->rust_buf, size, esize);
+	p->rust_ret = __kfifo_init(&p->rust, p->rust_buf, size, esize);
+
+	p->c_undefined = kfifo_diff_c_undefined_init(size, esize);
+	if (p->c_undefined)
+		return;
+
 	kfifo_c_ref_init(&p->c, p->c_buf, size, esize);
 }
 
@@ -106,6 +152,19 @@ static void kfifo_diff_init(struct kunit *test)
 			struct kfifo_diff_pair p;
 
 			kfifo_diff_pair_init(&p, sizes[i], esizes[j]);
+
+			if (p.c_undefined) {
+				/*
+				 * The C reference is undefined for this
+				 * input, so the Rust implementation is
+				 * checked against the specification: a
+				 * quotient below two elements is an error.
+				 */
+				KUNIT_EXPECT_EQ(test, p.rust_ret, -EINVAL);
+				KUNIT_EXPECT_EQ(test, p.rust.mask, 0u);
+				continue;
+			}
+
 			kfifo_diff_pair_compare(test, &p);
 		}
 	}
@@ -124,6 +183,21 @@ static void kfifo_diff_alloc(struct kunit *test)
 		memset(&p, 0, sizeof(p));
 
 		rust_ret = __kfifo_alloc(&p.rust, sizes[i], 1, GFP_KERNEL);
+
+		if (kfifo_diff_c_undefined_alloc(sizes[i])) {
+			/*
+			 * The C reference is undefined for a size of zero
+			 * (it rounds the size up with an out-of-range
+			 * shift), so the Rust implementation is checked
+			 * against the specification: a size below two
+			 * elements is an error.
+			 */
+			KUNIT_EXPECT_EQ(test, rust_ret, -EINVAL);
+			KUNIT_EXPECT_EQ(test, p.rust.mask, 0u);
+			KUNIT_EXPECT_TRUE(test, p.rust.data == NULL);
+			continue;
+		}
+
 		c_ret = kfifo_c_ref_alloc(&p.c, sizes[i], 1, GFP_KERNEL);
 
 		KUNIT_EXPECT_EQ(test, rust_ret, c_ret);

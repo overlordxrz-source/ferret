@@ -10,7 +10,10 @@
 set -euo pipefail
 
 SRC_MOUNT=${SRC_MOUNT:-/mnt/projects/ferret}
-OUTROOT=${OUTROOT:-/build}
+# The project's own trees live under /build/ferret, not directly under
+# /build: the container is shared, and another run (an independent audit,
+# say) must not be able to overwrite these objects and logs.
+OUTROOT=${OUTROOT:-/build/ferret}
 ARCH=${ARCH:-x86_64}
 JOBS=${JOBS:-$(nproc)}
 VARIANT=${1:?usage: build.sh <ref|rust>}
@@ -20,7 +23,10 @@ VARIANT=${1:?usage: build.sh <ref|rust>}
 # several hundred). .git and evidence are not needed for the build.
 SRC=$OUTROOT/src
 mkdir -p "$SRC"
-rsync -a --delete --exclude=.git/ --exclude=artifacts/ "$SRC_MOUNT/" "$SRC/"
+# --checksum: the modification times alone are not enough. A worktree (or a
+# checkout) can restore a file with an *older* time than the object that was
+# built from it, and the build system would then keep the stale object.
+rsync -a --delete --checksum --exclude=.git/ --exclude=artifacts/ "$SRC_MOUNT/" "$SRC/"
 
 case "$VARIANT" in
 ref | rust) ;;
@@ -36,7 +42,9 @@ x86_64) ARCH_SUFFIX= ;;
 esac
 OUT=$OUTROOT/linux-$VARIANT$ARCH_SUFFIX
 LOG=$OUTROOT/logs/$VARIANT$ARCH_SUFFIX
-ART=/mnt/projects/ferret/artifacts/$VARIANT$ARCH_SUFFIX
+# The artefact directory can be overridden so that two runs (a developer
+# and an independent auditor, say) do not write into the same tree.
+ART=${ART:-/mnt/projects/ferret/artifacts/$VARIANT$ARCH_SUFFIX}
 mkdir -p "$LOG" "$ART"
 
 if [ "${CLEAN:-0}" = "1" ]; then
@@ -72,6 +80,9 @@ if [ "$VARIANT" = rust ]; then
 	cfg --enable KFIFO_DIFF_KUNIT_TEST
 	cfg --enable BITMAP_RUST
 	cfg --enable BITMAP_DIFF_KUNIT_TEST
+	cfg --enable REFCOUNT_RUST
+	cfg --enable REFCOUNT_DIFF_KUNIT_TEST
+	cfg --enable FVS_REFCOUNT_ADVERSARIAL_KUNIT_TEST
 	# Rust KUnit tests (the migrated modules ship their own vectors tests).
 	# KUNIT_ALL_TESTS is deliberately not enabled: unrelated suites must not
 	# be able to obscure the result of the Ferret migrations.
@@ -85,6 +96,18 @@ else
 	cfg --disable KFIFO_DIFF_KUNIT_TEST 2>/dev/null || true
 	cfg --disable BITMAP_RUST 2>/dev/null || true
 	cfg --disable BITMAP_DIFF_KUNIT_TEST 2>/dev/null || true
+	cfg --disable REFCOUNT_RUST 2>/dev/null || true
+	cfg --disable REFCOUNT_DIFF_KUNIT_TEST 2>/dev/null || true
+	cfg --disable FVS_REFCOUNT_ADVERSARIAL_KUNIT_TEST 2>/dev/null || true
+fi
+
+# Extra configuration switches, used by the sanitizer builds of the
+# independent-verification gate (tools/ferret/audit/sanitizer.sh).
+# They are applied after the switches above, so that they win.
+if [ -n "${EXTRA_CONFIG:-}" ]; then
+	for sw in $EXTRA_CONFIG; do
+		cfg --enable "$sw"
+	done
 fi
 
 # Keep the build reproducible and reasonably fast.
